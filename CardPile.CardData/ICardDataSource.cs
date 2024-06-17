@@ -1,0 +1,8 @@
+﻿namespace CardPile.CardData;
+
+public interface ICardDataSource
+{
+    public string Name { get; }
+
+    public ICardData? GetDataForCard(int cardNumber);
+}

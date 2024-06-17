@@ -1,0 +1,151 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CardPile.App.ViewModels"
+        xmlns:services="using:CardPile.App.Services"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+        x:Class="CardPile.App.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="CardPile">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto, Auto, *" ColumnDefinitions="*">
+      <!-- Dropdowns -->
+      <Border Grid.Row="0" Margin="0 0 0 2" Background="LightGray" BorderThickness="0 0 0 1" BorderBrush="Gray">
+        <DockPanel LastChildFill="False">
+          <!-- Source dropdown -->
+          <StackPanel DockPanel.Dock="Left" Margin="5">
+            <Label Content="Source" DockPanel.Dock="Left"/>
+            <ComboBox ItemsSource="{Binding CardDataSourceBuilderCollectionService.AvailableCardDataSourceBuilders}" SelectedItem="{Binding CardDataSourceBuilderCollectionService.CurrentCardDataSourceBuilder, Mode=TwoWay}">
+              <ComboBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+          </StackPanel>
+          <!-- Parameters -->
+          <ItemsControl DockPanel.Dock="Left" ItemsSource="{Binding CardDataSourceBuilderCollectionService.CurrentCardDataSourceBuilder.Parameters}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal"/>
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <ContentControl Content="{Binding}">
+                  <ContentControl.DataTemplates>
+                    <DataTemplate DataType="{x:Type services:ICardDataSourceParameterOptionsService}">
+                      <StackPanel Margin="5">
+                        <Label Content="{Binding Name}"/>
+                        <ComboBox ItemsSource="{Binding Options}" SelectedItem="{Binding Value, Mode=TwoWay}">
+                          <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                              <TextBlock Text="{Binding}" />
+                            </DataTemplate>
+                          </ComboBox.ItemTemplate>
+                        </ComboBox>
+                      </StackPanel>
+                    </DataTemplate>
+
+                    <DataTemplate DataType="{x:Type services:ICardDataSourceParameterDateService}">
+                      <StackPanel Margin="5">
+                        <Label Content="{Binding Name}"/>
+                        <CalendarDatePicker SelectedDate="{Binding Value, Mode=TwoWay}" />
+                      </StackPanel>
+                    </DataTemplate>
+                  </ContentControl.DataTemplates>
+                </ContentControl>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <!-- Log Button -->
+          <StackPanel DockPanel.Dock="Right" Margin="5" >
+            <Button Command="{Binding ShowLogCommand}">Show log</Button>
+          </StackPanel>
+        </DockPanel>
+      </Border>
+      <!-- Metrics -->
+      <DockPanel Grid.Row="1" Margin="0, 2" LastChildFill="False">
+        <StackPanel DockPanel.Dock="Left" Orientation="Vertical">
+          <TextBlock Margin="5 2 0 0" FontSize="18" FontWeight="DemiBold">Metrics</TextBlock>
+          <ItemsControl DockPanel.Dock="Bottom" ItemsSource="{Binding MetricDescriptions}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal"/>
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <CheckBox Content="{Binding Name}" Margin="5 0 0 0" IsChecked="{Binding Visible, Mode=TwoWay}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Right" Orientation="Vertical" Margin="5 2">
+          <TextBlock Margin="0 2">Sort by</TextBlock>
+          <ComboBox ItemsSource="{Binding MetricDescriptions}" SelectedItem="{Binding SortByMetricDescription, Mode=TwoWay}">
+            <ComboBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding Name}" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+        </StackPanel>
+      </DockPanel>  
+      <!-- Picks & missing -->
+      <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Name="ContentContainer">
+        <Grid RowDefinitions="Auto,Auto,*">
+          <!-- Picks -->
+          <Expander Grid.Row="0" IsExpanded="true" VerticalAlignment="Top" Width="{Binding #ContentContainer.Bounds.Width}" Margin="0, 2" Padding="5 0 5 0">
+            <Expander.Header>
+              <TextBlock FontSize="18" FontWeight="DemiBold">Picks</TextBlock>
+            </Expander.Header>
+            <ItemsControl ItemsSource="{Binding CardsInPack}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+            </ItemsControl>
+          </Expander>
+          <!-- Missing -->
+          <Expander Grid.Row="1" VerticalAlignment="Top" Width="{Binding #ContentContainer.Bounds.Width}" Margin="0, 2">
+            <Expander.Header>
+              <TextBlock FontSize="18" FontWeight="DemiBold">Missing</TextBlock>
+            </Expander.Header>
+            <StackPanel Orientation="Horizontal">
+              <ContentControl Content="{Binding PreviouslyPickedCardFromPack}" />
+              <ItemsControl ItemsSource="{Binding CardsMissingFromPack}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+              </ItemsControl>
+            </StackPanel>
+          </Expander>
+          <!-- Upcoming -->
+          <Expander Grid.Row="2" VerticalAlignment="Top" Width="{Binding #ContentContainer.Bounds.Width}" Margin="0, 2">
+            <Expander.Header>
+              <TextBlock FontSize="18" FontWeight="DemiBold">Possible upcoming cards</TextBlock>
+            </Expander.Header>
+            <ItemsControl ItemsSource="{Binding CardsUpcomingAfterPack}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+            </ItemsControl>
+          </Expander>
+        </Grid>
+      </ScrollViewer>
+    </Grid>
+</Window>

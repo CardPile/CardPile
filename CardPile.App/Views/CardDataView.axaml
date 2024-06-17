@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CardPile.App.ViewModels"
+             xmlns:vmd="using:CardPile.App.ViewModels.Design"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="CardPile.App.Views.CardDataView"
+             x:DataType="vm:CardDataViewModel">
+ 
+  <Design.DataContext>
+    <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+    <vmd:CardDataViewModelDesign/>
+  </Design.DataContext>  
+  
+  <StackPanel>
+    <Grid RowDefinitions="*,*" ColumnDefinitions="*,*">
+      <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Content="{Binding CardName}"/>
+      <StackPanel Grid.Column="0" Grid.Row="1" Spacing="5" Margin="5 0">
+        <Border CornerRadius="10" ClipToBounds="True">
+          <Panel Background="LightGray">
+            <Image Width="172" Stretch="Uniform" Source="{Binding CardImage^}"/>
+            <Panel Height="240" IsVisible="{Binding CardImage^, Converter={x:Static ObjectConverters.IsNull}}">
+              <PathIcon Height="75" Width="75" Data="{StaticResource card_placeholder}" />
+            </Panel>
+          </Panel>
+        </Border>
+      </StackPanel>
+      <Border CornerRadius="10" ClipToBounds="True" Grid.Column="1" Grid.Row="1" Background="Gray" IsVisible="{Binding AnyMetricIsNotNull}">
+        <ItemsControl ItemsSource="{Binding Metrics}" >
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <UniformGrid Margin="5 0" Rows="1" IsVisible="{Binding Visible}">
+                <TextBlock Grid.Column="0" Text="{Binding Metric.Description.Name}" Margin="5 2"></TextBlock>
+                <TextBlock Grid.Column="1" Text="{Binding Metric.TextValue}" Margin="5 2" HorizontalAlignment="Right"></TextBlock>
+              </UniformGrid>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </Border>        
+    </Grid>
+  </StackPanel>
+</UserControl>
