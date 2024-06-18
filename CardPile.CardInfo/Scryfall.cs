@@ -184,8 +184,8 @@ public class Scryfall
     private static HttpClient TheHttpClient = new();
 
     private const string Url = "https://api.scryfall.com/bulk-data";
-    private readonly static string ExecutableDirectory = Environment.ProcessPath != null ? Path.GetDirectoryName(Environment.ProcessPath) ?? "." : ".";
-    private readonly static string CacheDirectory = Path.Combine(ExecutableDirectory, "ScryfallCardInfoCache");
+    private readonly static string AppProgramData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "CardPile");
+    private readonly static string CacheDirectory = Path.Combine(AppProgramData, "ScryfallCardInfoCache");
     private readonly static string CachePath = Path.Combine(CacheDirectory, "unique_artwork.json");
     private const int CacheValidHours = 12;
 

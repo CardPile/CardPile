@@ -149,8 +149,8 @@ public class SeventeenLands
     private readonly static HttpClient TheHttpClient = new();
 
     private const string Url = "https://17lands-public.s3.amazonaws.com/analysis_data/cards/cards.csv";
-    private readonly static string ExecutableDirectory = Environment.ProcessPath != null ? Path.GetDirectoryName(Environment.ProcessPath) ?? "." : ".";
-    private readonly static string CacheDirectory = Path.Combine(ExecutableDirectory, "17LandsCardInfoCache");
+    private readonly static string AppProgramData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "CardPile");
+    private readonly static string CacheDirectory = Path.Combine(AppProgramData, "17LandsCardInfoCache");
     private readonly static string CachePath = Path.Combine(CacheDirectory, "cards.csv");
 
     private static Dictionary<int, string> cardIdToName = [];

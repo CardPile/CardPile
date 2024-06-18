@@ -297,8 +297,8 @@ public class SeventeenLandsCardDataSourceBuilder : ICardDataSourceBuilder
 
     private const string FiltersUrl = "https://www.17lands.com/data/filters";
     private const string Url = "https://www.17lands.com/card_ratings/data";
-    private readonly static string ExecutableDirectory = Environment.ProcessPath != null ? Path.GetDirectoryName(Environment.ProcessPath) ?? "." : ".";
-    private readonly static string CacheDirectory = Path.Combine(ExecutableDirectory, "17LandsCache");
+    private readonly static string AppProgramData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "CardPile");
+    private readonly static string CacheDirectory = Path.Combine(AppProgramData, "17LandsCache");
     private const int CacheValidHours = 6;
 
     private const string ALL_USERS_USER_TYPE = "All users";

@@ -44,8 +44,7 @@ internal class CardDataModel : ReactiveObject, ICardDataService
 
     private async Task<Bitmap?> LoadCardImage()
     {
-        string executableDirectory = Environment.ProcessPath != null ? Path.GetDirectoryName(Environment.ProcessPath) ?? "." : ".";
-        string CacheDirectory = Path.Combine(executableDirectory, "ScryfallCardImageCache");
+        string CacheDirectory = Path.Combine(AppProgramData, "ScryfallCardImageCache");
         string CachePath = Path.Combine(CacheDirectory, $"{ArenaCardId}.jpg");
 
         Stream? stream = null;
@@ -82,6 +81,8 @@ internal class CardDataModel : ReactiveObject, ICardDataService
 
         return bitmap;
     }
+
+    private readonly static string AppProgramData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "CardPile");
 
     private static HttpClient httpClient = new();
 
