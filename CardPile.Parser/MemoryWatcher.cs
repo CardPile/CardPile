@@ -82,13 +82,9 @@ public class MemoryWatcher
                 return default;
             }
 
-            if (!GetDraftInfo(currentNavContentFieldValue, out Guid draftId, out int packNumber, out int pickNumber, out List<int> cardsInPackSecondary))
+            if (!GetDraftInfo(currentNavContentFieldValue, out Guid draftId, out int packNumber, out int pickNumber))
             {
                 // TODO: When this is stable make this a failure case if we don't find draft info
-            }
-            else
-            {
-                logger.Info($"Secondary cards in pack {string.Join(",", cardsInPackSecondary)}");
             }
 
             var cardsInPack = GetCardsInPack(currentNavContentFieldValue);
@@ -156,12 +152,11 @@ public class MemoryWatcher
         return cardChoices;
     }
 
-    private static bool GetDraftInfo(IManagedObjectInstance currentNavContentFieldValue, out Guid draftId, out int packNumber, out int pickNumber, out List<int> cardChoices)
+    private static bool GetDraftInfo(IManagedObjectInstance currentNavContentFieldValue, out Guid draftId, out int packNumber, out int pickNumber)
     {
         draftId = Guid.Empty;
         packNumber = 1;
         pickNumber = 1;
-        cardChoices = [];
 
         var draftPodFieldValue = currentNavContentFieldValue.TryToGetPath(DraftPodPath);
         if (draftPodFieldValue == null)
@@ -208,12 +203,6 @@ public class MemoryWatcher
                 return false;
             }
 
-            var retreivedPackCards = GetPackCardsFromHumanDraft(currentPickInfoFieldValue);
-            if(retreivedPackCards == null)
-            {
-                return false;
-            }
-
             var retreivedPackNumber = currentPickInfoFieldValue.TryToGetValue<int>("SelfPack");
             var retreivedPickNumber = currentPickInfoFieldValue.TryToGetValue<int>("SelfPick");
 
@@ -227,7 +216,6 @@ public class MemoryWatcher
             }
             packNumber = retreivedPackNumber;
             pickNumber = retreivedPickNumber;
-            cardChoices = retreivedPackCards;
 
             return true;
         }
@@ -240,7 +228,21 @@ public class MemoryWatcher
 
     private static List<int>? GetPackCardsFromHumanDraft(IManagedObjectInstance currentPickInfoFieldValue)
     {
-        return currentPickInfoFieldValue.TryToGetValue<List<int>>("PackCards");
+        var packCardsListFieldValue = currentPickInfoFieldValue.TryToGetPath("PackCards");
+        if(packCardsListFieldValue == null)
+        {
+            return default;
+        }
+
+        var items = packCardsListFieldValue.TryToGetValue<int[]>("_items");
+        if (items == null)
+        {
+            return default;
+        }
+
+        logger.Info("Found {ItemCount} items in PackCards", items.Length);
+
+        return [.. items];
     }
 
     private IAssemblyImage? GetMtgaAssemblyImage()
