@@ -78,8 +78,7 @@ public class Arena
                         }
 
                         // Assume the Steam version is the newest one, so just return it
-                        // return installLocationValue;
-                        continue;
+                        return installLocationValue;
                     }
                     else if(displayNameValue == StandaloneNeedle)
                     {
