@@ -1,5 +1,4 @@
 ﻿using Microsoft.Data.Sqlite;
-using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using NLog;
 using System.Runtime.Versioning;
@@ -9,30 +8,20 @@ namespace CardPile.CardInfo;
 public class Arena
 {
     static Arena()
-    {
-        string? cardDatabaseLocation = default;
-        if (OperatingSystem.IsWindows())
-        {
-            var arenaInstallDirectory = GetArenaInstallDirectory() ?? throw new InvalidOperationException("Cannot locate Magic: The Gathering Arena installation");
-            var arenaDataSubdirectory = Path.Combine(arenaInstallDirectory, "MTGA_Data");
-            var cardDatabaseFiles = Directory.GetFiles(arenaDataSubdirectory, "Raw_CardDatabase_*.mtga", SearchOption.AllDirectories);
-            if (cardDatabaseFiles.Length == 0)
-            {
-                throw new InvalidOperationException("Cannot locate Magic: The Gathering Arena card database");
-            }
-            if (cardDatabaseFiles.Length > 1)
-            {
-                throw new InvalidOperationException("Found multiple Magic: The Gathering Arena card databases");
-            }
-            cardDatabaseLocation = cardDatabaseFiles.First();
-        }
-
-        if (cardDatabaseLocation == null)
+    {       
+        var arenaInstallDirectory = GetArenaInstallDirectory() ?? throw new InvalidOperationException("Cannot locate Magic: The Gathering Arena installation");
+        var arenaDataSubdirectory = Path.Combine(arenaInstallDirectory, "MTGA_Data");
+        var cardDatabaseFiles = Directory.GetFiles(arenaDataSubdirectory, "Raw_CardDatabase_*.mtga", SearchOption.AllDirectories);
+        if (cardDatabaseFiles.Length == 0)
         {
             throw new InvalidOperationException("Cannot locate Magic: The Gathering Arena card database");
         }
+        if (cardDatabaseFiles.Length > 1)
+        {
+            throw new InvalidOperationException("Found multiple Magic: The Gathering Arena card databases");
+        }
 
-        LoadCardDatabase(cardDatabaseLocation);
+        LoadCardDatabase(cardDatabaseFiles.First());
     }
 
     public static void Init()
@@ -58,33 +47,70 @@ public class Arena
         return (null, null);
     }
 
-    [SupportedOSPlatform("windows")]
     private static string? GetArenaInstallDirectory()
     {
-        const string SteamNeedle = "Magic: The Gathering Arena";
-
-        foreach(var (rootRegKey, searchLocation) in searchLocations)
+        if (OperatingSystem.IsWindows())
         {
-            RegistryKey? regKey = rootRegKey.OpenSubKey(searchLocation);
-            if (regKey == null)
-            {
-                continue;
-            }
+            const string SteamNeedle = "Magic: The Gathering Arena";
+            const string StandaloneNeedle = "MTG Arena";
 
-            foreach(var subSearchLocation in regKey.GetSubKeyNames())
+            string? installedLocation = default;
+            Version? installedVersion = default;
+
+            foreach (var (rootRegKey, searchLocation) in searchLocations)
             {
-                RegistryKey? rsk = regKey.OpenSubKey(subSearchLocation);
-                string? displayName = rsk?.GetValue("DisplayName") as string;
-                if (displayName == SteamNeedle)
+                RegistryKey? regKey = rootRegKey.OpenSubKey(searchLocation);
+                if (regKey == null)
                 {
-                    string? installLocation = rsk?.GetValue("InstallLocation") as string;
-                    if(!string.IsNullOrWhiteSpace(installLocation))
+                    continue;
+                }
+
+                foreach (var subSearchLocation in regKey.GetSubKeyNames())
+                {
+                    RegistryKey? rsk = regKey.OpenSubKey(subSearchLocation);
+                    string? displayNameValue = rsk?.GetValue("DisplayName") as string;
+                    if (displayNameValue == SteamNeedle)
                     {
-                        return installLocation;
+                        string? installLocationValue = rsk?.GetValue("InstallLocation") as string;
+                        if (string.IsNullOrWhiteSpace(installLocationValue))
+                        {
+                            continue;
+                        }
+
+                        // Assume the Steam version is the newest one, so just return it
+                        // return installLocationValue;
+                        continue;
+                    }
+                    else if(displayNameValue == StandaloneNeedle)
+                    {
+                        string? installLocationValue = rsk?.GetValue("InstallLocation") as string;
+                        if (string.IsNullOrWhiteSpace(installLocationValue))
+                        {
+                            continue;
+                        }
+
+                        string? displayVersionValue = rsk?.GetValue("DisplayVersion") as string;
+                        if (string.IsNullOrWhiteSpace(displayVersionValue))
+                        {
+                            continue;
+                        }
+
+                        if (!Version.TryParse(displayVersionValue, out Version? version))
+                        {
+                            continue;
+                        }
+
+                        if(installedVersion == null || version > installedVersion)
+                        {
+                            installedLocation = installLocationValue;
+                            installedVersion = version;
+                        }
                     }
                 }
             }
-        }    
+
+            return installedLocation;
+        }
 
         return default;
     }
