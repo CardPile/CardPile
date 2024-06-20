@@ -88,7 +88,10 @@ namespace CardPile.Draft
             if (picks.Count <= packIndex)
             {
                 packIndex = picks.Count - 1;
-                pickIndex = picks[packIndex].Count - 1;
+                if (packIndex >= 0)
+                {
+                    pickIndex = picks[packIndex].Count - 1;
+                }
             }
             if (packIndex < 0)
             {
@@ -184,12 +187,6 @@ namespace CardPile.Draft
 
         public List<int> GetUpcomingCards(int pack, int pick)
         {
-            if (CurrentPack.Count == 0)
-            {
-                // No upcoming pack if there is no current pack
-                return [];
-            }
-
             var packIndex = pack - 1;
             var pickIndex = pick - 1;
 

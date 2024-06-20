@@ -104,7 +104,6 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         {
             cardsInCurrentPack.Clear();
             cardsMissingInCurrentPack.Clear();
-            cardsUpcomingAfterCurrentPack.Clear();
 
             PreviousPick = null;
         }

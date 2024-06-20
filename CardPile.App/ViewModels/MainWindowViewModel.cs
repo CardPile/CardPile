@@ -326,7 +326,14 @@ public class MainWindowViewModel : ViewModelBase
                 return 1;
             }
 
-            return internalComparer.Compare(x.Metrics[metricIndex].Metric, y.Metrics[metricIndex].Metric);
+            var comparisonResult = internalComparer.Compare(x.Metrics[metricIndex].Metric, y.Metrics[metricIndex].Metric);
+            if (comparisonResult == 0)
+            {
+
+                return x.CardDataService.ArenaCardId.CompareTo(y.CardDataService.ArenaCardId);
+            }
+
+            return comparisonResult;
         }
 
         private IComparer<ICardMetric> internalComparer;
