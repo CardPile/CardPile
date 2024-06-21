@@ -1,11 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <VersionPrefix>0.1.0</VersionPrefix>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <ApplicationIcon>Assets\cardpile.ico</ApplicationIcon>
+    <SignAssembly>False</SignAssembly>
+    <Version>$(VersionPrefix)</Version>
+    <PackageProjectUrl>https://github.com/CardPile/CardPile/</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,5 +38,9 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\LogWindow.axaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\cardpile.ico" />
   </ItemGroup>
 </Project>
