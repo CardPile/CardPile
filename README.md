@@ -4,6 +4,14 @@ Card Pile is an open source Magic: the Gathering Arena draft helper that utilize
 
 ![CardPileApp](https://github.com/CardPile/CardPile/assets/172943637/9fddf3cf-6476-49ac-9bb1-f38ee80689f4)
 
+## Suppoerted
+
+### Platforms
+* Windows
+
+### Formats
+* Premiere draft
+
 ## Disclaimer
 Use at your own risk. None of the authors, contributors, administrators or anyone else connected with CardPile, in any way whatsoever, can be responsible for your use of this software. 
 
