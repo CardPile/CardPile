@@ -84,7 +84,7 @@ public class MemoryWatcher
 
             if (!GetDraftInfo(currentNavContentFieldValue, out Guid draftId, out int packNumber, out int pickNumber))
             {
-                // TODO: When this is stable make this a failure case if we don't find draft info
+                return default;
             }
 
             var cardsInPack = GetCardsInPack(currentNavContentFieldValue);

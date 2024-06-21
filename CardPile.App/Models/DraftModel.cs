@@ -28,7 +28,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         this.logModel.DraftStartEvent += DraftStartHandler;
         this.logModel.DraftChoiceEvent += DraftChoiceHandler;
         this.logModel.DraftPickEvent += DraftPickHandler;
-        this.logModel.DraftEndEvent += DraftEndHandler;
+        this.logModel.DraftLeaveEvent += DraftLeaveHandler;
 
         this.cardDataSource = cardDataSource;
     }
@@ -114,7 +114,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         logger.Info($"Current deck [{string.Join(",", deck)}]");
     }
 
-    private void DraftEndHandler(object? sender, DraftEndEvent e)
+    private void DraftLeaveHandler(object? sender, DraftLeaveEvent e)
     {
         cardsInCurrentPack.Clear();
         cardsMissingInCurrentPack.Clear();

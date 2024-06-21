@@ -9,5 +9,5 @@ internal interface IWatcherService : IReactiveObject
     public event EventHandler<DraftEnterEvent>? DraftStartEvent;
     public event EventHandler<DraftChoiceEvent>? DraftChoiceEvent;
     public event EventHandler<DraftPickEvent>? DraftPickEvent;
-    public event EventHandler<DraftEndEvent>? DraftEndEvent;
+    public event EventHandler<DraftLeaveEvent>? DraftLeaveEvent;
 }

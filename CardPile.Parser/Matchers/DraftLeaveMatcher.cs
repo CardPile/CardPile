@@ -3,9 +3,9 @@ using CardPile.Parser.Matchers;
 
 namespace CardPile.Parser;
 
-public class DraftEnterMatcher : ILogMatcher
+public class DraftLeaveMatcher : ILogMatcher
 {
-    public event EventHandler<DraftEnterEvent>? DraftStartEvent;
+    public event EventHandler<DraftLeaveEvent>? DraftLeaveEvent;
 
     public bool Match(string line)
     {
@@ -20,32 +20,32 @@ public class DraftEnterMatcher : ILogMatcher
             return false;  
         }
 
-        var draftStartEvent = DraftStartEvent;
-        if(draftStartEvent != null)
+        var draftLeaveEvent = DraftLeaveEvent;
+        if(draftLeaveEvent != null)
         {
-            draftStartEvent(this, e);
+            draftLeaveEvent(this, e);
         }
 
         return true;        
     }
 
-    private DraftEnterEvent? ParseDraftEventInfo(string line, string needle)
+    private DraftLeaveEvent? ParseDraftEventInfo(string line, string needle)
     {
         dynamic? requestData = MatcherHelpers.ParseRequestUnchecked(line, needle);
-        var destinationScene = requestData?.toSceneName?.Value;
-        if (destinationScene == null)
+        var sourceScene = requestData?.fromSceneName?.Value;
+        if (sourceScene == null)
         {
             return null;
         }
 
-        if (destinationScene != DESTINATION_SCENE_NAME_NEEDLE)
+        if (sourceScene != SOURCE_SCENE_NAME_NEEDLE)
         {
             return null;
         }
 
-        return new DraftEnterEvent();
+        return new();
     }
 
     private static string SCENE_CHANGE_NEEDLE = "[UnityCrossThreadLogger]==> LogBusinessEvents";
-    private static string DESTINATION_SCENE_NAME_NEEDLE = "Draft";
+    private static string SOURCE_SCENE_NAME_NEEDLE = "Draft";
 }

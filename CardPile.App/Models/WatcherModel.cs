@@ -40,7 +40,7 @@ internal class WatcherModel : ReactiveObject, IWatcherService
     public event EventHandler<DraftEnterEvent>? DraftStartEvent;
     public event EventHandler<DraftChoiceEvent>? DraftChoiceEvent;
     public event EventHandler<DraftPickEvent>? DraftPickEvent;
-    public event EventHandler<DraftEndEvent>? DraftEndEvent;
+    public event EventHandler<DraftLeaveEvent>? DraftLeaveEvent;
 
     private void StartLogWatcherTimer()
     {
@@ -88,12 +88,12 @@ internal class WatcherModel : ReactiveObject, IWatcherService
 
     private void DraftStartHandler(object? sender, DraftEnterEvent e)
     {
-        logger.Info($"Entered draft.");
+        logger.Info($"Entered the draft.");
 
         dispatcher.RemoveMatcher<DraftEnterMatcher>();
         dispatcher.AddMatcher<DraftChoiceMatcher>().DraftChoiceEvent += DraftChoiceHandler;
         dispatcher.AddMatcher<DraftPickMatcher>().DraftPickEvent += DraftPickHandler;
-        dispatcher.AddMatcher<DraftEndMatcher>().DraftEndEvent += DraftEndHandler;
+        dispatcher.AddMatcher<DraftLeaveMatcher>().DraftLeaveEvent += DraftLeaveHandler;
 
         StartMemoryWatcherTimer();
         memoryWatcher.DraftChoiceEvent += DraftChoiceHandler;
@@ -121,16 +121,16 @@ internal class WatcherModel : ReactiveObject, IWatcherService
         OnRaiseDraftPickEvent(e);
     }
 
-    private void DraftEndHandler(object? sender, DraftEndEvent e)
+    private void DraftLeaveHandler(object? sender, DraftLeaveEvent e)
     {
-        logger.Info($"Draft {e.EventName} ended");
+        logger.Info($"Left the draft");
 
         dispatcher.RemoveMatcher<DraftChoiceMatcher>();
         dispatcher.RemoveMatcher<DraftPickMatcher>();
-        dispatcher.RemoveMatcher<DraftEndMatcher>();
+        dispatcher.RemoveMatcher<DraftLeaveMatcher>();
         dispatcher.AddMatcher<DraftEnterMatcher>().DraftStartEvent += DraftStartHandler;
 
-        OnRaiseDraftEndEvent(e);
+        OnRaiseDraftLeaveEvent(e);
     }
 
     private void OnRaiseDraftStartEvent(DraftEnterEvent e)
@@ -148,9 +148,9 @@ internal class WatcherModel : ReactiveObject, IWatcherService
         DraftPickEvent?.Invoke(this, e);
     }
 
-    private void OnRaiseDraftEndEvent(DraftEndEvent e)
+    private void OnRaiseDraftLeaveEvent(DraftLeaveEvent e)
     {
-        DraftEndEvent?.Invoke(this, e);
+        DraftLeaveEvent?.Invoke(this, e);
     }
 
     private LogFileWatcher logWatcher;
