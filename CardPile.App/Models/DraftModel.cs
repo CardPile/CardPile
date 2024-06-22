@@ -4,6 +4,9 @@ using CardPile.CardData;
 using ReactiveUI;
 using System.Collections.ObjectModel;
 using NLog;
+using System;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace CardPile.App.Models;
 
@@ -99,6 +102,8 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
     private void DraftPickHandler(object? sender, DraftPickEvent e)
     {
         draftState.ProcessEvent(e);
+
+        SerializeDraftState();
 
         if(e.PackNumber == draftState.LastPack && e.PickNumber == draftState.LastPick)
         {
@@ -198,7 +203,31 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         }
     }
 
-    private DraftState draftState;
+    private void SerializeDraftState()
+    {
+        if(draftState.DraftId == Guid.Empty)
+        {
+            return;
+        }
+
+        string executableDirectory = Environment.ProcessPath != null ? Path.GetDirectoryName(Environment.ProcessPath) ?? "." : ".";
+        string draftDirectory = Path.Combine(executableDirectory, "Drafts");
+        string draftFilePath = Path.Combine(draftDirectory, $"{draftState.DraftId}.json");
+
+        if(!Directory.Exists(draftDirectory))
+        {
+            Directory.CreateDirectory(draftDirectory);
+        }
+
+        JsonSerializer serializer = new JsonSerializer();
+
+        using StreamWriter sw = new StreamWriter(draftFilePath);
+        using JsonWriter jsonWriter = new JsonTextWriter(sw);
+
+        serializer.Serialize(jsonWriter, draftState);
+    }
+
+private DraftState draftState;
 
     private ObservableCollection<ICardDataService> cardsInCurrentPack;
     private ObservableCollection<ICardDataService> cardsMissingInCurrentPack;

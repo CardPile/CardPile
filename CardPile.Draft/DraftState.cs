@@ -1,6 +1,4 @@
-﻿using System.Net.Quic;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.ExceptionServices;
+﻿using Newtonsoft.Json;
 
 namespace CardPile.Draft
 {
@@ -23,6 +21,11 @@ namespace CardPile.Draft
             }
             if (e is DraftChoiceEvent choiceEvent)
             {
+                if (draftId == Guid.Empty)
+                {
+                    draftId = choiceEvent.DraftId;
+                }
+
                 lastPack = choiceEvent.PackNumber;
                 lastPick = choiceEvent.PickNumber;
                 CurrentPack = choiceEvent.CardsInPack;
@@ -30,6 +33,10 @@ namespace CardPile.Draft
             }
             else if (e is DraftPickEvent pickEvent)
             {
+                if (draftId == Guid.Empty)
+                {
+                    draftId = pickEvent.DraftId;
+                }
                 if (pickEvent.PackNumber == lastPack && pickEvent.PickNumber == lastPick)
                 {
                     CurrentPack.Clear();
@@ -37,6 +44,11 @@ namespace CardPile.Draft
                 AddPick(pickEvent.PackNumber, pickEvent.PickNumber, pickEvent.CardPicked);
                 AddSeenPack(pickEvent.PackNumber, pickEvent.PickNumber, pickEvent.CardsInPack);
             }
+        }
+
+        public Guid DraftId
+        {
+            get => draftId;
         }
 
         public List<int> CurrentPack
@@ -247,14 +259,21 @@ namespace CardPile.Draft
         private const int PACK_LOOK_BACK = 8;
         private const int UPCOMING_PACK_LOOK_BACK = 7;
 
+        [JsonProperty]
+        private Guid draftId = Guid.Empty;
+
+        [JsonProperty]
         private int lastPack = 1;
 
+        [JsonProperty]
         private int lastPick = 1;
 
         private List<int> currentPack = [];
 
+        [JsonProperty]
         private List<List<int>> picks = [];
 
+        [JsonProperty]
         private List<List<List<int>>> packsSeen = [];
     }
 }

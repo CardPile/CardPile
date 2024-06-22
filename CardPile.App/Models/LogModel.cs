@@ -40,7 +40,7 @@ internal class LogModel : ReactiveObject, ILogService
         protected override void Write(LogEventInfo logEvent)
         {
             string logMessage = RenderLogEvent(this.Layout, logEvent);
-            Parent.LogContents += logMessage + Environment.NewLine;
+            Parent.LogContents = logMessage + Environment.NewLine + Parent.LogContents;
         }
     }
 
