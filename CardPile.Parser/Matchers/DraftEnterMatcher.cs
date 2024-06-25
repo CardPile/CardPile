@@ -5,7 +5,7 @@ namespace CardPile.Parser;
 
 public class DraftEnterMatcher : ILogMatcher
 {
-    public event EventHandler<DraftEnterEvent>? DraftStartEvent;
+    public event EventHandler<DraftEnterEvent>? DraftEnterEvent;
 
     public bool Match(string line)
     {
@@ -20,11 +20,7 @@ public class DraftEnterMatcher : ILogMatcher
             return false;  
         }
 
-        var draftStartEvent = DraftStartEvent;
-        if(draftStartEvent != null)
-        {
-            draftStartEvent(this, e);
-        }
+        DraftEnterEvent?.Invoke(this, e);
 
         return true;        
     }

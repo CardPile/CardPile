@@ -13,7 +13,7 @@ internal class LogFeeder
         this.dispatcher = new MatcherDispatcher();
 
         this.logWatcher.NewLineEvent += NewLineHandler;
-        this.dispatcher.AddMatcher<DraftEnterMatcher>().DraftStartEvent += DraftStartHandler;
+        this.dispatcher.AddMatcher<DraftEnterMatcher>().DraftEnterEvent += DraftEnterHandler;
         this.dispatcher.AddMatcher<DraftChoiceMatcher>().DraftChoiceEvent += DraftChoiceHandler;
         this.dispatcher.AddMatcher<DraftPickMatcher>().DraftPickEvent += DraftPickHandler;
         this.dispatcher.AddMatcher<DraftLeaveMatcher>().DraftLeaveEvent += DraftEndHandler;
@@ -102,7 +102,7 @@ internal class LogFeeder
         }
     }
 
-    private void DraftStartHandler(object? sender, Draft.DraftEnterEvent e)
+    private void DraftEnterHandler(object? sender, Draft.DraftEnterEvent e)
     {
         currentLineMatched = true;
     }

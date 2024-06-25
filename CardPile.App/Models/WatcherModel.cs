@@ -29,7 +29,7 @@ internal class WatcherModel : ReactiveObject, IWatcherService
 
         dispatcher = new MatcherDispatcher();
         dispatcher.Connect(logWatcher);
-        dispatcher.AddMatcher<DraftEnterMatcher>().DraftStartEvent += DraftStartHandler;
+        dispatcher.AddMatcher<DraftEnterMatcher>().DraftEnterEvent += DraftEnterHandler;
 
         logWatcherTimerHandle = null;
         memoryWatcherTimerHandle = null;
@@ -37,7 +37,7 @@ internal class WatcherModel : ReactiveObject, IWatcherService
         StartLogWatcherTimer();
     }
 
-    public event EventHandler<DraftEnterEvent>? DraftStartEvent;
+    public event EventHandler<DraftEnterEvent>? DraftEnterEvent;
     public event EventHandler<DraftChoiceEvent>? DraftChoiceEvent;
     public event EventHandler<DraftPickEvent>? DraftPickEvent;
     public event EventHandler<DraftLeaveEvent>? DraftLeaveEvent;
@@ -86,7 +86,7 @@ internal class WatcherModel : ReactiveObject, IWatcherService
         return memoryWatcherTimerHandle != null;
     }
 
-    private void DraftStartHandler(object? sender, DraftEnterEvent e)
+    private void DraftEnterHandler(object? sender, DraftEnterEvent e)
     {
         logger.Info($"Entered the draft.");
 
@@ -98,7 +98,7 @@ internal class WatcherModel : ReactiveObject, IWatcherService
         StartMemoryWatcherTimer();
         memoryWatcher.DraftChoiceEvent += DraftChoiceHandler;
 
-        OnRaiseDraftStartEvent(e);
+        OnRaiseDraftEnterEvent(e);
     }
 
     private void DraftChoiceHandler(object? sender, DraftChoiceEvent e)
@@ -128,14 +128,14 @@ internal class WatcherModel : ReactiveObject, IWatcherService
         dispatcher.RemoveMatcher<DraftChoiceMatcher>();
         dispatcher.RemoveMatcher<DraftPickMatcher>();
         dispatcher.RemoveMatcher<DraftLeaveMatcher>();
-        dispatcher.AddMatcher<DraftEnterMatcher>().DraftStartEvent += DraftStartHandler;
+        dispatcher.AddMatcher<DraftEnterMatcher>().DraftEnterEvent += DraftEnterHandler;
 
         OnRaiseDraftLeaveEvent(e);
     }
 
-    private void OnRaiseDraftStartEvent(DraftEnterEvent e)
+    private void OnRaiseDraftEnterEvent(DraftEnterEvent e)
     {
-        DraftStartEvent?.Invoke(this, e);
+        DraftEnterEvent?.Invoke(this, e);
     }
 
     private void OnRaiseDraftChoiceEvent(DraftChoiceEvent e)

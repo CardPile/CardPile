@@ -20,11 +20,7 @@ public class DraftLeaveMatcher : ILogMatcher
             return false;  
         }
 
-        var draftLeaveEvent = DraftLeaveEvent;
-        if(draftLeaveEvent != null)
-        {
-            draftLeaveEvent(this, e);
-        }
+        DraftLeaveEvent?.Invoke(this, e);
 
         return true;        
     }

@@ -28,7 +28,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         PreviousPick = null;
 
         this.logModel = logModel;
-        this.logModel.DraftStartEvent += DraftStartHandler;
+        this.logModel.DraftEnterEvent += DraftEntertHandler;
         this.logModel.DraftChoiceEvent += DraftChoiceHandler;
         this.logModel.DraftPickEvent += DraftPickHandler;
         this.logModel.DraftLeaveEvent += DraftLeaveHandler;
@@ -65,7 +65,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         UpdateDeckWithNewData(cardDataSource);
     }
 
-    private void DraftStartHandler(object? sender, DraftEnterEvent e)
+    private void DraftEntertHandler(object? sender, DraftEnterEvent e)
     {
         draftState.ProcessEvent(e);
 
@@ -227,7 +227,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         serializer.Serialize(jsonWriter, draftState);
     }
 
-private DraftState draftState;
+    private DraftState draftState;
 
     private ObservableCollection<ICardDataService> cardsInCurrentPack;
     private ObservableCollection<ICardDataService> cardsMissingInCurrentPack;

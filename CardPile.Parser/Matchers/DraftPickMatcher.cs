@@ -25,11 +25,7 @@ public class DraftPickMatcher : ILogMatcher
             return false;
         }
 
-        var draftPickEvent = DraftPickEvent;
-        if (draftPickEvent != null)
-        {
-            draftPickEvent(this, e);
-        }
+        DraftPickEvent?.Invoke(this, e);
 
         return true;
     }

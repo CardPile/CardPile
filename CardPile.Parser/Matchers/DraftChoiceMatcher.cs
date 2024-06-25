@@ -20,11 +20,7 @@ public class DraftChoiceMatcher : ILogMatcher
             return false;
         }
 
-        var draftChoiceEvent = DraftChoiceEvent;
-        if (draftChoiceEvent != null)
-        {
-            draftChoiceEvent(this, e);
-        }
+        DraftChoiceEvent?.Invoke(this, e);
 
         return true;
     }
