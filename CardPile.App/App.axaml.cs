@@ -23,6 +23,15 @@ public partial class App : Application
             {
                 DataContext = new MainWindowViewModel(model),
             };
+            desktop.MainWindow.Closed += MainWindowClosedHandler;
+        }
+    }
+
+    private void MainWindowClosedHandler(object? sender, System.EventArgs e)
+    {
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            desktop.Shutdown();
         }
     }
 }
