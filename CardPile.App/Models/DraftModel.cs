@@ -79,6 +79,11 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
 
     private void DraftChoiceHandler(object? sender, DraftChoiceEvent e)
     {
+        if(draftState.TrySetDraftId(e.DraftId))
+        {
+            DeserializeDraftState(draftState);
+        }
+
         draftState.ProcessEvent(e);
 
         UpdateCurrentPackWithNewData(cardDataSource);
@@ -101,9 +106,11 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
 
     private void DraftPickHandler(object? sender, DraftPickEvent e)
     {
+        draftState.TrySetDraftId(e.DraftId);
+
         draftState.ProcessEvent(e);
 
-        SerializeDraftState();
+        SerializeDraftState(draftState);
 
         if(e.PackNumber == draftState.LastPack && e.PickNumber == draftState.LastPick)
         {
@@ -203,16 +210,16 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         }
     }
 
-    private void SerializeDraftState()
+    private static void SerializeDraftState(DraftState state)
     {
-        if(draftState.DraftId == Guid.Empty)
+        if(state.DraftId == Guid.Empty)
         {
             return;
         }
 
         string executableDirectory = Environment.ProcessPath != null ? Path.GetDirectoryName(Environment.ProcessPath) ?? "." : ".";
         string draftDirectory = Path.Combine(executableDirectory, "Drafts");
-        string draftFilePath = Path.Combine(draftDirectory, $"{draftState.DraftId}.json");
+        string draftFilePath = Path.Combine(draftDirectory, $"{state.DraftId}.json");
 
         if(!Directory.Exists(draftDirectory))
         {
@@ -221,21 +228,50 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
 
         JsonSerializer serializer = new JsonSerializer();
 
-        using StreamWriter sw = new StreamWriter(draftFilePath);
-        using JsonWriter jsonWriter = new JsonTextWriter(sw);
+        using StreamWriter sw = new(draftFilePath);
+        using JsonTextWriter jsonWriter = new(sw);
 
-        serializer.Serialize(jsonWriter, draftState);
+        serializer.Serialize(jsonWriter, state);
+    }
+
+    private static void DeserializeDraftState(DraftState state)
+    {
+        if (state.DraftId == Guid.Empty)
+        {
+            return;
+        }
+
+        string executableDirectory = Environment.ProcessPath != null ? Path.GetDirectoryName(Environment.ProcessPath) ?? "." : ".";
+        string draftDirectory = Path.Combine(executableDirectory, "Drafts");
+        string draftFilePath = Path.Combine(draftDirectory, $"{state.DraftId}.json");
+
+        if (!Directory.Exists(draftDirectory))
+        {
+            return;
+        }
+
+        if (!File.Exists(draftFilePath))
+        {
+            return;
+        }
+
+        JsonSerializer serializer = new();
+
+        using StreamReader sr = new(draftFilePath);
+        using JsonTextReader jsonReader = new(sr);
+
+        serializer.Populate(jsonReader, state);
     }
 
     private DraftState draftState;
 
-    private ObservableCollection<ICardDataService> cardsInCurrentPack;
-    private ObservableCollection<ICardDataService> cardsMissingInCurrentPack;
-    private ObservableCollection<ICardDataService> cardsUpcomingAfterCurrentPack;
-    private ObservableCollection<ICardDataService> cardsInDeck;
+    private readonly ObservableCollection<ICardDataService> cardsInCurrentPack;
+    private readonly ObservableCollection<ICardDataService> cardsMissingInCurrentPack;
+    private readonly ObservableCollection<ICardDataService> cardsUpcomingAfterCurrentPack;
+    private readonly ObservableCollection<ICardDataService> cardsInDeck;
     private ICardDataService? previousPick;
 
-    private WatcherModel logModel;
+    private readonly WatcherModel logModel;
     private ICardDataSource cardDataSource;
 
     private static readonly Logger logger = LogManager.GetCurrentClassLogger();

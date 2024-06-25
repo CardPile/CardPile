@@ -21,11 +21,6 @@ namespace CardPile.Draft
             }
             if (e is DraftChoiceEvent choiceEvent)
             {
-                if (draftId == Guid.Empty)
-                {
-                    draftId = choiceEvent.DraftId;
-                }
-
                 lastPack = choiceEvent.PackNumber;
                 lastPick = choiceEvent.PickNumber;
                 CurrentPack = choiceEvent.CardsInPack;
@@ -33,10 +28,6 @@ namespace CardPile.Draft
             }
             else if (e is DraftPickEvent pickEvent)
             {
-                if (draftId == Guid.Empty)
-                {
-                    draftId = pickEvent.DraftId;
-                }
                 if (pickEvent.PackNumber == lastPack && pickEvent.PickNumber == lastPick)
                 {
                     CurrentPack.Clear();
@@ -48,6 +39,16 @@ namespace CardPile.Draft
         public Guid DraftId
         {
             get => draftId;
+        }
+
+        public bool TrySetDraftId(Guid guid)
+        {
+            if(draftId == Guid.Empty)
+            {
+                draftId = guid;
+                return true;
+            }
+            return false;
         }
 
         public List<int> CurrentPack
