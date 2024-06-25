@@ -63,6 +63,8 @@ internal class WatcherModel : ReactiveObject, IWatcherService
             throw new InvalidOperationException("The timer is already started.");
         }
 
+        logger.Info("Staring memory watcher");
+
         memoryWatcherTimerHandle = DispatcherTimer.Run(() =>
         {
             memoryWatcher.Poll();
@@ -76,6 +78,8 @@ internal class WatcherModel : ReactiveObject, IWatcherService
         {
             throw new InvalidOperationException("The timer is already stopped.");
         }
+
+        logger.Info("Stopping memory watcher");
 
         memoryWatcherTimerHandle.Dispose();
         memoryWatcherTimerHandle = null;
