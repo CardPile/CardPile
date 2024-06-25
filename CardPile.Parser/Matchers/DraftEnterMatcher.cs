@@ -25,10 +25,10 @@ public class DraftEnterMatcher : ILogMatcher
         return true;        
     }
 
-    private DraftEnterEvent? ParseDraftEventInfo(string line, string needle)
+    private static DraftEnterEvent? ParseDraftEventInfo(string line, string needle)
     {
-        dynamic? requestData = MatcherHelpers.ParseRequestUnchecked(line, needle);
-        var destinationScene = requestData?.toSceneName?.Value;
+        dynamic data = MatcherHelpers.ParseUnchecked(line, needle);
+        var destinationScene = data.toSceneName?.Value;
         if (destinationScene == null)
         {
             return null;
@@ -39,9 +39,9 @@ public class DraftEnterMatcher : ILogMatcher
             return null;
         }
 
-        return new DraftEnterEvent();
+        return new();
     }
 
-    private static string SCENE_CHANGE_NEEDLE = "[UnityCrossThreadLogger]==> LogBusinessEvents";
-    private static string DESTINATION_SCENE_NAME_NEEDLE = "Draft";
+    private static readonly string SCENE_CHANGE_NEEDLE = "[UnityCrossThreadLogger]Client.SceneChange";
+    private static readonly string DESTINATION_SCENE_NAME_NEEDLE = "Draft";
 }

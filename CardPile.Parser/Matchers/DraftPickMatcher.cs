@@ -9,17 +9,17 @@ public class DraftPickMatcher : ILogMatcher
 
     public bool Match(string line)
     {
-        if (!line.StartsWith(PREMIERE_DRAFT_PICK_PREFIX_NEEDLE))
+        if (!line.StartsWith(DRAFT_PICK_PREFIX_NEEDLE))
         {
             return false;
         }
 
-        if(!line.Contains(PREMIERE_DRAFT_PICK_DRAFT_ID_NEEDLE))
+        if(!line.Contains(DRAFT_PICK_DRAFT_ID_NEEDLE))
         {
             return false;
         }
 
-        var e = ParseDraftEventInfo(line, PREMIERE_DRAFT_PICK_PREFIX_NEEDLE);
+        var e = ParseDraftEventInfo(line, DRAFT_PICK_PREFIX_NEEDLE);
         if (e == null)
         {
             return false;
@@ -30,25 +30,23 @@ public class DraftPickMatcher : ILogMatcher
         return true;
     }
 
-    private DraftPickEvent? ParseDraftEventInfo(string line, string needle)
+    private static DraftPickEvent? ParseDraftEventInfo(string line, string needle)
     {
         dynamic? requestData = MatcherHelpers.ParseRequestUnchecked(line, needle);
 
         var draftId = requestData?.DraftId?.Value;
-        var eventId = requestData?.EventId?.Value;
-        var packNumber = requestData?.PackNumber?.Value;
-        var pickNumber = requestData?.PickNumber?.Value;
-        var cardsInPack = requestData?.CardsInPack?.ToObject<IList<int>>();
-        var cardPicked = requestData?.PickGrpId?.Value;
+        var packNumber = requestData?.Pack?.Value;
+        var pickNumber = requestData?.Pick?.Value;
+        var cardPicked = requestData?.GrpId?.Value;
 
-        if (draftId == null || eventId == null || packNumber == null || pickNumber == null || cardsInPack == null || cardPicked == null ) 
+        if (draftId == null || packNumber == null || pickNumber == null || cardPicked == null ) 
         { 
             return null; 
         }
 
-        return new DraftPickEvent(new Guid(draftId), eventId!, (int)packNumber, (int)pickNumber, cardsInPack!, (int)cardPicked);
+        return new DraftPickEvent(new Guid(draftId), (int)packNumber, (int)pickNumber, (int)cardPicked);
     }
 
-    private static string PREMIERE_DRAFT_PICK_PREFIX_NEEDLE = "[UnityCrossThreadLogger]==> LogBusinessEvents";
-    private static string PREMIERE_DRAFT_PICK_DRAFT_ID_NEEDLE = "DraftId";
+    private static readonly string DRAFT_PICK_PREFIX_NEEDLE = "[UnityCrossThreadLogger]==> Event_PlayerDraftMakePick";
+    private static readonly string DRAFT_PICK_DRAFT_ID_NEEDLE = "DraftId";
 }

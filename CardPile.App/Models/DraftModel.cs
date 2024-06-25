@@ -28,7 +28,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         PreviousPick = null;
 
         this.logModel = logModel;
-        this.logModel.DraftEnterEvent += DraftEntertHandler;
+        this.logModel.DraftEnterEvent += DraftEnterHandler;
         this.logModel.DraftChoiceEvent += DraftChoiceHandler;
         this.logModel.DraftPickEvent += DraftPickHandler;
         this.logModel.DraftLeaveEvent += DraftLeaveHandler;
@@ -65,7 +65,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         UpdateDeckWithNewData(cardDataSource);
     }
 
-    private void DraftEntertHandler(object? sender, DraftEnterEvent e)
+    private void DraftEnterHandler(object? sender, DraftEnterEvent e)
     {
         draftState.ProcessEvent(e);
 

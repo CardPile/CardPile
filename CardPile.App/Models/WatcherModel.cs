@@ -13,8 +13,8 @@ internal class WatcherModel : ReactiveObject, IWatcherService
 {
     internal WatcherModel()
     {
-        // string logFilePath = @"D:\Programming\GitHub\CardPile\Test data\Logs\Player_fed.log";
-
+        // string logFilePath = @"C:\Data\Programming\GitHub\CardPile\Test data\Logs\Player_fed.log";
+        
         var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         if(string.IsNullOrEmpty(localAppData) )
         {
@@ -22,7 +22,7 @@ internal class WatcherModel : ReactiveObject, IWatcherService
         }
         localAppData = localAppData.Replace("Roaming", "LocalLow");  // There is a beter way to do it, but this is simpler
         string logFilePath = Path.Combine(localAppData, "Wizards Of The Coast", "MTGA", "Player.log");
-
+        
         logWatcher = new LogFileWatcher(logFilePath, false);
 
         memoryWatcher = new MemoryWatcher();
@@ -116,7 +116,7 @@ internal class WatcherModel : ReactiveObject, IWatcherService
 
     private void DraftPickHandler(object? sender, DraftPickEvent e)
     {
-        logger.Info($"Draft {e.EventName}/{e.DraftId} - P{e.PackNumber}P{e.PickNumber}. Picked {e.CardPicked} from [{string.Join(",", e.CardsInPack)}]");
+        logger.Info($"Draft {e.DraftId} - P{e.PackNumber}P{e.PickNumber}. Picked {e.CardPicked}.");
 
         OnRaiseDraftPickEvent(e);
     }

@@ -42,7 +42,6 @@ namespace CardPile.Draft
                     CurrentPack.Clear();
                 }
                 AddPick(pickEvent.PackNumber, pickEvent.PickNumber, pickEvent.CardPicked);
-                AddSeenPack(pickEvent.PackNumber, pickEvent.PickNumber, pickEvent.CardsInPack);
             }
         }
 
