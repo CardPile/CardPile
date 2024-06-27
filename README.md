@@ -11,6 +11,7 @@ Card Pile is an open source Magic: the Gathering Arena draft helper that utilize
 
 ### Formats
 * Premiere draft
+* Quick draft
 
 ## Disclaimer
 Use at your own risk. None of the authors, contributors, administrators or anyone else connected with CardPile, in any way whatsoever, can be responsible for your use of this software. 
