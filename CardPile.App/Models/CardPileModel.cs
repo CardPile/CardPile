@@ -10,6 +10,15 @@ namespace CardPile.App.Models;
 
 internal class CardPileModel : ReactiveObject
 {
+    internal static async Task Init(Action<string> progressCallback, CancellationToken cancellationToken)
+    {
+        progressCallback("Loading Arena data...");
+        await Task.Run(CardInfo.Arena.Init, cancellationToken);
+
+        progressCallback("Loading 17Lands data...");
+        await Task.Run(CardInfo.SeventeenLands.Init, cancellationToken);
+    }
+
     internal CardPileModel()
     {
         logModel = new LogModel();

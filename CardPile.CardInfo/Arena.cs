@@ -8,7 +8,7 @@ namespace CardPile.CardInfo;
 public class Arena
 {
     static Arena()
-    {       
+    {
         var arenaInstallDirectory = GetArenaInstallDirectory() ?? throw new InvalidOperationException("Cannot locate Magic: The Gathering Arena installation");
         var arenaDataSubdirectory = Path.Combine(arenaInstallDirectory, "MTGA_Data");
         var cardDatabaseFiles = Directory.GetFiles(arenaDataSubdirectory, "Raw_CardDatabase_*.mtga", SearchOption.AllDirectories);
@@ -26,7 +26,7 @@ public class Arena
 
     public static void Init()
     {
-        // NOOP
+        // NOOP - runs the static constructor
     }
 
     public static string? GetCardNameFromId(int cardId)

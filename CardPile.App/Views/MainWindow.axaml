@@ -8,7 +8,7 @@
         x:Class="CardPile.App.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/cardpile.ico"
-        Title="CardPile">
+        Title="Card Pile">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,

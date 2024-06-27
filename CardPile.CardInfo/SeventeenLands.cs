@@ -41,7 +41,7 @@ public class SeventeenLands
 
     public static void Init()
     {
-        // NOOP
+        // NOOP - runs the static constructor
     }
 
     public static string? GetCardNameFromId(int cardId)

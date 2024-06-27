@@ -43,4 +43,8 @@
   <ItemGroup>
     <Content Include="Assets\cardpile.ico" />
   </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\SplashWindow.axaml" />
+  </ItemGroup>
 </Project>

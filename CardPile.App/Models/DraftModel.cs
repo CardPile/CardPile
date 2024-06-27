@@ -14,9 +14,6 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
 {
     public DraftModel(WatcherModel logModel, ICardDataSource cardDataSource)
     {
-        CardInfo.Arena.Init();
-        CardInfo.SeventeenLands.Init();
-
         draftState = new DraftState();
 
         cardsInCurrentPack = [];
