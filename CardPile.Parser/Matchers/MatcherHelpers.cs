@@ -4,6 +4,8 @@ namespace CardPile.Parser.Matchers;
 
 internal class MatcherHelpers
 {
+    internal static readonly Guid CARD_PILE_DRAFT_NAMESPACE_GUID = new("D9A69F35-EFDA-474F-BED1-FC139AC3C952");
+
     internal static JObject? ParseRequest(string line, string needle)
     {
         dynamic? data = Parse(line, needle);

@@ -166,27 +166,8 @@ public class MemoryWatcher
       
         if(draftPodFieldValue.TypeDefinition.Name == BotDraftPodTypeNameNeedle)
         {
-            var retreivedDraftId = draftPodFieldValue.TryToGetValue<string>("<DraftId>k__BackingField");
-            if(retreivedDraftId == null)
-            {
-                logger.Warn("Error getting value of DraftId from {TypeName}", draftPodFieldValue.TypeDefinition.Name);
-                return false; 
-            }
-            var retreivedPackNumber = draftPodFieldValue.TryToGetValue<int>("_currentPack");
-            var retreivedPickNumber = draftPodFieldValue.TryToGetValue<int>("_currentPick");
-
-            if(Guid.TryParse(retreivedDraftId, out Guid parsedDraftId))
-            {
-                draftId = parsedDraftId;
-            }
-            else
-            {
-                logger.Warn("Error parsing value of DraftId equal to {TypeName}", retreivedDraftId);
-            }
-            packNumber = retreivedPackNumber;
-            pickNumber = retreivedPickNumber;
-
-            return true;
+            // NOOP
+            return false;
         }
         else if(draftPodFieldValue.TypeDefinition.Name == HumanDraftPodTypeNameNeedle)
         {
