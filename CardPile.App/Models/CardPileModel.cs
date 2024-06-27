@@ -14,9 +14,6 @@ internal class CardPileModel : ReactiveObject
     {
         progressCallback("Loading Arena data...");
         await Task.Run(CardInfo.Arena.Init, cancellationToken);
-
-        progressCallback("Loading 17Lands data...");
-        await Task.Run(CardInfo.SeventeenLands.Init, cancellationToken);
     }
 
     internal CardPileModel()

@@ -31,12 +31,6 @@ public class SeventeenLandsCardDataSource : ICardDataSource
             return new SeventeenLandsCardData(cardNameFromArena, cardNumber, url);
         }
 
-        string? cardNameFrom17Lands = CardInfo.SeventeenLands.GetCardNameFromId(cardNumber);
-        if (cardNameFrom17Lands != null)
-        {
-            return new SeventeenLandsCardData(cardNameFrom17Lands, cardNumber);
-        }
-
         return null;
     }
 

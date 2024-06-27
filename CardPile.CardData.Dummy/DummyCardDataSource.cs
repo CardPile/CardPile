@@ -32,12 +32,6 @@ public class DummyCardDataSource : ICardDataSource
                 return new DummyCardData(cardNameFromArena, cardNumber, url, null, null, null);
             }
 
-            string? cardNameFrom17Lands = CardInfo.SeventeenLands.GetCardNameFromId(cardNumber);
-            if (cardNameFrom17Lands != null)
-            {
-                return new DummyCardData(cardNameFrom17Lands, cardNumber, null, null, null, null);
-            }
-
             return null;
         }
     }
