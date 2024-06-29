@@ -15,6 +15,11 @@ public class LogFileWatcher
         Watch(path, processExisting);
     }
 
+    public string? FilePath
+    {
+        get => filePath;
+    }
+
     public void Watch(string path, bool processExisting)
     {
         filePath = path;

@@ -9,8 +9,8 @@ public class Arena
 {
     static Arena()
     {
-        var arenaInstallDirectory = GetArenaInstallDirectory() ?? throw new InvalidOperationException("Cannot locate Magic: The Gathering Arena installation");
-        var arenaDataSubdirectory = Path.Combine(arenaInstallDirectory, "MTGA_Data");
+        var arenaInstallDirectory = GetArenaInstallDirectory();
+        var arenaDataSubdirectory = GetArenaDataSubdirectory(arenaInstallDirectory) ?? throw new InvalidOperationException("Cannot locate Magic: The Gathering Arena installation");
         var cardDatabaseFiles = Directory.GetFiles(arenaDataSubdirectory, "Raw_CardDatabase_*.mtga", SearchOption.AllDirectories);
         if (cardDatabaseFiles.Length == 0)
         {
@@ -112,6 +112,33 @@ public class Arena
         }
 
         return default;
+    }
+
+    private static string? GetArenaDataSubdirectory(string? arenaInstallDirectory)
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            if(arenaInstallDirectory == null)
+            {
+                return default;
+            }
+
+            return Path.Combine(arenaInstallDirectory, "MTGA_Data");
+        }
+        else if(OperatingSystem.IsMacOS())
+        {
+            var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            if(string.IsNullOrEmpty(userProfile))
+            {
+                return default;
+            }
+
+            return Path.Combine(userProfile, "Library", "Application Support", "com.wizards.mtga");
+        }
+        else
+        {
+            throw new NotSupportedException($"Unsupported operating system {Environment.OSVersion}");
+        }
     }
 
     private static void LoadCardDatabase(string arenaCardDatabasePath)

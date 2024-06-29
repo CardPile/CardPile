@@ -13,17 +13,7 @@ internal class WatcherModel : ReactiveObject, IWatcherService
 {
     internal WatcherModel()
     {
-        // string logFilePath = @"C:\Data\Programming\GitHub\CardPile\Test data\Logs\Player_fed.log";
-        
-        var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        if(string.IsNullOrEmpty(localAppData) )
-        {
-            throw new InvalidOperationException("LocalAppData is null. Cannot resolve path to Player.log");
-        }
-        localAppData = localAppData.Replace("Roaming", "LocalLow");  // There is a beter way to do it, but this is simpler
-        string logFilePath = Path.Combine(localAppData, "Wizards Of The Coast", "MTGA", "Player.log");
-        
-        logWatcher = new LogFileWatcher(logFilePath, false);
+        logWatcher = new LogFileWatcher(GetPlayerLogLocation(), false);
 
         memoryWatcher = new MemoryWatcher();
 
@@ -42,12 +32,39 @@ internal class WatcherModel : ReactiveObject, IWatcherService
     public event EventHandler<DraftPickEvent>? DraftPickEvent;
     public event EventHandler<DraftLeaveEvent>? DraftLeaveEvent;
 
+    private string GetPlayerLogLocation()
+    {
+        // return @"C:\Data\Programming\GitHub\CardPile\Test data\Logs\Player_fed.log";
+
+        if(OperatingSystem.IsMacOS())
+        {
+            var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            if(string.IsNullOrEmpty(userProfile))
+            {
+                throw new InvalidOperationException("UserProfile is null. Cannot resolve path to Player.log");
+            }
+            return Path.Combine(userProfile, "Library", "Logs", "com.wizards.mtga", "Wizards Of The Coast", "MTGA", "Player.log");
+        }
+        else
+        {
+            var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            if(string.IsNullOrEmpty(localAppData))
+            {
+                throw new InvalidOperationException("LocalAppData is null. Cannot resolve path to Player.log");
+            }
+            localAppData = localAppData.Replace("Roaming", "LocalLow");  // There is a beter way to do it, but this is simpler
+            return Path.Combine(localAppData, "Wizards Of The Coast", "MTGA", "Player.log");
+        }
+    }
+
     private void StartLogWatcherTimer()
     {
         if (logWatcherTimerHandle != null)
         {
             throw new InvalidOperationException("The timer is already started.");
         }
+
+        logger.Info($"Watching log file at '{logWatcher.FilePath ?? "NULL"}'");
 
         logWatcherTimerHandle = DispatcherTimer.Run(() =>
         {
