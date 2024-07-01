@@ -8,7 +8,7 @@
         x:DataType="vm:LogWindowViewModel"
         Title="Log">
   <!-- Log contents -->
-  <DockPanel Background="Black">
+  <DockPanel>
     <TextBlock DockPanel.Dock="Top" Margin="2">Log contents</TextBlock>
     <ScrollViewer DockPanel.Dock="Bottom" Padding="2.5, 0">
       <SelectableTextBlock Text="{Binding Log.LogContents}"></SelectableTextBlock>
