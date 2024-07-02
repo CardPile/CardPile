@@ -297,6 +297,8 @@ namespace UnitySpy.Offsets
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
+                string quotedGameExecutableFilePath = $"\"{gameExecutableFilePath}\"";
+
                 FileInfo gameExecutableFile = new FileInfo(gameExecutableFilePath);
                 string infoPlist = File.ReadAllText(gameExecutableFile.Directory.Parent.FullName + "/Info.plist");
                 string unityVersionField = "Unity Player version ";
@@ -310,7 +312,7 @@ namespace UnitySpy.Offsets
                 p.StartInfo.UseShellExecute = false;
                 p.StartInfo.RedirectStandardOutput = true;
                 p.StartInfo.FileName = "file";
-                p.StartInfo.Arguments = gameExecutableFile.FullName;
+                p.StartInfo.Arguments = quotedGameExecutableFilePath;
                 p.Start();
 
                 // Do not wait for the child process to exit before
@@ -319,7 +321,7 @@ namespace UnitySpy.Offsets
                 // Read the output stream first and then wait.
                 string output = p.StandardOutput.ReadToEnd();
                 p.WaitForExit();
-                return GetOffsets(unityVersion, output.EndsWith("x86_64\n"), BinaryFormat.MachO, force);
+                return GetOffsets(unityVersion, output.Contains("Mach-O 64-bit executable x86_64\n"), BinaryFormat.MachO, force);
             }
 
             throw new NotSupportedException("Platform not supported");

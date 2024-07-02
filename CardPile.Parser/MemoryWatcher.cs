@@ -233,9 +233,36 @@ public class MemoryWatcher
         {
             return default;
         }
-        var windowsProcessFacade = new ProcessFacadeWindows(mtgaProcess);
-        var monoLibraryOffsets = MonoLibraryOffsets.GetOffsets(windowsProcessFacade.GetMainModuleFileName());
-        var unityProcessFacade = new UnityProcessFacade(windowsProcessFacade, monoLibraryOffsets);
+
+        UnityProcessFacade unityProcessFacade;
+        if(OperatingSystem.IsWindows())
+        {
+            var processFacade = new ProcessFacadeWindows(mtgaProcess);
+            var monoLibraryOffsets = MonoLibraryOffsets.GetOffsets(processFacade.GetMainModuleFileName());
+            unityProcessFacade = new UnityProcessFacade(processFacade, monoLibraryOffsets);
+        }
+        else if(OperatingSystem.IsMacOS())
+        {
+            // MTGA for MacOS uses il2cpp - a different soltion is required
+            return default;
+            
+            /*
+            if(mtgaProcess.MainModule == null)
+            {
+                logger.Warn("Found MTGA process, but MainModule is null");
+                return default;
+            }
+
+            var processFacade = new ProcessFacadeMacOSDirect(mtgaProcess);
+            var monoLibraryOffsets = MonoLibraryOffsets.GetOffsets(mtgaProcess.MainModule.FileName);
+            unityProcessFacade = new UnityProcessFacade(processFacade, monoLibraryOffsets);
+            */
+        }
+        else
+        {
+            throw new NotSupportedException($"Unsupported operating system {Environment.OSVersion}");
+        }
+
         return AssemblyImageFactory.Create(unityProcessFacade);
     }
 
