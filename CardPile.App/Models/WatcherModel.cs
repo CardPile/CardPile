@@ -146,6 +146,12 @@ internal class WatcherModel : ReactiveObject, IWatcherService
     {
         logger.Info($"Left the draft");
 
+        if (IsMemoryWatcherTimerRunning())
+        {
+            memoryWatcher.DraftChoiceEvent -= DraftChoiceHandler;
+            StopMemoryWatcherTimer();
+        }
+
         dispatcher.RemoveMatcher<DraftChoiceMatcher>();
         dispatcher.RemoveMatcher<DraftPickMatcher>();
         dispatcher.RemoveMatcher<DraftLeaveMatcher>();
