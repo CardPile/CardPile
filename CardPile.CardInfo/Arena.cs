@@ -18,7 +18,20 @@ public class Arena
         }
         if (cardDatabaseFiles.Length > 1)
         {
-            throw new InvalidOperationException("Found multiple Magic: The Gathering Arena card databases");
+            logger.Warn("Found multiple Magic: The Gathering Arena card databases. Choosing the newest one.");
+
+            var bestDatabaseFileInfo = new FileInfo(cardDatabaseFiles[0]);
+            for (int i = 1; i < cardDatabaseFiles.Length; ++i)
+            {
+                var currentDatabaseFile = cardDatabaseFiles[i];
+                var currentDatabaseFileInfo = new FileInfo(currentDatabaseFile);
+                if(bestDatabaseFileInfo.CreationTimeUtc < currentDatabaseFileInfo.CreationTimeUtc)
+                {
+                    cardDatabaseFiles[i] = cardDatabaseFiles[0];
+                    cardDatabaseFiles[0] = currentDatabaseFile;
+                    bestDatabaseFileInfo = currentDatabaseFileInfo;
+                }
+            }
         }
 
         LoadCardDatabase(cardDatabaseFiles.First());
