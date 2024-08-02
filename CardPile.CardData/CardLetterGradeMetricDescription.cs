@@ -119,8 +119,8 @@ public class CardLetterGradeMetricDescription : ICardMetricDescription
                 }
             }
 
-            var xIntValue = GRADE_TO_VALUE.GetValueOrDefault(xValue, int.MaxValue);
-            var yIntValue = GRADE_TO_VALUE.GetValueOrDefault(yValue, int.MaxValue);
+            var xIntValue = GRADE_TO_VALUE.GetValueOrDefault(xValue, -1);
+            var yIntValue = GRADE_TO_VALUE.GetValueOrDefault(yValue, -1);
             return Comparer<int>.Default.Compare(xIntValue, yIntValue);
         }
     };

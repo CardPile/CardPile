@@ -14,7 +14,7 @@ public class DummyCardDataSource : ICardDataSource
                                      DummyCardDataSourceBuilder.MetricADesc.NewMetric<float>(75.1f),
                                      DummyCardDataSourceBuilder.MetricBDesc.NewMetric<int>(4),
                                      DummyCardDataSourceBuilder.MetricCDesc.NewMetric<float>(0.16f),
-                                     DummyCardDataSourceBuilder.MetricDDesc.NewMetric("A+")
+                                     DummyCardDataSourceBuilder.MetricDDesc.NewMetric("SB A+")
                                      );
         }
         else if(cardNumber == 91613)
@@ -25,7 +25,7 @@ public class DummyCardDataSource : ICardDataSource
                                      DummyCardDataSourceBuilder.MetricADesc.NewMetric<float>(73.1f),
                                      DummyCardDataSourceBuilder.MetricBDesc.NewMetric<int>(5),
                                      DummyCardDataSourceBuilder.MetricCDesc.NewMetric<float>(0.14f),
-                                     DummyCardDataSourceBuilder.MetricDDesc.NewMetric("D+")
+                                     DummyCardDataSourceBuilder.MetricDDesc.NewMetric("SYN D+")
                                      );
         }
         else if (cardNumber == 91620)
@@ -36,7 +36,7 @@ public class DummyCardDataSource : ICardDataSource
                                      DummyCardDataSourceBuilder.MetricADesc.NewMetric<float>(79.1f),
                                      DummyCardDataSourceBuilder.MetricBDesc.NewMetric<int>(6),
                                      DummyCardDataSourceBuilder.MetricCDesc.NewMetric<float>(0.10f),
-                                     DummyCardDataSourceBuilder.MetricDDesc.NewMetric("C+"));
+                                     DummyCardDataSourceBuilder.MetricDDesc.NewMetric("BA C+"));
         }
         else
         {
