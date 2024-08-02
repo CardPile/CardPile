@@ -20,7 +20,7 @@ public class CardMetricDescription<T> : ICardMetricDescription where T : struct
 
     public IComparer<ICardMetric> Comparer { get => new CardMetricComparer(); }
 
-    public ICardMetric NewMetric<E>(E? value) where E : struct
+    public ICardMetric NewMetric<E>(E? value)
     {
         if(value == null)
         {

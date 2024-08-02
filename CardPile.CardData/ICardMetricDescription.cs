@@ -10,5 +10,5 @@ public interface ICardMetricDescription
 
     public IComparer<ICardMetric> Comparer { get; }
 
-    public ICardMetric NewMetric<T>(T? value) where T : struct;
+    public ICardMetric NewMetric<T>(T? value);
 }

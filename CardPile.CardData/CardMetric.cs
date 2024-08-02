@@ -1,6 +1,4 @@
-﻿using CardPile.CardData.Formatting;
-
-namespace CardPile.CardData;
+﻿namespace CardPile.CardData;
 
 public class CardMetric<T> : ICardMetric where T : struct
 {
