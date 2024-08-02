@@ -22,7 +22,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardPile.CardInfo", "CardPi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitySpy", "UnitySpy\UnitySpy.csproj", "{4D4FF55B-CB3B-4EE9-B74E-781550B47540}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardPile.Feeder", "CardPile.Feeder\CardPile.Feeder.csproj", "{A5839192-A2EC-402A-ACA0-1FDF1BB7B755}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardPile.Feeder", "CardPile.Feeder\CardPile.Feeder.csproj", "{A5839192-A2EC-402A-ACA0-1FDF1BB7B755}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardPile.CardData.Spreadsheet", "CardPile.CardData.Spreadsheet\CardPile.CardData.Spreadsheet.csproj", "{7EEAE0DF-C404-43D0-8CBD-61F90BBE5CB8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,6 +68,10 @@ Global
 		{A5839192-A2EC-402A-ACA0-1FDF1BB7B755}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5839192-A2EC-402A-ACA0-1FDF1BB7B755}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A5839192-A2EC-402A-ACA0-1FDF1BB7B755}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EEAE0DF-C404-43D0-8CBD-61F90BBE5CB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EEAE0DF-C404-43D0-8CBD-61F90BBE5CB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EEAE0DF-C404-43D0-8CBD-61F90BBE5CB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EEAE0DF-C404-43D0-8CBD-61F90BBE5CB8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,7 @@
 ﻿using CardPile.App.Services;
 using CardPile.CardData.Dummy;
 using CardPile.CardData.SeventeenLands;
+using CardPile.CardData.Spreadsheet;
 using ReactiveUI;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,8 @@ internal class CardDataSourceBuilderCollectionModel : ReactiveObject, ICardDataS
         currentCardDataSourceBuilder = AvailableCardDataSourceBuilders.First();
     }
 
-    // public List<ICardDataSourceBuilderService> AvailableCardDataSourceBuilders { get; } = [DummyCardDataSourceBuilderModel, SeventeenLandsCardDataSourceBuilderModel];
-    public List<ICardDataSourceBuilderService> AvailableCardDataSourceBuilders { get; } = [SeventeenLandsCardDataSourceBuilderModel];
+    // public List<ICardDataSourceBuilderService> AvailableCardDataSourceBuilders { get; } = [DummyCardDataSourceBuilderModel, SeventeenLandsCardDataSourceBuilderModel, SpreadsheetCardDataSourceBuilderModel];
+    public List<ICardDataSourceBuilderService> AvailableCardDataSourceBuilders { get; } = [SeventeenLandsCardDataSourceBuilderModel, SpreadsheetCardDataSourceBuilderModel];
 
     public ICardDataSourceBuilderService CurrentCardDataSourceBuilder
     {
@@ -25,6 +26,7 @@ internal class CardDataSourceBuilderCollectionModel : ReactiveObject, ICardDataS
 
     private static readonly CardDataSourceBuilderModel DummyCardDataSourceBuilderModel = new CardDataSourceBuilderModel(new DummyCardDataSourceBuilder());
     private static readonly CardDataSourceBuilderModel SeventeenLandsCardDataSourceBuilderModel = new CardDataSourceBuilderModel(new SeventeenLandsCardDataSourceBuilder());
+    private static readonly CardDataSourceBuilderModel SpreadsheetCardDataSourceBuilderModel = new CardDataSourceBuilderModel(new SpreadsheetCardDataSourceBuilder());
 
     private ICardDataSourceBuilderService currentCardDataSourceBuilder;
 }

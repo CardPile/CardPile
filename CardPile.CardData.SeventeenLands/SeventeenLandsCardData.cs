@@ -65,7 +65,9 @@ internal class SeventeenLandsCardData : ICardData
 
     public string? Url { get; set; }
 
-    public static List<ICardMetricDescription> MetricDescriptions
+    public List<ICardMetric> Metrics { get; init; }
+
+    internal static List<ICardMetricDescription> MetricDescriptions
     {
         get
         {
@@ -90,7 +92,6 @@ internal class SeventeenLandsCardData : ICardData
             ];
         }
     }
-    public List<ICardMetric> Metrics { get; init; }
 
     private static readonly CardMetricDescription<int>      SeenMetricDesc = new CardMetricDescription<int>("# Seen", false, false);
     private static readonly CardMetricDescription<float>    AverageLastSeenAtMetricDesc = new CardMetricDescription<float>("ALSA", true, false, new CardMetricDecimalFormatter());

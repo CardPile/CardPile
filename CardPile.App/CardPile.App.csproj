@@ -31,6 +31,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CardPile.CardData.Dummy\CardPile.CardData.Dummy.csproj" />
     <ProjectReference Include="..\CardPile.CardData.SeventeenLands\CardPile.CardData.SeventeenLands.csproj" />
+    <ProjectReference Include="..\CardPile.CardData.Spreadsheet\CardPile.CardData.Spreadsheet.csproj" />
     <ProjectReference Include="..\CardPile.CardData\CardPile.CardData.csproj" />
     <ProjectReference Include="..\CardPile.Draft\CardPile.Draft.csproj" />
     <ProjectReference Include="..\CardPile.Parser\CardPile.Parser.csproj" />
