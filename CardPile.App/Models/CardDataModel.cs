@@ -1,6 +1,7 @@
 ﻿using Avalonia.Media.Imaging;
 using CardPile.App.Services;
 using CardPile.CardData;
+using NLog;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -56,8 +57,17 @@ internal class CardDataModel : ReactiveObject, ICardDataService
         }
         else if (Url != null)
         {
-            var data = await httpClient.GetByteArrayAsync(Url);
-            stream = new MemoryStream(data);
+            var response = await httpClient.GetAsync(Url);
+            if(response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadAsByteArrayAsync();
+                stream = new MemoryStream(data);
+            }
+            else
+            {
+                logger.Warn("Error fetching image for car {cardId} from {url}", ArenaCardId, Url);
+                logger.Warn("Status: {status} Response: {response}", response.StatusCode, response.Content);
+            }
         }
 
         Bitmap? bitmap = null;
@@ -83,6 +93,8 @@ internal class CardDataModel : ReactiveObject, ICardDataService
     }
 
     private readonly static string AppProgramData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "CardPile");
+
+    private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
     private static HttpClient httpClient = new();
 

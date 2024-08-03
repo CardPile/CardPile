@@ -4,8 +4,8 @@ class Program
 {
     static void Main(string[] args)
     {
-        const string DefaultSource = @"C:\Data\Programming\GitHub\CardPile\Test data\Logs\Player_20_06_2024.log";
-        const string DefaultDestination = @"C:\Data\Programming\GitHub\CardPile\Test data\Logs\Player_fed.log";
+        const string DefaultSource = @"D:\Programming\GitHub\CardPile\Logs\Player_2024_08_03.log";
+        const string DefaultDestination = @"D:\Programming\GitHub\CardPile\Logs\Player_fed.log";
 
         var source = DefaultSource;
         var destination = DefaultDestination;

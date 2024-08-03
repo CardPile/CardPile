@@ -34,7 +34,7 @@ internal class WatcherModel : ReactiveObject, IWatcherService
 
     private string GetPlayerLogLocation()
     {
-        // return @"C:\Data\Programming\GitHub\CardPile\Test data\Logs\Player_fed.log";
+        // return @"D:\Programming\GitHub\CardPile\Logs\Player_fed.log";
 
         if(OperatingSystem.IsMacOS())
         {
