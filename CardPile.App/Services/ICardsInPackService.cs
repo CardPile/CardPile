@@ -11,5 +11,7 @@ internal interface ICardsInPackService : IReactiveObject
 
     public ObservableCollection<ICardDataService> CardsUpcomingAfterPack { get; }
 
+    public ObservableCollection<ICardDataService> CardsSeen { get; }
+
     public ICardDataService? PreviousPick { get; }
 }

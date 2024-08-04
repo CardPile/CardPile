@@ -213,13 +213,32 @@ namespace CardPile.Draft
                 return [];
             }
 
-            if(packsSeen[packIndex][upcomingPickIndex].Count <= 8)
+            if(packsSeen[packIndex][upcomingPickIndex].Count <= PACK_LOOK_BACK)
             {
                 return [];
             }
 
             var result = new List<int>(packsSeen[packIndex][upcomingPickIndex]);
             result.Remove(picks[packIndex][upcomingPickIndex]);
+            return result;
+        }
+
+        public List<int> GetSeenCards()
+        {
+            var result = new List<int>();
+            for (int packIndex = 0; packIndex < packsSeen.Count; ++packIndex)
+            {
+                var packLoopBackCount = Math.Min(PACK_LOOK_BACK, Math.Min(packsSeen[packIndex].Count, packIndex < picks.Count ? picks[packIndex].Count : 0));
+                for (int i = 0; i < packLoopBackCount; i++)
+                {
+                    result.AddRange(packsSeen[packIndex][i]);
+                }
+
+                for (int i = 0; i < packLoopBackCount; i++)
+                {
+                    result.Remove(picks[packIndex][i]);
+                }
+            }
             return result;
         }
 

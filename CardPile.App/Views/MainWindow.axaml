@@ -102,7 +102,7 @@
       </DockPanel>  
       <!-- Picks & missing -->
       <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Name="ContentContainer">
-        <Grid RowDefinitions="Auto,Auto,*">
+        <Grid RowDefinitions="Auto,Auto,Auto,*">
           <!-- Picks -->
           <Expander Grid.Row="0" IsExpanded="true" VerticalAlignment="Top" Width="{Binding #ContentContainer.Bounds.Width}" Margin="0, 2" Padding="5 0 5 0">
             <Expander.Header>
@@ -144,6 +144,70 @@
                 </ItemsPanelTemplate>
               </ItemsControl.ItemsPanel>
             </ItemsControl>
+          </Expander>
+          <!-- Passed -->
+          <Expander Grid.Row="3" VerticalAlignment="Top" Width="{Binding #ContentContainer.Bounds.Width}" Margin="0, 2">
+            <Expander.Header>
+              <TextBlock FontSize="18" FontWeight="DemiBold">Passed cards</TextBlock>
+            </Expander.Header>
+            <Grid ColumnDefinitions="*,*,*,*,*,*,*" >
+              <!-- Passed white -->
+              <ItemsControl Grid.Column="0" ItemsSource="{Binding WhiteCardsSeen}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Vertical" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+              </ItemsControl>
+              <!-- Passed blue -->
+              <ItemsControl Grid.Column="1" ItemsSource="{Binding BlueCardsSeen}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Vertical" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+              </ItemsControl>
+              <!-- Passed black -->
+              <ItemsControl Grid.Column="2" ItemsSource="{Binding BlackCardsSeen}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Vertical" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+              </ItemsControl>
+              <!-- Passed red -->
+              <ItemsControl Grid.Column="3" ItemsSource="{Binding RedCardsSeen}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Vertical" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+              </ItemsControl>
+              <!-- Passed green -->
+              <ItemsControl Grid.Column="4" ItemsSource="{Binding GreenCardsSeen}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Vertical" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+              </ItemsControl>
+              <!-- Passed multicolor -->
+              <ItemsControl Grid.Column="5" ItemsSource="{Binding MulticolorCardsSeen}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Vertical" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+              </ItemsControl>
+              <!-- Passed colorless -->
+              <ItemsControl Grid.Column="6" ItemsSource="{Binding ColorlessCardsSeen}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Vertical" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+              </ItemsControl>
+            </Grid>
           </Expander>
         </Grid>
       </ScrollViewer>

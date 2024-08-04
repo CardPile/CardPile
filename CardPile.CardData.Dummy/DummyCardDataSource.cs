@@ -9,7 +9,8 @@ public class DummyCardDataSource : ICardDataSource
         if (cardNumber == 91692)
         {
             return new DummyCardData("Card A",
-                                     90752,
+                                     cardNumber,
+                                     [Color.White],
                                      null,
                                      DummyCardDataSourceBuilder.MetricADesc.NewMetric<float>(75.1f),
                                      DummyCardDataSourceBuilder.MetricBDesc.NewMetric<int>(4),
@@ -20,7 +21,8 @@ public class DummyCardDataSource : ICardDataSource
         else if(cardNumber == 91613)
         {
             return new DummyCardData("Card B",
-                                     90629,
+                                     cardNumber,
+                                     [Color.Green],
                                      null,
                                      DummyCardDataSourceBuilder.MetricADesc.NewMetric<float>(73.1f),
                                      DummyCardDataSourceBuilder.MetricBDesc.NewMetric<int>(5),
@@ -32,6 +34,7 @@ public class DummyCardDataSource : ICardDataSource
         {
             return new DummyCardData("Card C",
                                      cardNumber,
+                                     [Color.Red],
                                      null,
                                      DummyCardDataSourceBuilder.MetricADesc.NewMetric<float>(79.1f),
                                      DummyCardDataSourceBuilder.MetricBDesc.NewMetric<int>(6),
@@ -44,12 +47,15 @@ public class DummyCardDataSource : ICardDataSource
             if (cardNameFromArena != null)
             {
                 var (expansion, collectorNumber) = CardInfo.Arena.GetCardExpansionAndCollectorNumberFromId(cardNumber);
+                
                 string? url = null;
                 if (expansion != null && collectorNumber != null)
                 {
                     url = CardInfo.Scryfall.GetImageUrlFromExpansionAndCollectorNumber(expansion, collectorNumber);
                 }
-                return new DummyCardData(cardNameFromArena, cardNumber, url, null, null, null, null);
+
+                var colors = CardInfo.Arena.GetCardColorsFromId(cardNumber) ?? [];
+                return new DummyCardData(cardNameFromArena, cardNumber, colors, url, null, null, null, null);
             }
 
             return null;

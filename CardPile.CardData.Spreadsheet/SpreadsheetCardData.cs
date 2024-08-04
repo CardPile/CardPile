@@ -2,13 +2,14 @@
 
 public class SpreadsheetCardData : ICardData
 {
-    internal SpreadsheetCardData(string name, int arenaCardId, string? url) : this(name, arenaCardId, url, null)
+    internal SpreadsheetCardData(string name, int arenaCardId, List<Color> colors, string? url) : this(name, arenaCardId, colors, url, null)
     { }
 
-    internal SpreadsheetCardData(string name, int arenaCardId, string? url, string? grade)
+    internal SpreadsheetCardData(string name, int arenaCardId, List<Color> colors, string? url, string? grade)
     {
         Name = name;
         ArenaCardId = arenaCardId;
+        Colors = colors;
         Url = url;
         Metrics =
         [
@@ -19,6 +20,8 @@ public class SpreadsheetCardData : ICardData
     public string Name { get; init; }
 
     public int ArenaCardId { get; init; }
+
+    public List<Color> Colors { get; init; }
 
     public string? Url { get; init; }
 

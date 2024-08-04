@@ -13,4 +13,8 @@
     <PackageReference Include="NLog" Version="5.3.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CardPile.CardData\CardPile.CardData.csproj" />
+  </ItemGroup>
+
 </Project>

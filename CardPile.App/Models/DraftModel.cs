@@ -19,6 +19,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         cardsInCurrentPack = [];
         cardsMissingInCurrentPack = [];
         cardsUpcomingAfterCurrentPack = [];
+        cardsSeen = [];
         cardsInDeck = [];
         
         PreviousPick = null;
@@ -47,6 +48,11 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         get => cardsUpcomingAfterCurrentPack;
     }
 
+    public ObservableCollection<ICardDataService> CardsSeen
+    {
+        get => cardsSeen;
+    }
+
     public ICardDataService? PreviousPick
     {
         get => previousPick;
@@ -57,8 +63,8 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
     {
         logger.Info($"Setting new card data source {newCardDataSource.Name}");
         cardDataSource = newCardDataSource;
-        UpdateCurrentPackWithNewData(cardDataSource);
-        UpdateDeckWithNewData(cardDataSource);
+        UpdateCardDataAfterChoice(cardDataSource);
+        UpdateCardDataAfterPick(cardDataSource);
     }
 
     private void DraftEnterHandler(object? sender, DraftEnterEvent e)
@@ -68,6 +74,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         cardsInCurrentPack.Clear();
         cardsMissingInCurrentPack.Clear();
         cardsUpcomingAfterCurrentPack.Clear();
+        cardsSeen.Clear();
         cardsInDeck.Clear();
 
         PreviousPick = null;
@@ -82,7 +89,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
 
         draftState.ProcessEvent(e);
 
-        UpdateCurrentPackWithNewData(cardDataSource);
+        UpdateCardDataAfterChoice(cardDataSource);
 
         var deck = draftState.GetCurrentDeck();
         logger.Info($"Current deck [{string.Join(",", deck)}]");
@@ -116,7 +123,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
             PreviousPick = null;
         }
 
-        UpdateDeckWithNewData(cardDataSource);
+        UpdateCardDataAfterPick(cardDataSource);
 
         var deck = draftState.GetCurrentDeck();
         logger.Info($"Current deck [{string.Join(",", deck)}]");
@@ -127,6 +134,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         cardsInCurrentPack.Clear();
         cardsMissingInCurrentPack.Clear();
         cardsUpcomingAfterCurrentPack.Clear();
+        cardsSeen.Clear();
         cardsInDeck.Clear();
 
         PreviousPick = null;
@@ -134,7 +142,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         draftState.ProcessEvent(e);
     }
 
-    private void UpdateCurrentPackWithNewData(ICardDataSource cardDataSource)
+    private void UpdateCardDataAfterChoice(ICardDataSource cardDataSource)
     {
         cardsInCurrentPack.Clear();
         cardsMissingInCurrentPack.Clear();
@@ -192,9 +200,10 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         }
     }
 
-    private void UpdateDeckWithNewData(ICardDataSource cardDataSource)
+    private void UpdateCardDataAfterPick(ICardDataSource cardDataSource)
     {
         cardsInDeck.Clear();
+        cardsSeen.Clear();
 
         foreach (var cardInDeck in draftState.GetCurrentDeck())
         {
@@ -202,6 +211,19 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
             if (cardInDeckData != null)
             {
                 cardsInDeck.Add(new CardDataModel(cardInDeckData));
+            }
+        }
+
+        foreach (var seenCard in draftState.GetSeenCards())
+        {
+            var seendCardData = cardDataSource.GetDataForCard(seenCard);
+            if (seendCardData != null)
+            {
+                cardsSeen.Add(new CardDataModel(seendCardData));
+            }
+            else
+            {
+                logger.Info(string.Format($"Could not find card data for seen card with MTGA id {seenCard}"));
             }
         }
     }
@@ -264,6 +286,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
     private readonly ObservableCollection<ICardDataService> cardsInCurrentPack;
     private readonly ObservableCollection<ICardDataService> cardsMissingInCurrentPack;
     private readonly ObservableCollection<ICardDataService> cardsUpcomingAfterCurrentPack;
+    private readonly ObservableCollection<ICardDataService> cardsSeen;
     private readonly ObservableCollection<ICardDataService> cardsInDeck;
     private ICardDataService? previousPick;
 

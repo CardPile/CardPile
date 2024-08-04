@@ -6,6 +6,8 @@ public interface ICardData
 
     public int ArenaCardId { get; init; }
 
+    public List<Color> Colors { get; init; }
+
     public string? Url { get; }
 
     public List<ICardMetric> Metrics { get; }

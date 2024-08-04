@@ -30,7 +30,8 @@ public class SpreadsheetCardDataSource : ICardDataSource
         string? grade = null;
         cardGrades.TryGetValue(cardNameFromArena, out grade);
 
-        return new SpreadsheetCardData(cardNameFromArena, cardNumber, url, grade);
+        var colors = CardInfo.Arena.GetCardColorsFromId(cardNumber) ?? [];
+        return new SpreadsheetCardData(cardNameFromArena, cardNumber, colors, grade);
     }
 
     private readonly Dictionary<string, string> cardGrades = [];

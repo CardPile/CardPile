@@ -3,6 +3,8 @@ using Microsoft.Win32;
 using NLog;
 using System.Runtime.Versioning;
 
+using CardPile.CardData;
+
 namespace CardPile.CardInfo;
 
 public class Arena
@@ -58,6 +60,15 @@ public class Arena
             return expansionAndCollectorNumber;
         }
         return (null, null);
+    }
+
+    public static List<Color>? GetCardColorsFromId(int cardId)
+    {
+        if (cardIdToColors.TryGetValue(cardId, out var colors))
+        {
+            return colors;
+        }
+        return null;
     }
 
     private static string? GetArenaInstallDirectory()
@@ -160,7 +171,7 @@ public class Arena
         connection.Open();
 
         var command = connection.CreateCommand();
-        command.CommandText = @"SELECT GrpId, ExpansionCode, CollectorNumber, enUS FROM Cards LEFT JOIN Localizations ON Cards.TitleId == Localizations.LocId WHERE Localizations.Formatted = 2";
+        command.CommandText = @"SELECT GrpId, ExpansionCode, CollectorNumber, Colors, enUS FROM Cards LEFT JOIN Localizations ON Cards.TitleId == Localizations.LocId WHERE Localizations.Formatted = 2";
         
         using var reader = command.ExecuteReader();
         while (reader.Read())
@@ -168,10 +179,60 @@ public class Arena
             var grpId = reader.GetInt32(0);
             var expansion = reader.GetString(1);
             var collectorNumber = reader.GetString(2);
-            var name = reader.GetString(3);
+            var colors = reader.GetString(3);
+            var name = reader.GetString(4);
 
             cardIdToName.Add(grpId, name);
             cardIdToExpansionAndCollectorNumber.Add(grpId, (expansion, collectorNumber));
+
+            cardIdToColors.Add(grpId, CreateColorList(grpId, colors));
+        }
+    }
+
+    private static List<Color> CreateColorList(int grpId, string colors)
+    {
+        var parts = colors.Split(",").Select(x => x.Trim());
+
+        var result = new List<Color>();
+        foreach (var part in parts)
+        {
+            if(int.TryParse(part, out var colorToMap))
+            {
+                var color = MapValueToColor(colorToMap);
+                if (color.HasValue)
+                {
+                    result.Add(color.Value);
+                }
+                else
+                {
+                    logger.Warn("Error mapping colors of card with id {grpId}. Colors are [{colors}]. Color that failed to map is [{colorToMap}].", grpId, colors, colorToMap);
+                }
+            }
+            else
+            {
+                logger.Warn("Cannot parse colors of card with id {grpId}. Colors are [{colors}]", grpId, colors);
+            }
+        }
+
+        return result;
+    }
+
+    private static Color? MapValueToColor(int value)
+    {
+        switch (value)
+        {
+            case 1:
+                return Color.White;
+            case 2:
+                return Color.Blue;
+            case 3:
+                return Color.Black;
+            case 4:
+                return Color.Red;
+            case 5:
+                return Color.Green;
+            default:
+                return null;
         }
     }
 
@@ -186,6 +247,7 @@ public class Arena
 
     private static Dictionary<int, string> cardIdToName = [];
     private static Dictionary<int, (string, string)> cardIdToExpansionAndCollectorNumber = [];
+    private static Dictionary<int, List<Color>> cardIdToColors = [];
 
     private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 }

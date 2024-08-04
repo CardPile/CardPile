@@ -28,7 +28,9 @@ public class SeventeenLandsCardDataSource : ICardDataSource
             {
                 url = CardInfo.Scryfall.GetImageUrlFromExpansionAndCollectorNumber(expansion, collectorNumber);
             }
-            return new SeventeenLandsCardData(cardNameFromArena, cardNumber, url);
+
+            var colors = CardInfo.Arena.GetCardColorsFromId(cardNumber) ?? [];
+            return new SeventeenLandsCardData(cardNameFromArena, cardNumber, colors, url);
         }
 
         return null;

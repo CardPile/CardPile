@@ -2,7 +2,6 @@
 using CardPile.CardData;
 using ReactiveUI;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace CardPile.App.Services;
@@ -12,6 +11,8 @@ internal interface ICardDataService : IReactiveObject
     public string Name { get; }
 
     public int ArenaCardId { get; }
+
+    public List<Color> Colors { get; }
 
     public string? Url { get; }
 

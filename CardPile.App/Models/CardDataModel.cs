@@ -28,6 +28,11 @@ internal class CardDataModel : ReactiveObject, ICardDataService
         get => cardData.ArenaCardId;
     }
 
+    public List<Color> Colors
+    {
+        get => cardData.Colors;
+    }
+
     public string? Url
     { 
         get => cardData.Url; 

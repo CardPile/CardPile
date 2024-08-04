@@ -5,38 +5,39 @@ namespace CardPile.CardData.SeventeenLands;
 
 internal class SeventeenLandsCardData : ICardData
 {
-    internal SeventeenLandsCardData(string name, int mtga_id) : this(name, mtga_id, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+    internal SeventeenLandsCardData(string name, int mtga_id, List<Color> colors) : this(name, mtga_id, colors, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
     {}
 
-    internal SeventeenLandsCardData(string name, int mtga_id, string? url) : this(name, mtga_id, url, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+    internal SeventeenLandsCardData(string name, int mtga_id, List<Color> colors, string? url) : this(name, mtga_id, colors, url, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
     { }
 
-    [JsonConstructor]
     internal SeventeenLandsCardData
-    (
-        string name,
-        int mtga_id,
-        string? url,
-        int? seen_count,                    // # Seen
-        float? avg_seen,                    // ALSA
-        int? pick_count,                    // # Picked
-        float? avg_pick,                    // ATA
-        int? game_count,                    // # GP
-        float? play_rate,                   // % GP
-        float? win_rate,                    // GP WR
-        int? opening_hand_game_count,       // # OH
-        float? opening_hand_win_rate,       // OH WR
-        int? drawn_game_count,              // # GD
-        float? drawn_win_rate,              // GD WR
-        int? ever_drawn_game_count,         // # GIH
-        float? ever_drawn_win_rate,         // GIH WR
-        int? never_drawn_game_count,        // # GNS
-        float? never_drawn_win_rate,        // GNS WR
-        float? drawn_improvement_win_rate   // IWD,
-    )
+        (
+            string name,
+            int mtga_id,
+            List<Color> colors,
+            string? url,
+            int? seen_count,                    // # Seen
+            float? avg_seen,                    // ALSA
+            int? pick_count,                    // # Picked
+            float? avg_pick,                    // ATA
+            int? game_count,                    // # GP
+            float? play_rate,                   // % GP
+            float? win_rate,                    // GP WR
+            int? opening_hand_game_count,       // # OH
+            float? opening_hand_win_rate,       // OH WR
+            int? drawn_game_count,              // # GD
+            float? drawn_win_rate,              // GD WR
+            int? ever_drawn_game_count,         // # GIH
+            float? ever_drawn_win_rate,         // GIH WR
+            int? never_drawn_game_count,        // # GNS
+            float? never_drawn_win_rate,        // GNS WR
+            float? drawn_improvement_win_rate   // IWD,
+        )
     {
         Name = name;
         ArenaCardId = mtga_id;
+        Colors = colors;
         Url = url;
         Metrics =
         [
@@ -59,9 +60,39 @@ internal class SeventeenLandsCardData : ICardData
         ];
     }
 
+    [JsonConstructor]
+    internal SeventeenLandsCardData
+    (
+        string name,
+        int mtga_id,
+        string? color,
+        string? url,
+        int? seen_count,                    // # Seen
+        float? avg_seen,                    // ALSA
+        int? pick_count,                    // # Picked
+        float? avg_pick,                    // ATA
+        int? game_count,                    // # GP
+        float? play_rate,                   // % GP
+        float? win_rate,                    // GP WR
+        int? opening_hand_game_count,       // # OH
+        float? opening_hand_win_rate,       // OH WR
+        int? drawn_game_count,              // # GD
+        float? drawn_win_rate,              // GD WR
+        int? ever_drawn_game_count,         // # GIH
+        float? ever_drawn_win_rate,         // GIH WR
+        int? never_drawn_game_count,        // # GNS
+        float? never_drawn_win_rate,        // GNS WR
+        float? drawn_improvement_win_rate   // IWD,
+    ) : this(name, mtga_id, [], url, seen_count, avg_seen, pick_count, avg_pick, game_count, play_rate, win_rate, opening_hand_game_count, opening_hand_win_rate, drawn_game_count, drawn_win_rate, ever_drawn_game_count, ever_drawn_win_rate, never_drawn_game_count, never_drawn_win_rate, drawn_improvement_win_rate)
+    {
+        Colors = ParseColors(color);
+    }
+
     public string Name { get; init; }
 
     public int ArenaCardId { get; init; }
+
+    public List<Color> Colors { get; init; }
 
     public string? Url { get; set; }
 
@@ -91,6 +122,41 @@ internal class SeventeenLandsCardData : ICardData
                 WinRateImprovementWhenDrawnMetricDesc,
             ];
         }
+    }
+
+    private static List<Color> ParseColors(string? colors)
+    {
+        if (colors == null)
+        {
+            return [];
+        }
+
+        var result = new List<Color>();
+        foreach (var color in colors)
+        {
+            if(color == 'W')
+            {
+                result.Add(Color.White);
+            }
+            else if(color == 'U')
+            {
+                result.Add(Color.Blue);
+            }
+            else if (color == 'B')
+            {
+                result.Add(Color.Black);
+            }
+            else if (color == 'R')
+            {
+                result.Add(Color.Red);
+            }
+            else if (color == 'G')
+            {
+                result.Add(Color.Green);
+            }
+        }
+
+        return result;
     }
 
     private static readonly CardMetricDescription<int>      SeenMetricDesc = new CardMetricDescription<int>("# Seen", false, false);

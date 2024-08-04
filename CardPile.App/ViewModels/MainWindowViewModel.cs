@@ -29,6 +29,7 @@ public class MainWindowViewModel : ViewModelBase
         cardsInPackService.CardsInPack.CollectionChanged += UpdateCardsInPack;
         cardsInPackService.CardsMissingFromPack.CollectionChanged += UpdateCardsMissingFromPack;
         cardsInPackService.CardsUpcomingAfterPack.CollectionChanged += UpdateCardsUpcomingAfterPack;
+        cardsInPackService.CardsSeen.CollectionChanged += UpdateCardsSeen;
         cardsInPackService.ObservableForProperty(x => x.PreviousPick)
                           .Subscribe(x => UpdatePreviouslyPickedCardFromPack(x.Value));
 
@@ -77,6 +78,14 @@ public class MainWindowViewModel : ViewModelBase
 
     internal ObservableCollection<CardViewModel> CardsUpcomingAfterPack { get; } = [];
 
+    internal ObservableCollection<CardViewModel> WhiteCardsSeen { get; } = [];
+    internal ObservableCollection<CardViewModel> BlueCardsSeen { get; } = [];
+    internal ObservableCollection<CardViewModel> BlackCardsSeen { get; } = [];
+    internal ObservableCollection<CardViewModel> RedCardsSeen { get; } = [];
+    internal ObservableCollection<CardViewModel> GreenCardsSeen { get; } = [];
+    internal ObservableCollection<CardViewModel> MulticolorCardsSeen { get; } = [];
+    internal ObservableCollection<CardViewModel> ColorlessCardsSeen { get; } = [];
+
     internal CardViewModel? PreviouslyPickedCardFromPack
     {
         get => previouslyPickedCardFromPack;
@@ -84,6 +93,16 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     internal ICommand ShowLogCommand { get; init; }
+
+    private static void SortCards(ObservableCollection<CardViewModel> collection, Func<CardViewModel, int> selector)
+    {
+        List<CardViewModel> sorted = [.. collection.OrderBy(selector)];
+        for (int i = 0; i < sorted.Count; i++)
+        {
+            collection.Move(collection.IndexOf(sorted[i]), i);
+        }
+    }
+
 
     private void UpdateCardsInPack(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
@@ -196,8 +215,8 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     if (item is ICardDataService cardDataService)
                     {
-                        var newCardDataVm = new CardViewModel(cardDataService);
-                        CardsUpcomingAfterPack.Add(newCardDataVm);
+                        var newCardVm = new CardViewModel(cardDataService);
+                        CardsUpcomingAfterPack.Add(newCardVm);
                     }
                     else
                     {
@@ -216,8 +235,8 @@ public class MainWindowViewModel : ViewModelBase
                     if (item is ICardDataService cardDataService)
                     {
                         CardsUpcomingAfterPack.Remove(CardsUpcomingAfterPack.Where(x => x.CardDataService == item));
-                        var newCardDataVm = new CardViewModel(cardDataService);
-                        CardsUpcomingAfterPack.Add(newCardDataVm);
+                        var oldCardVm = new CardViewModel(cardDataService);
+                        CardsUpcomingAfterPack.Add(oldCardVm);
                     }
                     else
                     {
@@ -234,7 +253,135 @@ public class MainWindowViewModel : ViewModelBase
 
         DispatchObservableCardCollection(e, clearItems, processNewItems, processOldItems);
     }
-    
+
+    private void UpdateCardsSeen(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        void processNewItems(IList? newItems)
+        {
+            if (newItems != null)
+            {
+                foreach (var item in newItems)
+                {
+                    if (item is ICardDataService cardDataService)
+                    {
+                        var newCardVm = new CardViewModel(cardDataService);
+                        if (cardDataService.Colors.Count == 0)
+                        {
+                            ColorlessCardsSeen.Add(newCardVm);
+                        }
+                        else if (cardDataService.Colors.Count == 1)
+                        {
+                            if(cardDataService.Colors.First() == Color.White)
+                            {
+                                WhiteCardsSeen.Add(newCardVm);
+                            }
+                            else if(cardDataService.Colors.First() == Color.Blue)
+                            {
+                                BlueCardsSeen.Add(newCardVm);
+                            }
+                            else if (cardDataService.Colors.First() == Color.Black)
+                            {
+                                BlackCardsSeen.Add(newCardVm);
+                            }
+                            else if (cardDataService.Colors.First() == Color.Red)
+                            {
+                                RedCardsSeen.Add(newCardVm);
+                            }
+                            else if (cardDataService.Colors.First() == Color.Green)
+                            {
+                                GreenCardsSeen.Add(newCardVm);
+                            }
+                        }
+                        else
+                        {
+                            MulticolorCardsSeen.Add(newCardVm);
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Expected a ICardDataService as a new item");
+                    }
+                }
+            }
+        }
+
+        void processOldItems(IList? oldItems)
+        {
+            if (oldItems != null)
+            {
+                foreach (var item in oldItems)
+                {
+                    if (item is ICardDataService cardDataService)
+                    {
+                        var oldCardVm = new CardViewModel(cardDataService);
+                        if (cardDataService.Colors.Count == 0)
+                        {
+                            ColorlessCardsSeen.Remove(ColorlessCardsSeen.Where(x => x.CardDataService == item));
+                            ColorlessCardsSeen.Add(oldCardVm);
+                        }
+                        else if (cardDataService.Colors.Count == 1)
+                        {
+                            if (cardDataService.Colors.First() == Color.White)
+                            {
+                                WhiteCardsSeen.Remove(WhiteCardsSeen.Where(x => x.CardDataService == item));
+                                WhiteCardsSeen.Add(oldCardVm);
+                            }
+                            else if (cardDataService.Colors.First() == Color.Blue)
+                            {
+                                BlueCardsSeen.Remove(BlueCardsSeen.Where(x => x.CardDataService == item));
+                                BlueCardsSeen.Add(oldCardVm);
+                            }
+                            else if (cardDataService.Colors.First() == Color.Black)
+                            {
+                                BlackCardsSeen.Remove(BlackCardsSeen.Where(x => x.CardDataService == item));
+                                BlackCardsSeen.Add(oldCardVm);
+                            }
+                            else if (cardDataService.Colors.First() == Color.Red)
+                            {
+                                RedCardsSeen.Remove(RedCardsSeen.Where(x => x.CardDataService == item));
+                                RedCardsSeen.Add(oldCardVm);
+                            }
+                            else if (cardDataService.Colors.First() == Color.Green)
+                            {
+                                GreenCardsSeen.Remove(GreenCardsSeen.Where(x => x.CardDataService == item));
+                                GreenCardsSeen.Add(oldCardVm);
+                            }
+                        }
+                        else
+                        {
+                            MulticolorCardsSeen.Remove(MulticolorCardsSeen.Where(x => x.CardDataService == item));
+                            MulticolorCardsSeen.Add(oldCardVm);
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Expected a ICardDataService as a old item");
+                    }
+                }
+            }
+        }
+
+        void clearItems()
+        {
+            WhiteCardsSeen.Clear();
+            BlueCardsSeen.Clear();
+            BlackCardsSeen.Clear();
+            RedCardsSeen.Clear();
+            GreenCardsSeen.Clear();
+            MulticolorCardsSeen.Clear();
+            ColorlessCardsSeen.Clear();
+        }
+
+        DispatchObservableCardCollection(e, clearItems, processNewItems, processOldItems);
+        SortCards(WhiteCardsSeen, x => x.CardDataService.ArenaCardId);
+        SortCards(BlueCardsSeen, x => x.CardDataService.ArenaCardId);
+        SortCards(BlackCardsSeen, x => x.CardDataService.ArenaCardId);
+        SortCards(RedCardsSeen, x => x.CardDataService.ArenaCardId);
+        SortCards(GreenCardsSeen, x => x.CardDataService.ArenaCardId);
+        SortCards(MulticolorCardsSeen, x => x.CardDataService.ArenaCardId);
+        SortCards(ColorlessCardsSeen, x => x.CardDataService.ArenaCardId);
+    }
+
     private void DispatchObservableCardCollection(System.Collections.Specialized.NotifyCollectionChangedEventArgs e, Action clearItems, Action<IList?> processNewItems, Action<IList?> processOldItems)
     {
         switch (e.Action)
