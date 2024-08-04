@@ -65,8 +65,9 @@ internal class CardDataModel : ReactiveObject, ICardDataService
             }
             else
             {
+                var content = response.Content.ReadAsStringAsync();
                 logger.Warn("Error fetching image for car {cardId} from {url}", ArenaCardId, Url);
-                logger.Warn("Status: {status} Response: {response}", response.StatusCode, response.Content);
+                logger.Warn("Status: {status} Response: {response}", response.StatusCode, content);
             }
         }
 
