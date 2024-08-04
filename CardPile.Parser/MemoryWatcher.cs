@@ -116,10 +116,11 @@ public class MemoryWatcher
             return default;
         }
 
-        logger.Info("Found {ItemCount} items", items.Length);
+        var itemsCount = itemListFieldValue.TryToGetValue<int>("_size");
+        logger.Info("Found {ItemCount} items", itemsCount);
 
         List<int> cardChoices = [];
-        for (int i = 0; i < items.Length; i++)
+        for (int i = 0; i < itemsCount; i++)
         {
             // These items are in opposite order
             var item = items[i];
@@ -136,6 +137,8 @@ public class MemoryWatcher
                 return default;
             }
 
+            var quantity = itemInstance.TryToGetValue<int>(CardCollectionItemQuantityNeedle);
+
             var recordFieldValue = itemInstance.TryToGetPath(RecordPath);
             if (recordFieldValue == null)
             {
@@ -144,7 +147,10 @@ public class MemoryWatcher
             }
 
             var grpId = recordFieldValue.TryToGetValue<uint>("GrpId");
-            cardChoices.Add((int)grpId);
+            for(int q = 0; q < quantity; ++q)
+            {
+                cardChoices.Add((int)grpId);
+            }
         }
 
         cardChoices.Reverse();
@@ -271,6 +277,7 @@ public class MemoryWatcher
     private static readonly string[] CurrentNavContentPath = ["<SceneLoader>k__BackingField", "<CurrentNavContent>k__BackingField"];
     private const string CurrentNavContentTypeNameNeedle = "DraftContentController";
     private static readonly string[] DraftItemListPath = ["_draftPackHolder", "_packCollection", "_itemList"];
+    private const string CardCollectionItemQuantityNeedle = "<Quantity>k__BackingField";
     private static readonly string[] RecordPath = ["<Card>k__BackingField", "_printing", "Record"];
     private static readonly string[] DraftPodPath = ["_limitedEvent", "<DraftPod>k__BackingField"];
     private const string BotDraftPodTypeNameNeedle = "BotDraftPod";
