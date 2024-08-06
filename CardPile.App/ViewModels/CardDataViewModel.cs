@@ -29,9 +29,9 @@ public class CardDataViewModel : ViewModelBase
         get => metrics;
     }
 
-    internal bool AnyMetricIsNotNull
+    internal bool AnyMetricToShow
     {
-        get => metrics.Aggregate(false, (acc, x) => acc || (x.Metric != null && x.Metric.HasValue));
+        get => metrics.Aggregate(false, (acc, x) => acc || (x.Metric != null && x.Metric.HasValue)) && metrics.Aggregate(false, (acc, x) => acc || x.Visible);
     }
 
     internal Task<Bitmap?> CardImage

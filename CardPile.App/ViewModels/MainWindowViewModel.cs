@@ -43,7 +43,21 @@ public class MainWindowViewModel : ViewModelBase
         UpdateMetricViewModels(cardDataSourceBuilderCollectionService.CurrentCardDataSourceBuilder);
 
         this.ObservableForProperty(p => p.SortByMetricDescription)
-            .Subscribe(p => SortCardsInPackBySelectedMetric());
+            .Subscribe(p => SortCardsDescendingBySelectedMetric(CardsInPack));
+        this.ObservableForProperty(p => p.SortByMetricDescription)
+            .Subscribe(p => SortCardsDescendingBySelectedMetric(WhiteCardsSeen));
+        this.ObservableForProperty(p => p.SortByMetricDescription)
+            .Subscribe(p => SortCardsDescendingBySelectedMetric(BlueCardsSeen));
+        this.ObservableForProperty(p => p.SortByMetricDescription)
+            .Subscribe(p => SortCardsDescendingBySelectedMetric(BlackCardsSeen));
+        this.ObservableForProperty(p => p.SortByMetricDescription)
+            .Subscribe(p => SortCardsDescendingBySelectedMetric(RedCardsSeen));
+        this.ObservableForProperty(p => p.SortByMetricDescription)
+            .Subscribe(p => SortCardsDescendingBySelectedMetric(GreenCardsSeen));
+        this.ObservableForProperty(p => p.SortByMetricDescription)
+            .Subscribe(p => SortCardsDescendingBySelectedMetric(MulticolorCardsSeen));
+        this.ObservableForProperty(p => p.SortByMetricDescription)
+            .Subscribe(p => SortCardsDescendingBySelectedMetric(ColorlessCardsSeen));
 
         ShowLogCommand = ReactiveCommand.Create(() =>
         {
@@ -78,13 +92,13 @@ public class MainWindowViewModel : ViewModelBase
 
     internal ObservableCollection<CardViewModel> CardsUpcomingAfterPack { get; } = [];
 
-    internal ObservableCollection<CardViewModel> WhiteCardsSeen { get; } = [];
-    internal ObservableCollection<CardViewModel> BlueCardsSeen { get; } = [];
-    internal ObservableCollection<CardViewModel> BlackCardsSeen { get; } = [];
-    internal ObservableCollection<CardViewModel> RedCardsSeen { get; } = [];
-    internal ObservableCollection<CardViewModel> GreenCardsSeen { get; } = [];
-    internal ObservableCollection<CardViewModel> MulticolorCardsSeen { get; } = [];
-    internal ObservableCollection<CardViewModel> ColorlessCardsSeen { get; } = [];
+    internal ObservableCollection<CardDataViewModel> WhiteCardsSeen { get; } = [];
+    internal ObservableCollection<CardDataViewModel> BlueCardsSeen { get; } = [];
+    internal ObservableCollection<CardDataViewModel> BlackCardsSeen { get; } = [];
+    internal ObservableCollection<CardDataViewModel> RedCardsSeen { get; } = [];
+    internal ObservableCollection<CardDataViewModel> GreenCardsSeen { get; } = [];
+    internal ObservableCollection<CardDataViewModel> MulticolorCardsSeen { get; } = [];
+    internal ObservableCollection<CardDataViewModel> ColorlessCardsSeen { get; } = [];
 
     internal CardViewModel? PreviouslyPickedCardFromPack
     {
@@ -94,15 +108,23 @@ public class MainWindowViewModel : ViewModelBase
 
     internal ICommand ShowLogCommand { get; init; }
 
-    private static void SortCards(ObservableCollection<CardViewModel> collection, Func<CardViewModel, int> selector)
+    private static void SortCards<T, TKey>(ObservableCollection<T> collection, Func<T, TKey> selector, IComparer<TKey>? comparer = null)
     {
-        List<CardViewModel> sorted = [.. collection.OrderBy(selector)];
+        List<T> sorted = [.. collection.OrderBy(selector, comparer ?? Comparer<TKey>.Default)];
         for (int i = 0; i < sorted.Count; i++)
         {
             collection.Move(collection.IndexOf(sorted[i]), i);
         }
     }
 
+    private static void SortCardsDescending<T, TKey>(ObservableCollection<T> collection, Func<T, TKey> selector, IComparer<TKey>? comparer = null)
+    {
+        List<T> sorted = [.. collection.OrderByDescending(selector, comparer ?? Comparer<TKey>.Default)];
+        for (int i = 0; i < sorted.Count; i++)
+        {
+            collection.Move(collection.IndexOf(sorted[i]), i);
+        }
+    }
 
     private void UpdateCardsInPack(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
@@ -153,7 +175,7 @@ public class MainWindowViewModel : ViewModelBase
         }
 
         DispatchObservableCardCollection(e, clearItems, processNewItems, processOldItems);
-        SortCardsInPackBySelectedMetric();
+        SortCardsDescendingBySelectedMetric(CardsInPack);
     }
 
     private void UpdateCardsMissingFromPack(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -264,7 +286,8 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     if (item is ICardDataService cardDataService)
                     {
-                        var newCardVm = new CardViewModel(cardDataService);
+                        var newCardVm = new CardDataViewModel(cardDataService);
+                        ClearCardMetricVisibility(newCardVm);
                         if (cardDataService.Colors.Count == 0)
                         {
                             ColorlessCardsSeen.Add(newCardVm);
@@ -313,7 +336,8 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     if (item is ICardDataService cardDataService)
                     {
-                        var oldCardVm = new CardViewModel(cardDataService);
+                        var oldCardVm = new CardDataViewModel(cardDataService);
+                        ClearCardMetricVisibility(oldCardVm);
                         if (cardDataService.Colors.Count == 0)
                         {
                             ColorlessCardsSeen.Remove(ColorlessCardsSeen.Where(x => x.CardDataService == item));
@@ -373,13 +397,13 @@ public class MainWindowViewModel : ViewModelBase
         }
 
         DispatchObservableCardCollection(e, clearItems, processNewItems, processOldItems);
-        SortCards(WhiteCardsSeen, x => x.CardDataService.ArenaCardId);
-        SortCards(BlueCardsSeen, x => x.CardDataService.ArenaCardId);
-        SortCards(BlackCardsSeen, x => x.CardDataService.ArenaCardId);
-        SortCards(RedCardsSeen, x => x.CardDataService.ArenaCardId);
-        SortCards(GreenCardsSeen, x => x.CardDataService.ArenaCardId);
-        SortCards(MulticolorCardsSeen, x => x.CardDataService.ArenaCardId);
-        SortCards(ColorlessCardsSeen, x => x.CardDataService.ArenaCardId);
+        SortCardsDescendingBySelectedMetric(WhiteCardsSeen);
+        SortCardsDescendingBySelectedMetric(BlueCardsSeen);
+        SortCardsDescendingBySelectedMetric(BlackCardsSeen);
+        SortCardsDescendingBySelectedMetric(RedCardsSeen);
+        SortCardsDescendingBySelectedMetric(GreenCardsSeen);
+        SortCardsDescendingBySelectedMetric(MulticolorCardsSeen);
+        SortCardsDescendingBySelectedMetric(ColorlessCardsSeen);
     }
 
     private void DispatchObservableCardCollection(System.Collections.Specialized.NotifyCollectionChangedEventArgs e, Action clearItems, Action<IList?> processNewItems, Action<IList?> processOldItems)
@@ -487,7 +511,7 @@ public class MainWindowViewModel : ViewModelBase
         private int metricIndex;
     };
 
-    private void SortCardsInPackBySelectedMetric()
+    private void SortCardsDescendingBySelectedMetric(ObservableCollection<CardDataViewModel> collection)
     {
         if (sortByMetricDescriptionViewModel == null)
         {
@@ -498,11 +522,7 @@ public class MainWindowViewModel : ViewModelBase
         int metricIndex = metricDescriptionViewModels.IndexOf(sortByMetricDescriptionViewModel);
 
         CardDataViewModelComparer comparer = new CardDataViewModelComparer(internalComparer, metricIndex);
-        List<CardDataViewModel> sorted = [.. CardsInPack.OrderByDescending(x => x, comparer)];
-        for (int i = 0; i < sorted.Count; i++)
-        {
-            CardsInPack.Move(CardsInPack.IndexOf(sorted[i]), i);
-        }
+        SortCardsDescending(collection, x => x, comparer);
     }
 
     private void UpdateMetricVisibility(CardDataMetricDescriptionViewModel vm, bool visible)
@@ -519,6 +539,14 @@ public class MainWindowViewModel : ViewModelBase
         for(int i = 0; i < metricDescriptionViewModels.Count; ++i)
         {
             cardVm.Metrics[i].Visible = metricDescriptionViewModels[i].Visible;
+        }
+    }
+
+    private void ClearCardMetricVisibility(CardDataViewModel cardVm)
+    {
+        for (int i = 0; i < metricDescriptionViewModels.Count; ++i)
+        {
+            cardVm.Metrics[i].Visible = false;
         }
     }
 

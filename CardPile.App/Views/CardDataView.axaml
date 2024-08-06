@@ -27,7 +27,7 @@
           </Panel>
         </Border>
       </StackPanel>
-      <Border CornerRadius="10" ClipToBounds="True" Grid.Column="1" Grid.Row="1" Background="Gray" IsVisible="{Binding AnyMetricIsNotNull}">
+      <Border CornerRadius="10" ClipToBounds="True" Grid.Column="1" Grid.Row="1" Background="Gray" IsVisible="{Binding AnyMetricToShow}">
         <ItemsControl ItemsSource="{Binding Metrics}" >
           <ItemsControl.ItemTemplate>
             <DataTemplate>
