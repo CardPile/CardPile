@@ -19,7 +19,7 @@ public class CardDataViewModelDesign : ViewModelBase
         get => [];
     }
 
-    internal bool AnyMetricIsNotNull
+    internal bool AnyMetricToShow
     {
         get => true;
     }
