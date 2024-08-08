@@ -4,7 +4,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        const string DefaultSource = @"D:\Programming\GitHub\CardPile\Logs\Player_2024_08_03.log";
+        const string DefaultSource = @"D:\Programming\GitHub\CardPile\Logs\Player_to_feed.log";
         const string DefaultDestination = @"D:\Programming\GitHub\CardPile\Logs\Player_fed.log";
 
         var source = DefaultSource;
