@@ -444,6 +444,14 @@ public class MainWindowViewModel : ViewModelBase
     {
         CardsInPack.Clear();
         CardsMissingFromPack.Clear();
+        CardsUpcomingAfterPack.Clear();
+        WhiteCardsSeen.Clear();
+        BlueCardsSeen.Clear();
+        BlackCardsSeen.Clear();
+        RedCardsSeen.Clear();
+        GreenCardsSeen.Clear();
+        MulticolorCardsSeen.Clear();
+        ColorlessCardsSeen.Clear();
         PreviouslyPickedCardFromPack = null;
     }
 
