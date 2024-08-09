@@ -126,16 +126,16 @@
             <Expander.Header>
               <TextBlock FontSize="18" FontWeight="DemiBold">Missing</TextBlock>
             </Expander.Header>
-            <StackPanel Orientation="Horizontal">
-              <ContentControl Content="{Binding PreviouslyPickedCardFromPack}" />
-              <ItemsControl ItemsSource="{Binding CardsMissingFromPack}">
+            <DockPanel>
+              <ContentControl DockPanel.Dock="Left" Content="{Binding PreviouslyPickedCardFromPack}" />
+              <ItemsControl DockPanel.Dock="Right" ItemsSource="{Binding CardsMissingFromPack}">
                 <ItemsControl.ItemsPanel>
                   <ItemsPanelTemplate>
                     <WrapPanel Orientation="Horizontal" />
                   </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
               </ItemsControl>
-            </StackPanel>
+            </DockPanel>
           </Expander>
           <!-- Upcoming -->
           <Expander Grid.Row="2" VerticalAlignment="Top" Width="{Binding #ContentContainer.Bounds.Width}" Margin="0, 2">
