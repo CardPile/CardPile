@@ -4,7 +4,7 @@
         xmlns:services="using:CardPile.App.Services"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="600"
         x:Class="CardPile.App.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/cardpile.ico"
@@ -67,8 +67,13 @@
             </ItemsControl.ItemTemplate>
           </ItemsControl>
           <!-- Log Button -->
-          <StackPanel DockPanel.Dock="Right" Margin="5" >
-            <Button Command="{Binding ShowLogCommand}">Show log</Button>
+          <StackPanel DockPanel.Dock="Right" Margin="5" Orientation="Horizontal">
+            <Button Background="Transparent" Command="{Binding ShowLogCommand}">
+              <PathIcon Height="20" Width="20" Foreground="Black" Data="{StaticResource log_icon}"/>
+            </Button>
+            <Button Background="Transparent" Command="{Binding ShowSettingsCommand}">
+              <PathIcon Height="20" Width="20" Foreground="Black" Data="{StaticResource settings_icon}"/>
+            </Button>
           </StackPanel>
         </DockPanel>
       </Border>

@@ -59,13 +59,26 @@ public class MainWindowViewModel : ViewModelBase
         this.ObservableForProperty(p => p.SortByMetricDescription)
             .Subscribe(p => SortCardsDescendingBySelectedMetric(ColorlessCardsSeen));
 
+        logWindow = new LogWindow()
+        {
+            DataContext = new LogWindowViewModel(model.LogService)
+        };
+
         ShowLogCommand = ReactiveCommand.Create(() =>
         {
-            LogWindow logWindow = new LogWindow()
+            if(!logWindow.IsVisible)
             {
-                DataContext = new LogWindowViewModel(model.LogService)
-            };
-            logWindow.Show();
+                logWindow.Show();
+            }
+            else
+            {
+                logWindow.Activate();
+            }
+        });
+
+        ShowSettingsCommand = ReactiveCommand.Create(() =>
+        {
+            // TODO....
         });
     }
 
@@ -107,6 +120,8 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     internal ICommand ShowLogCommand { get; init; }
+
+    internal ICommand ShowSettingsCommand { get; init; }
 
     private static void SortCards<T, TKey>(ObservableCollection<T> collection, Func<T, TKey> selector, IComparer<TKey>? comparer = null)
     {
@@ -565,4 +580,6 @@ public class MainWindowViewModel : ViewModelBase
     private CardDataMetricDescriptionViewModel? sortByMetricDescriptionViewModel;
 
     private CardViewModel? previouslyPickedCardFromPack = null;
+
+    private LogWindow logWindow;
 }
