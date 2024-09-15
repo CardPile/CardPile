@@ -4,9 +4,9 @@ public interface ICardData
 {
     public string Name { get; }
 
-    public int ArenaCardId { get; init; }
+    public int ArenaCardId { get; }
 
-    public List<Color> Colors { get; init; }
+    public List<Color> Colors { get; }
 
     public string? Url { get; }
 

@@ -1,6 +1,4 @@
-﻿using CardPile.CardData.Formatting;
-
-namespace CardPile.CardData;
+﻿namespace CardPile.CardData;
 
 public class CardLetterGradeMetricDescription : ICardMetricDescription
 {
@@ -19,18 +17,9 @@ public class CardLetterGradeMetricDescription : ICardMetricDescription
 
     public IComparer<ICardMetric> Comparer { get => new CardLetterGradeMetricComparer(); }
 
-    public ICardMetric NewMetric<E>(E? value)
+    public ICardMetric NewMetric(string? value)
     {
-        if (value == null)
-        {
-            return new CardLetterGradeMetric(this, null!);
-        }
-
-        if (value is not string baseValue)
-        {
-            throw new ArgumentException("The letter grade metric value type must be a string");
-        }
-        return new CardLetterGradeMetric(this, baseValue);
+        return new CardLetterGradeMetric(this, value!);
     }
 
     private class CardLetterGradeMetricComparer : IComparer<ICardMetric>

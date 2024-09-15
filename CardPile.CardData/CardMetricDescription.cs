@@ -18,9 +18,9 @@ public class CardMetricDescription<T> : ICardMetricDescription where T : struct
 
     public bool IsDefaultMetric { get; init; }
 
-    public IComparer<ICardMetric> Comparer { get => new CardMetricComparer(); }
+    public IComparer<ICardMetric> Comparer { get => new CompositeCardMetricComparer(); }
 
-    public ICardMetric NewMetric<E>(E? value)
+    public CardMetric<T> NewMetric<E>(E? value)
     {
         if(value == null)
         {
@@ -36,7 +36,7 @@ public class CardMetricDescription<T> : ICardMetricDescription where T : struct
 
     internal ICardMetricFormatter<T>? Formatter { get; init; }
 
-    private class CardMetricComparer : IComparer<ICardMetric>
+    private class CompositeCardMetricComparer : IComparer<ICardMetric>
     {
         public int Compare(ICardMetric? x, ICardMetric? y)
         {
@@ -79,7 +79,6 @@ public class CardMetricDescription<T> : ICardMetricDescription where T : struct
             {
                 return 1;
             }
-
 
             return Comparer<T>.Default.Compare(xMetric.Value.Value, yMetric.Value.Value);
         }

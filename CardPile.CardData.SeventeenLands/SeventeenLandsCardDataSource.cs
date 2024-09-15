@@ -5,9 +5,29 @@ public class SeventeenLandsCardDataSource : ICardDataSource
     internal SeventeenLandsCardDataSource()
     { }
 
-    internal SeventeenLandsCardDataSource(List<SeventeenLandsCardData> cardData)
+    internal SeventeenLandsCardDataSource(SeventeenLandsRawCardDataSource cardData,
+                                          SeventeenLandsRawCardDataSource wuCardData,
+                                          SeventeenLandsRawCardDataSource wbCardData,
+                                          SeventeenLandsRawCardDataSource wrCardData,
+                                          SeventeenLandsRawCardDataSource wgCardData,
+                                          SeventeenLandsRawCardDataSource ubCardData,
+                                          SeventeenLandsRawCardDataSource urCardData,
+                                          SeventeenLandsRawCardDataSource ugCardData,
+                                          SeventeenLandsRawCardDataSource brCardData,
+                                          SeventeenLandsRawCardDataSource bgCardData,
+                                          SeventeenLandsRawCardDataSource rgCardData)
     {
-        cardDataSet = cardData.ToDictionary(x => x.ArenaCardId, x => x);
+        cardDataSet = cardData.CardDataSet.ToDictionary(x => x.Value.ArenaCardId, x => new SeventeenLandsCardData(x.Value,
+                                                                                                                  (wuCardData.GetDataForCard(x.Value.ArenaCardId) as SeventeenLandsRawCardData)?.WinRateInHandMetric.Value,
+                                                                                                                  (wbCardData.GetDataForCard(x.Value.ArenaCardId) as SeventeenLandsRawCardData)?.WinRateInHandMetric.Value,
+                                                                                                                  (wrCardData.GetDataForCard(x.Value.ArenaCardId) as SeventeenLandsRawCardData)?.WinRateInHandMetric.Value,
+                                                                                                                  (wgCardData.GetDataForCard(x.Value.ArenaCardId) as SeventeenLandsRawCardData)?.WinRateInHandMetric.Value,
+                                                                                                                  (ubCardData.GetDataForCard(x.Value.ArenaCardId) as SeventeenLandsRawCardData)?.WinRateInHandMetric.Value,
+                                                                                                                  (urCardData.GetDataForCard(x.Value.ArenaCardId) as SeventeenLandsRawCardData)?.WinRateInHandMetric.Value,
+                                                                                                                  (ugCardData.GetDataForCard(x.Value.ArenaCardId) as SeventeenLandsRawCardData)?.WinRateInHandMetric.Value,
+                                                                                                                  (brCardData.GetDataForCard(x.Value.ArenaCardId) as SeventeenLandsRawCardData)?.WinRateInHandMetric.Value,
+                                                                                                                  (bgCardData.GetDataForCard(x.Value.ArenaCardId) as SeventeenLandsRawCardData)?.WinRateInHandMetric.Value,
+                                                                                                                  (rgCardData.GetDataForCard(x.Value.ArenaCardId) as SeventeenLandsRawCardData)?.WinRateInHandMetric.Value));
     }
 
     public string Name => "17Lands";

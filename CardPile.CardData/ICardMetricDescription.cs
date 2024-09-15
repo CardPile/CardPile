@@ -9,6 +9,4 @@ public interface ICardMetricDescription
     public bool IsDefaultMetric { get; }
 
     public IComparer<ICardMetric> Comparer { get; }
-
-    public ICardMetric NewMetric<T>(T? value);
 }

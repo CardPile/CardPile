@@ -28,7 +28,7 @@ public class CardMetric<T> : ICardMetric where T : struct
         }
     }
 
-    internal T? Value { get; init; }
+    public T? Value { get; init; }
 
     private CardMetricDescription<T> description;
 }
