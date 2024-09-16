@@ -269,7 +269,7 @@ public class MemoryWatcher
             throw new NotSupportedException($"Unsupported operating system {Environment.OSVersion}");
         }
 
-        return AssemblyImageFactory.Create(unityProcessFacade);
+        return AssemblyImageFactory.Create(unityProcessFacade, "Core");
     }
 
     private const string NeedleTypeName = "WrapperController";
