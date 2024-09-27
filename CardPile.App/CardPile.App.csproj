@@ -48,4 +48,10 @@
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\SplashWindow.axaml" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\CardDataSourceSettingsDialog.axaml.cs">
+      <DependentUpon>CardDataSourceSettingsDialog.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

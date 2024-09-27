@@ -16,6 +16,12 @@ internal class CardDataSourceBuilderModel : ReactiveObject, ICardDataSourceBuild
     { 
         this.builder = builder;
 
+        settings = builder.Settings.Select(p => p.Type switch
+            { 
+                CardDataSourceSettingType.Path => new CardDataSourceSettingPathModel((p as ICardDataSourceSettingPath)!),
+                _ => new CardDataSourceSettingModel(p)
+            }).ToList<ICardDataSourceSettingService>();
+
         parameters = builder.Parameters.Select(p => p.Type switch
             {
                 CardDataSourceParameterType.Options => new CardDataSourceParameterOptionsModel((p as ICardDataSourceParameterOptions)!),
@@ -30,6 +36,11 @@ internal class CardDataSourceBuilderModel : ReactiveObject, ICardDataSourceBuild
     public string Name
     {
         get => builder.Name;
+    }
+
+    public List<ICardDataSourceSettingService> Settings
+    {
+        get => settings;
     }
 
     public List<ICardDataSourceParameterService> Parameters
@@ -53,6 +64,7 @@ internal class CardDataSourceBuilderModel : ReactiveObject, ICardDataSourceBuild
     }
 
     private readonly ICardDataSourceBuilder builder;
+    private readonly List<ICardDataSourceSettingService> settings;
     private readonly List<ICardDataSourceParameterService> parameters;
     private readonly List<ICardMetricDescriptionService> metricDescriptions;
 }

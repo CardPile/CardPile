@@ -10,5 +10,5 @@ public class CardDataSourceParameter : ICardDataSourceParameter
 
     public string Name { get; init; }
 
-    public CardDataSourceParameterType Type { get; protected set; }
+    public CardDataSourceParameterType Type { get; init; }
 }

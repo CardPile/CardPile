@@ -8,8 +8,8 @@
         x:Class="CardPile.App.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/cardpile.ico"
-        Title="Card Pile">
-
+        Title="Card Pile"
+        WindowStartupLocation="CenterScreen">
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
@@ -31,6 +31,9 @@
               </ComboBox.ItemTemplate>
             </ComboBox>
           </StackPanel>
+          <Button DockPanel.Dock="Left" Background="Transparent" Command="{Binding ShowCardDataSourceSettingsCommand}" IsVisible="{Binding CardDataSourceBuilderCollectionService.CurrentCardDataSourceBuilder.Settings.Count}" ToolTip.Tip="Card data source settings">
+            <PathIcon Height="20" Width="20" Foreground="Black" Data="{StaticResource card_data_source_settings_icon}"/>
+          </Button>
           <!-- Parameters -->
           <ItemsControl DockPanel.Dock="Left" ItemsSource="{Binding CardDataSourceBuilderCollectionService.CurrentCardDataSourceBuilder.Parameters}">
             <ItemsControl.ItemsPanel>
@@ -68,10 +71,10 @@
           </ItemsControl>
           <!-- Log Button -->
           <StackPanel DockPanel.Dock="Right" Margin="5" Orientation="Horizontal">
-            <Button Background="Transparent" Command="{Binding ShowLogCommand}">
+            <Button Background="Transparent" Command="{Binding ShowLogCommand}" ToolTip.Tip="Show log window">
               <PathIcon Height="20" Width="20" Foreground="Black" Data="{StaticResource log_icon}"/>
             </Button>
-            <Button Background="Transparent" Command="{Binding ShowSettingsCommand}">
+            <Button Background="Transparent" Command="{Binding ShowSettingsCommand}" ToolTip.Tip="Settings">
               <PathIcon Height="20" Width="20" Foreground="Black" Data="{StaticResource settings_icon}"/>
             </Button>
           </StackPanel>

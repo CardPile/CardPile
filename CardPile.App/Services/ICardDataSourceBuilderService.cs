@@ -10,6 +10,8 @@ internal interface ICardDataSourceBuilderService : IReactiveObject
 {
     public string Name { get; }
 
+    public List<ICardDataSourceSettingService> Settings { get; }
+
     public List<ICardDataSourceParameterService> Parameters { get; }
 
     public List<ICardMetricDescriptionService> MetricDescriptions { get; }

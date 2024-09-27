@@ -76,6 +76,25 @@ public class MainWindowViewModel : ViewModelBase
             }
         });
 
+        ShowCardDataSourceSettingsDialog = new Interaction<CardDataSourceSettingsDialogViewModel, bool>();
+
+        ShowCardDataSourceSettingsCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            var settingsViewModel = new CardDataSourceSettingsDialogViewModel(cardDataSourceBuilderCollectionService.CurrentCardDataSourceBuilder.Settings);
+            var result = await ShowCardDataSourceSettingsDialog.Handle(settingsViewModel);
+            if (result)
+            {
+                // TODO(now): Rebuild the card data source
+                // ClearMetricViewModels();
+                // ClearCardData();
+                settingsViewModel.ApplyChanges();
+            }
+            else
+            {
+                settingsViewModel.DiscardChanges();
+            }
+        });
+
         ShowSettingsCommand = ReactiveCommand.Create(() =>
         {
             // TODO....
@@ -120,6 +139,10 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     internal ICommand ShowLogCommand { get; init; }
+
+    internal Interaction<CardDataSourceSettingsDialogViewModel, bool> ShowCardDataSourceSettingsDialog { get; }
+
+    internal ICommand ShowCardDataSourceSettingsCommand { get; init; }
 
     internal ICommand ShowSettingsCommand { get; init; }
 

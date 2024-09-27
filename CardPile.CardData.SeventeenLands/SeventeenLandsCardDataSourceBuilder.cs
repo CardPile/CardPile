@@ -4,6 +4,7 @@ public class SeventeenLandsCardDataSourceBuilder : ICardDataSourceBuilder
 {
     public SeventeenLandsCardDataSourceBuilder()
     {
+        Settings = [];
         Parameters =
         [
             SetParameter,
@@ -18,6 +19,8 @@ public class SeventeenLandsCardDataSourceBuilder : ICardDataSourceBuilder
     }
 
     public string Name => "17Lands";
+
+    public List<ICardDataSourceSetting> Settings { get; init; }
 
     public List<ICardDataSourceParameter> Parameters { get; init; }
 

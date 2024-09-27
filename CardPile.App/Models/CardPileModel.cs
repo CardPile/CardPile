@@ -26,6 +26,7 @@ internal class CardPileModel : ReactiveObject
 
         cardDataSource = cardDataSourceBuilderCollectionModel.CurrentCardDataSourceBuilder.BuildDataSource();
         SubscribeToAllBuilderSourceParameters(cardDataSourceBuilderCollectionModel.CurrentCardDataSourceBuilder);
+        SubscribeToAllBuilderSourceSettings(cardDataSourceBuilderCollectionModel.CurrentCardDataSourceBuilder);
 
         watcherModel = new WatcherModel();
         draftModel = new DraftModel(watcherModel, cardDataSource);
@@ -50,6 +51,7 @@ internal class CardPileModel : ReactiveObject
     {
         SubscribeToAllBuilderSourceParameters(builder);
         BuildCardDataSource(builder);
+        SubscribeToAllBuilderSourceSettings(builder);
     }
 
     private void SubscribeToAllBuilderSourceParameters(ICardDataSourceBuilderService builder)
@@ -67,6 +69,19 @@ internal class CardPileModel : ReactiveObject
                 var date = parameter as ICardDataSourceParameterDateService;
                 date.ObservableForProperty(x => x.Value)
                     .Subscribe(x => BuildCardDataSource(builder));
+            }
+        }
+    }
+
+    private void SubscribeToAllBuilderSourceSettings(ICardDataSourceBuilderService builder)
+    {
+        foreach(var setting in builder.Settings)
+        {
+            if(setting.Type == CardDataSourceSettingType.Path)
+            {
+                var path = setting as ICardDataSourceSettingPathService;
+                path.ObservableForProperty(x => x.Value)
+                    .Subscribe (x => BuildCardDataSource(builder));
             }
         }
     }

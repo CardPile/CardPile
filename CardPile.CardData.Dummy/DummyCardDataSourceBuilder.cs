@@ -4,6 +4,8 @@ public class DummyCardDataSourceBuilder : ICardDataSourceBuilder
 {
     public string Name => "Dummy";
 
+    public List<ICardDataSourceSetting> Settings => [FirstSetting];
+
     public List<ICardDataSourceParameter> Parameters => [FirstParameter, SecondParameter];
 
     public List<ICardMetricDescription> MetricDescriptions { get; init; } = [MetricADesc, MetricBDesc, MetricCDesc, MetricDDesc, MetricEDesc];
@@ -23,6 +25,8 @@ public class DummyCardDataSourceBuilder : ICardDataSourceBuilder
     internal static CardMetricDescription<float> MetricCDesc { get; } = new CardMetricDescription<float>("Metric C", true, true);
     internal static CardLetterGradeMetricDescription MetricDDesc { get; } = new CardLetterGradeMetricDescription("Metric D", true, false);
     internal static CompositeCardMetricDescription MetricEDesc { get; } = new CompositeCardMetricDescription("Metic ACD", true, false, MetricADesc, MetricCDesc, MetricDDesc);
+
+    private CardDataSourceSettingPath FirstSetting = new CardDataSourceSettingPath("Test path", "Foo");
 
     private CardDataSourceParameterOptions FirstParameter = new CardDataSourceParameterOptions("First", ["Option A", "Option B"]);
     private CardDataSourceParameterOptions SecondParameter = new CardDataSourceParameterOptions("Second", ["Option 1", "Option 2", "Option 3"]);

@@ -4,6 +4,8 @@ public interface ICardDataSourceBuilder
 {
     public string Name { get; }
 
+    public List<ICardDataSourceSetting> Settings { get; }
+
     public List<ICardDataSourceParameter> Parameters { get; }
 
     public List<ICardMetricDescription> MetricDescriptions { get; }
