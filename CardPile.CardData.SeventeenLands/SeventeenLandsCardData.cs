@@ -124,7 +124,7 @@ internal class SeventeenLandsCardData : ICardData
     private static readonly CardMetricDescription<float> BRWinRateInHandMetricDesc = new CardMetricDescription<float>("BR", true, false, new CardMetricPercentFormatter());
     private static readonly CardMetricDescription<float> BGWinRateInHandMetricDesc = new CardMetricDescription<float>("BG", true, false, new CardMetricPercentFormatter());
     private static readonly CardMetricDescription<float> RGWinRateInHandMetricDesc = new CardMetricDescription<float>("RG", true, false, new CardMetricPercentFormatter());
-    private static readonly CompositeCardMetricDescription ColorsWinRateInHandMetricDesc = new CompositeCardMetricDescription("GIH WR (2C)", false, false,
+    private static readonly CompositeCardMetricDescription ColorsWinRateInHandMetricDesc = new CompositeCardMetricDescription("GIH WR (2C)", true, false,
                                                                                                                                WUWinRateInHandMetricDesc,
                                                                                                                                WBWinRateInHandMetricDesc,
                                                                                                                                WRWinRateInHandMetricDesc,
