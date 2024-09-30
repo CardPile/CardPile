@@ -19,7 +19,6 @@ public class CompositeMetric : ICardMetric
         }
 
         Description = description;
-        Importance = InferImportance(values);
         Values = new List<ICardMetric?>(values);
         SortValue = Values.FirstOrDefault();
     }
@@ -45,31 +44,24 @@ public class CompositeMetric : ICardMetric
                     continue;
                 }
 
-                builder.AppendFormat("{0}\t{1}\n", metric.Description.Name, metric.TextValue);
+                string importanceIndicator = "\u26aa";
+                if (metric.Importance == ImportanceLevel.Critical)
+                {
+                    importanceIndicator = "\ud83d\udd34";
+                }
+                else if (metric.Importance == ImportanceLevel.High)
+                {
+                    importanceIndicator = "\ud83d\udfe1";
+                }
+                builder.AppendFormat("{0}{1}\t{2}\n", importanceIndicator, metric.Description.Name, metric.TextValue);
             }
             return builder.ToString();
         }
     }
 
-    public ImportanceLevel Importance { get; init; }
+    public ImportanceLevel Importance { get => ImportanceLevel.Regular; }
 
     internal List<ICardMetric?> Values { get; init; }
 
     internal ICardMetric? SortValue { get; set; }
-
-    private static ImportanceLevel InferImportance(params ICardMetric?[] values)
-    {
-        ImportanceLevel? result = null;
-        foreach (ICardMetric? metric in values)
-        {
-            if (metric == null)
-            {
-                continue;
-            }
-
-            result = ((result ?? ImportanceLevel.Low) < metric.Importance ? metric.Importance : result);
-        }
-
-        return result ?? ImportanceLevel.Regular;
-    }
 }

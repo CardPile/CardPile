@@ -1,10 +1,6 @@
 ﻿using CardPile.CardData.Importance;
 using CardPile.Draft;
 using MathNet.Numerics.Distributions;
-using Newtonsoft.Json.Linq;
-using System.Diagnostics;
-using static System.Formats.Asn1.AsnWriter;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CardPile.CardData.SeventeenLands;
 
@@ -22,28 +18,31 @@ public class SeventeenLandsCardDataSource : ICardDataSource
                                           SeventeenLandsRawCardDataSource bgCardData,
                                           SeventeenLandsRawCardDataSource rgCardData)
     {
-        this.cardData = cardData;
-        this.wuCardData = wuCardData;
-        this.wbCardData = wbCardData;
-        this.wrCardData = wrCardData;
-        this.wgCardData = wgCardData;
-        this.ubCardData = ubCardData;
-        this.urCardData = urCardData;
-        this.ugCardData = ugCardData;
-        this.brCardData = brCardData;
-        this.bgCardData = bgCardData;
-        this.rgCardData = rgCardData;
+        archetypeCardData[ColorPair.None] = cardData;
+        archetypeCardData[ColorPair.WU] = wuCardData;
+        archetypeCardData[ColorPair.WB] = wbCardData;
+        archetypeCardData[ColorPair.WR] = wrCardData;
+        archetypeCardData[ColorPair.WG] = wgCardData;
+        archetypeCardData[ColorPair.UB] = ubCardData;
+        archetypeCardData[ColorPair.UR] = urCardData;
+        archetypeCardData[ColorPair.UG] = ugCardData;
+        archetypeCardData[ColorPair.BR] = brCardData;
+        archetypeCardData[ColorPair.BG] = bgCardData;
+        archetypeCardData[ColorPair.RG] = rgCardData;
 
-        var gihWrMean = Mean(cardData, (SeventeenLandsRawCardData data) => (data.EverDrawnGameCount ?? 0) > 100 ? data.EverDrawnWinRate : null);
-        var gihWrStdDev = (float)Math.Sqrt(Variance(cardData, gihWrMean, (SeventeenLandsRawCardData data) => (data.EverDrawnGameCount ?? 0 ) > 100 ? data.EverDrawnWinRate : null));
-        gihWrDistribution = new Normal(gihWrMean, gihWrStdDev);
+        foreach (var archetypeEntry in archetypeCardData)
+        {
+            var gihWrMean = Mean(archetypeEntry.Value, (SeventeenLandsRawCardData data) => (data.EverDrawnGameCount ?? 0) > CARD_EVER_DRAWN_CUTOFF ? data.EverDrawnWinRate : null);
+            var gihWrStdDev = (float)Math.Sqrt(Variance(archetypeEntry.Value, gihWrMean, (SeventeenLandsRawCardData data) => (data.EverDrawnGameCount ?? 0) > CARD_EVER_DRAWN_CUTOFF ? data.EverDrawnWinRate : null));
+            archetypeGihWrDistribution[archetypeEntry.Key] = new Normal(gihWrMean, gihWrStdDev);
+        }
     }
 
     public string Name => "17Lands";
 
     public ICardData? GetDataForCard(int cardNumber, DraftState state)
     {
-        SeventeenLandsRawCardData? rawCardData = cardData.GetDataForCard(cardNumber);
+        SeventeenLandsRawCardData? rawCardData = archetypeCardData[ColorPair.None].GetDataForCard(cardNumber);
         if (rawCardData != null)
         {
             return new SeventeenLandsCardData(rawCardData.Name,
@@ -62,18 +61,18 @@ public class SeventeenLandsCardDataSource : ICardDataSource
                                               SeventeenLandsCardData.NumberOfGamesDrawnTurn1OrLaterMetricDesc.NewMetric(rawCardData.DrawnGameCount),
                                               SeventeenLandsCardData.WinRateWhenDrawnTurn1OrLaterMetricDesc.NewMetric(rawCardData.DrawnWinRate),
                                               SeventeenLandsCardData.NumberOfGamesInHandMetricDesc.NewMetric(rawCardData.EverDrawnGameCount),
-                                              SeventeenLandsCardData.WinRateInHandMetricDesc.NewMetric(rawCardData.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(0.9f, 0.68f, 0.57f, (float value) => (float)gihWrDistribution.CumulativeDistribution(value))),
+                                              SeventeenLandsCardData.WinRateInHandMetricDesc.NewMetric(rawCardData.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (float value) => (float)archetypeGihWrDistribution[ColorPair.None].CumulativeDistribution(value))),
                                               SeventeenLandsCardData.ColorsWinRateInHandMetricDesc.NewMetric(
-                                                  SeventeenLandsCardData.WUWinRateInHandMetricDesc.NewMetric(wuCardData.GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate),
-                                                  SeventeenLandsCardData.WBWinRateInHandMetricDesc.NewMetric(wbCardData.GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate),
-                                                  SeventeenLandsCardData.WRWinRateInHandMetricDesc.NewMetric(wrCardData.GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate),
-                                                  SeventeenLandsCardData.WGWinRateInHandMetricDesc.NewMetric(wgCardData.GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate),
-                                                  SeventeenLandsCardData.UBWinRateInHandMetricDesc.NewMetric(ubCardData.GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate),
-                                                  SeventeenLandsCardData.URWinRateInHandMetricDesc.NewMetric(urCardData.GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate),
-                                                  SeventeenLandsCardData.UGWinRateInHandMetricDesc.NewMetric(ugCardData.GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate),
-                                                  SeventeenLandsCardData.BRWinRateInHandMetricDesc.NewMetric(brCardData.GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate),
-                                                  SeventeenLandsCardData.BGWinRateInHandMetricDesc.NewMetric(bgCardData.GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate),
-                                                  SeventeenLandsCardData.RGWinRateInHandMetricDesc.NewMetric(rgCardData.GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate)
+                                                  SeventeenLandsCardData.WUWinRateInHandMetricDesc.NewMetric(archetypeCardData[ColorPair.WU].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (float value) => (float)archetypeGihWrDistribution[ColorPair.WU].CumulativeDistribution(value))),
+                                                  SeventeenLandsCardData.WBWinRateInHandMetricDesc.NewMetric(archetypeCardData[ColorPair.WB].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (float value) => (float)archetypeGihWrDistribution[ColorPair.WB].CumulativeDistribution(value))),
+                                                  SeventeenLandsCardData.WRWinRateInHandMetricDesc.NewMetric(archetypeCardData[ColorPair.WR].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (float value) => (float)archetypeGihWrDistribution[ColorPair.WR].CumulativeDistribution(value))),
+                                                  SeventeenLandsCardData.WGWinRateInHandMetricDesc.NewMetric(archetypeCardData[ColorPair.WG].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (float value) => (float)archetypeGihWrDistribution[ColorPair.WG].CumulativeDistribution(value))),
+                                                  SeventeenLandsCardData.UBWinRateInHandMetricDesc.NewMetric(archetypeCardData[ColorPair.UB].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (float value) => (float)archetypeGihWrDistribution[ColorPair.UB].CumulativeDistribution(value))),
+                                                  SeventeenLandsCardData.URWinRateInHandMetricDesc.NewMetric(archetypeCardData[ColorPair.UR].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (float value) => (float)archetypeGihWrDistribution[ColorPair.UR].CumulativeDistribution(value))),
+                                                  SeventeenLandsCardData.UGWinRateInHandMetricDesc.NewMetric(archetypeCardData[ColorPair.UG].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (float value) => (float)archetypeGihWrDistribution[ColorPair.UG].CumulativeDistribution(value))),
+                                                  SeventeenLandsCardData.BRWinRateInHandMetricDesc.NewMetric(archetypeCardData[ColorPair.BR].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (float value) => (float)archetypeGihWrDistribution[ColorPair.BR].CumulativeDistribution(value))),
+                                                  SeventeenLandsCardData.BGWinRateInHandMetricDesc.NewMetric(archetypeCardData[ColorPair.BG].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (float value) => (float)archetypeGihWrDistribution[ColorPair.BG].CumulativeDistribution(value))),
+                                                  SeventeenLandsCardData.RGWinRateInHandMetricDesc.NewMetric(archetypeCardData[ColorPair.RG].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (float value) => (float)archetypeGihWrDistribution[ColorPair.RG].CumulativeDistribution(value)))
                                               ),
                                               SeventeenLandsCardData.NumberOfGamesNotSeenMetricDesc.NewMetric(rawCardData.NeverDrawnGameCount),
                                               SeventeenLandsCardData.WinRateNotSeenMetricDesc.NewMetric(rawCardData.NeverDrawnWinRate),
@@ -96,6 +95,11 @@ public class SeventeenLandsCardDataSource : ICardDataSource
 
         return null;
     }
+
+    private const int CARD_EVER_DRAWN_CUTOFF = 500;
+    private const float CARD_GIH_WR_CRITICAL_THRESHOLD = 0.9f;
+    private const float CARD_GIH_WR_HIGH_THRESHOLD = 0.68f;
+    private const float CARD_GIH_WR_REGULAR_THRESHOLD = 0.57f;
 
     private float Mean(SeventeenLandsRawCardDataSource source, Func<SeventeenLandsRawCardData, float?> selector)
     {
@@ -145,17 +149,6 @@ public class SeventeenLandsCardDataSource : ICardDataSource
         return sum / (count - 1);
     }
 
-    SeventeenLandsRawCardDataSource cardData;
-    SeventeenLandsRawCardDataSource wuCardData;
-    SeventeenLandsRawCardDataSource wbCardData;
-    SeventeenLandsRawCardDataSource wrCardData;
-    SeventeenLandsRawCardDataSource wgCardData;
-    SeventeenLandsRawCardDataSource ubCardData;
-    SeventeenLandsRawCardDataSource urCardData;
-    SeventeenLandsRawCardDataSource ugCardData;
-    SeventeenLandsRawCardDataSource brCardData;
-    SeventeenLandsRawCardDataSource bgCardData;
-    SeventeenLandsRawCardDataSource rgCardData;
-
-    Normal gihWrDistribution;
+    private Dictionary<ColorPair, SeventeenLandsRawCardDataSource> archetypeCardData = [];
+    private Dictionary<ColorPair, Normal> archetypeGihWrDistribution = [];
 }
