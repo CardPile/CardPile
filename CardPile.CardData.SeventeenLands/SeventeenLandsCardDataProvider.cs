@@ -202,8 +202,8 @@ public class SeventeenLandsCardDataSourceProvider
             return null;
         }
 
-        var creationTime = File.GetCreationTime(cachePath);
-        var creationTimeSpan = DateTime.Now.Subtract(creationTime);
+        var creationTime = File.GetLastWriteTimeUtc(cachePath);
+        var creationTimeSpan = DateTime.UtcNow.Subtract(creationTime);
         if (creationTimeSpan.TotalHours >= CacheValidHours)
         {
             try

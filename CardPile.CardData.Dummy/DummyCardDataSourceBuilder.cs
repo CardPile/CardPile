@@ -1,4 +1,8 @@
-﻿namespace CardPile.CardData.Dummy;
+﻿using CardPile.CardData.Metrics;
+using CardPile.CardData.Parameters;
+using CardPile.CardData.Settings;
+
+namespace CardPile.CardData.Dummy;
 
 public class DummyCardDataSourceBuilder : ICardDataSourceBuilder
 {
@@ -20,14 +24,14 @@ public class DummyCardDataSourceBuilder : ICardDataSourceBuilder
         return Task.FromResult(new DummyCardDataSource() as ICardDataSource);
     }
 
-    internal static CardMetricDescription<float> MetricADesc { get; } = new CardMetricDescription<float>("Metric A", false, false);
-    internal static CardMetricDescription<int> MetricBDesc { get; } = new CardMetricDescription<int>("Metric B", true, false);
-    internal static CardMetricDescription<float> MetricCDesc { get; } = new CardMetricDescription<float>("Metric C", true, true);
-    internal static CardLetterGradeMetricDescription MetricDDesc { get; } = new CardLetterGradeMetricDescription("Metric D", true, false);
-    internal static CompositeCardMetricDescription MetricEDesc { get; } = new CompositeCardMetricDescription("Metic ACD", true, false, MetricADesc, MetricCDesc, MetricDDesc);
+    internal static MetricDescription<float> MetricADesc { get; } = new MetricDescription<float>("Metric A", false, false);
+    internal static MetricDescription<int> MetricBDesc { get; } = new MetricDescription<int>("Metric B", true, false);
+    internal static MetricDescription<float> MetricCDesc { get; } = new MetricDescription<float>("Metric C", true, true);
+    internal static LetterGradeMetricDescription MetricDDesc { get; } = new LetterGradeMetricDescription("Metric D", true, false);
+    internal static CompositeMetricDescription MetricEDesc { get; } = new CompositeMetricDescription("Metic ACD", true, false, MetricADesc, MetricCDesc, MetricDDesc);
 
-    private CardDataSourceSettingPath FirstSetting = new CardDataSourceSettingPath("Test path", "Foo");
+    private SettingPath FirstSetting = new SettingPath("Test path", "Foo");
 
-    private CardDataSourceParameterOptions FirstParameter = new CardDataSourceParameterOptions("First", ["Option A", "Option B"]);
-    private CardDataSourceParameterOptions SecondParameter = new CardDataSourceParameterOptions("Second", ["Option 1", "Option 2", "Option 3"]);
+    private ParameterOptions FirstParameter = new ParameterOptions("First", ["Option A", "Option B"]);
+    private ParameterOptions SecondParameter = new ParameterOptions("Second", ["Option 1", "Option 2", "Option 3"]);
 }

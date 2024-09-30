@@ -1,40 +1,28 @@
-﻿namespace CardPile.CardData.SeventeenLands;
+﻿using System.Collections;
 
-internal class SeventeenLandsRawCardDataSource : ICardDataSource
+namespace CardPile.CardData.SeventeenLands;
+
+internal class SeventeenLandsRawCardDataSource : IEnumerable<KeyValuePair<int, SeventeenLandsRawCardData>>
 {
-    internal SeventeenLandsRawCardDataSource()
-    { }
-
     internal SeventeenLandsRawCardDataSource(List<SeventeenLandsRawCardData> cardData)
     {
-        CardDataSet = cardData.ToDictionary(x => x.ArenaCardId, x => x);
+        cardDataSet = cardData.ToDictionary(x => x.ArenaCardId, x => x);
     }
 
-    public string Name => "17Lands";
-
-    public ICardData? GetDataForCard(int cardNumber)
+    public SeventeenLandsRawCardData? GetDataForCard(int cardNumber)
     {
-        if(CardDataSet.TryGetValue(cardNumber, out SeventeenLandsRawCardData? cardData))
-        {
-            return cardData;
-        }
-
-        string? cardNameFromArena = CardInfo.Arena.GetCardNameFromId(cardNumber);
-        if (cardNameFromArena != null)
-        {
-            var (expansion, collectorNumber) = CardInfo.Arena.GetCardExpansionAndCollectorNumberFromId(cardNumber);
-            string? url = null;
-            if (expansion != null && collectorNumber != null)
-            {
-                url = CardInfo.Scryfall.GetImageUrlFromExpansionAndCollectorNumber(expansion, collectorNumber);
-            }
-
-            var colors = CardInfo.Arena.GetCardColorsFromId(cardNumber) ?? [];
-            return new SeventeenLandsRawCardData(cardNameFromArena, cardNumber, colors, url);
-        }
-
-        return null;
+        return cardDataSet.TryGetValue(cardNumber, out SeventeenLandsRawCardData? cardData) ? cardData : null;
     }
 
-    internal readonly Dictionary<int, SeventeenLandsRawCardData> CardDataSet = [];
+    public IEnumerator<KeyValuePair<int, SeventeenLandsRawCardData>> GetEnumerator()
+    {
+        return cardDataSet.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return cardDataSet.GetEnumerator();
+    }
+
+    private readonly Dictionary<int, SeventeenLandsRawCardData> cardDataSet = [];
 }

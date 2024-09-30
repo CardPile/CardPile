@@ -152,7 +152,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
 
         foreach (var cardInPack in draftState.CurrentPack)
         {
-            var cardInPackData = cardDataSource.GetDataForCard(cardInPack);
+            var cardInPackData = cardDataSource.GetDataForCard(cardInPack, draftState);
             if (cardInPackData != null)
             {
                 cardsInCurrentPack.Add(new CardDataModel(cardInPackData));
@@ -165,7 +165,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
 
         foreach (var missingCard in draftState.GetCurrentMissingCards())
         {
-            var missingCardData = cardDataSource.GetDataForCard(missingCard);
+            var missingCardData = cardDataSource.GetDataForCard(missingCard, draftState);
             if (missingCardData != null)
             {
                 cardsMissingInCurrentPack.Add(new CardDataModel(missingCardData));
@@ -178,7 +178,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
 
         foreach (var upcomingCard in draftState.GetCurrentUpcomingCards())
         {
-            var upcomingCardData = cardDataSource.GetDataForCard(upcomingCard);
+            var upcomingCardData = cardDataSource.GetDataForCard(upcomingCard, draftState);
             if (upcomingCardData != null)
             {
                 cardsUpcomingAfterCurrentPack.Add(new CardDataModel(upcomingCardData));
@@ -192,7 +192,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         var previouslyPickedCard = draftState.GetCurrentPackPreviousPick();
         if (previouslyPickedCard != null)
         {
-            var previouslyPickedCardData = cardDataSource.GetDataForCard(previouslyPickedCard.Value);
+            var previouslyPickedCardData = cardDataSource.GetDataForCard(previouslyPickedCard.Value, draftState);
             if(previouslyPickedCardData != null)
             {
                 PreviousPick = new CardDataModel(previouslyPickedCardData);
@@ -207,7 +207,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
 
         foreach (var cardInDeck in draftState.GetCurrentDeck())
         {
-            var cardInDeckData = cardDataSource.GetDataForCard(cardInDeck);
+            var cardInDeckData = cardDataSource.GetDataForCard(cardInDeck, draftState);
             if (cardInDeckData != null)
             {
                 cardsInDeck.Add(new CardDataModel(cardInDeckData));
@@ -216,7 +216,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
 
         foreach (var seenCard in draftState.GetSeenCards())
         {
-            var seendCardData = cardDataSource.GetDataForCard(seenCard);
+            var seendCardData = cardDataSource.GetDataForCard(seenCard, draftState);
             if (seendCardData != null)
             {
                 cardsSeen.Add(new CardDataModel(seendCardData));

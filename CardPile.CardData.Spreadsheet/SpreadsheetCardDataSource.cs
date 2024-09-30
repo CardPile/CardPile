@@ -1,4 +1,6 @@
-﻿namespace CardPile.CardData.Spreadsheet;
+﻿using CardPile.Draft;
+
+namespace CardPile.CardData.Spreadsheet;
 
 public class SpreadsheetCardDataSource : ICardDataSource
 {
@@ -12,7 +14,7 @@ public class SpreadsheetCardDataSource : ICardDataSource
 
     public string Name => "Spreadsheet";
 
-    public ICardData? GetDataForCard(int cardNumber)
+    public ICardData? GetDataForCard(int cardNumber, DraftState draftState)
     {
         string? cardNameFromArena = CardInfo.Arena.GetCardNameFromId(cardNumber);
         if (cardNameFromArena == null)

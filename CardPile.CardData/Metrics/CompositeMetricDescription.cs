@@ -1,12 +1,10 @@
-﻿using CardPile.CardData.Formatting;
+﻿namespace CardPile.CardData.Metrics;
 
-namespace CardPile.CardData;
-
-public class CompositeCardMetricDescription : ICardMetricDescription
+public class CompositeMetricDescription : ICardMetricDescription
 {
-    public CompositeCardMetricDescription(string name, bool isDefaultVisible, bool isDefault, params ICardMetricDescription?[] descriptions)
+    public CompositeMetricDescription(string name, bool isDefaultVisible, bool isDefault, params ICardMetricDescription?[] descriptions)
     {
-        if(descriptions.Length == 0)
+        if (descriptions.Length == 0)
         {
             throw new ArgumentException("descriptions must contain at least one element", nameof(descriptions));
         }
@@ -27,12 +25,12 @@ public class CompositeCardMetricDescription : ICardMetricDescription
 
     public ICardMetric NewMetric(params ICardMetric?[] values)
     {
-        return new CompositeCardMetric(this, values);
+        return new CompositeMetric(this, values);
     }
 
     public ICardMetric NewMetricWithSort(ICardMetric? sortMetric, params ICardMetric?[] values)
     {
-        var result = new CompositeCardMetric(this, values);
+        var result = new CompositeMetric(this, values);
         result.SortValue = sortMetric;
         return result;
     }
@@ -58,12 +56,12 @@ public class CompositeCardMetricDescription : ICardMetricDescription
                 return 1;
             }
 
-            if (x is not CompositeCardMetric xMetric)
+            if (x is not CompositeMetric xMetric)
             {
                 throw new ArgumentException("First comparer parameter is not a CompositeCardMetric");
             }
 
-            if (y is not CompositeCardMetric yMetric)
+            if (y is not CompositeMetric yMetric)
             {
                 throw new ArgumentException("Second comparer parameter is not a CompositeCardMetric");
             }

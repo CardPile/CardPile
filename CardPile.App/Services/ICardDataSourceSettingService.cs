@@ -1,4 +1,4 @@
-﻿using CardPile.CardData;
+﻿using CardPile.CardData.Settings;
 
 namespace CardPile.App.Services;
 
@@ -6,7 +6,7 @@ internal interface ICardDataSourceSettingService
 {
     public string Name { get; }
 
-    public CardDataSourceSettingType Type { get; }
+    public SettingType Type { get; }
 
     public void ApplyChanges();
 

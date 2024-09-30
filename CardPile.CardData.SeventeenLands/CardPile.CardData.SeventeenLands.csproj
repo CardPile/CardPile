@@ -8,12 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CardPile.CardData\CardPile.CardData.csproj" />
     <ProjectReference Include="..\CardPile.CardInfo\CardPile.CardInfo.csproj" />
+    <ProjectReference Include="..\CardPile.Draft\CardPile.Draft.csproj" />
   </ItemGroup>
 
 </Project>

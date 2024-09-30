@@ -1,10 +1,12 @@
-﻿namespace CardPile.CardData.Dummy;
+﻿using CardPile.Draft;
+
+namespace CardPile.CardData.Dummy;
 
 public class DummyCardDataSource : ICardDataSource
 {
     public string Name => "Dummy";
 
-    public ICardData? GetDataForCard(int cardNumber)
+    public ICardData? GetDataForCard(int cardNumber, DraftState state)
     {
         if (firstCardNumber == null)
         {
@@ -89,6 +91,11 @@ public class DummyCardDataSource : ICardDataSource
 
             return null;
         }
+    }
+
+    public void Update(DraftState state)
+    {
+        // NOOP
     }
 
     int? firstCardNumber = null;

@@ -1,4 +1,6 @@
-﻿namespace CardPile.CardData.SeventeenLands;
+﻿using CardPile.CardData.Parameters;
+
+namespace CardPile.CardData.SeventeenLands;
 
 public class SeventeenLandsCardDataSourceBuilder : ICardDataSourceBuilder
 {
@@ -70,12 +72,12 @@ public class SeventeenLandsCardDataSourceBuilder : ICardDataSourceBuilder
 
     private const int StartDataOffsetDays = 21;
 
-    private readonly CardDataSourceParameterOptions SetParameter = new(SET_PARAMETER_NAME, SeventeenLandsCardDataSourceProvider.SetList);
-    private readonly CardDataSourceParameterOptions EventTypeParameter = new(EVENT_TYPE_PARAMETER_NAME, SeventeenLandsCardDataSourceProvider.EventTypeList);
-    private readonly CardDataSourceParameterOptions UserTypeParameter = new(USER_TYPE_PARAMETER_NAME, SeventeenLandsCardDataSourceProvider.UserTypeList);
-    private readonly CardDataSourceParameterOptions ColorParameter = new(COLOR_PARAMETER_NAME, SeventeenLandsCardDataSourceProvider.ColorList);
-    private readonly CardDataSourceParameterOptions DeckTypeParameter = new(DECK_TYPE_PARAMETER_NAME, SeventeenLandsCardDataSourceProvider.GetDeckTypeList());
-    private readonly CardDataSourceParameterOptions RarityParameter = new(RARITY_PARAMETER_NAME, SeventeenLandsCardDataSourceProvider.GetRarityList());
-    private readonly CardDataSourceParameterDate StartDateParameter = new(START_DATE_PARAMETER_NAME, DateTime.Now.AddDays(-StartDataOffsetDays));
-    private readonly CardDataSourceParameterDate EndDateParameter = new(END_DATE_PARAMETER_NAME, DateTime.Now);
+    private readonly ParameterOptions SetParameter = new(SET_PARAMETER_NAME, SeventeenLandsCardDataSourceProvider.SetList);
+    private readonly ParameterOptions EventTypeParameter = new(EVENT_TYPE_PARAMETER_NAME, SeventeenLandsCardDataSourceProvider.EventTypeList);
+    private readonly ParameterOptions UserTypeParameter = new(USER_TYPE_PARAMETER_NAME, SeventeenLandsCardDataSourceProvider.UserTypeList);
+    private readonly ParameterOptions ColorParameter = new(COLOR_PARAMETER_NAME, SeventeenLandsCardDataSourceProvider.ColorList);
+    private readonly ParameterOptions DeckTypeParameter = new(DECK_TYPE_PARAMETER_NAME, SeventeenLandsCardDataSourceProvider.GetDeckTypeList());
+    private readonly ParameterOptions RarityParameter = new(RARITY_PARAMETER_NAME, SeventeenLandsCardDataSourceProvider.GetRarityList());
+    private readonly ParameterDate StartDateParameter = new(START_DATE_PARAMETER_NAME, DateTime.Now.AddDays(-StartDataOffsetDays));
+    private readonly ParameterDate EndDateParameter = new(END_DATE_PARAMETER_NAME, DateTime.Now);
 }

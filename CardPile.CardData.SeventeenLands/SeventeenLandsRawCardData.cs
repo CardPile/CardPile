@@ -1,81 +1,54 @@
-﻿using CardPile.CardData.Formatting;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace CardPile.CardData.SeventeenLands;
 
-internal class SeventeenLandsRawCardData : ICardData
+internal class SeventeenLandsRawCardData
 {
-    internal SeventeenLandsRawCardData(string name, int mtga_id, List<Color> colors) : this(name, mtga_id, colors, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
-    { }
-
-    internal SeventeenLandsRawCardData(string name, int mtga_id, List<Color> colors, string? url) : this(name, mtga_id, colors, url, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
-    { }
-
     internal SeventeenLandsRawCardData
     (
         string name,
         int mtga_id,
         List<Color> colors,
         string? url,
-        int? seen_count,                    // # Seen
-        float? avg_seen,                    // ALSA
-        int? pick_count,                    // # Picked
-        float? avg_pick,                    // ATA
-        int? game_count,                    // # GP
-        float? play_rate,                   // % GP
-        float? win_rate,                    // GP WR
-        int? opening_hand_game_count,       // # OH
-        float? opening_hand_win_rate,       // OH WR
-        int? drawn_game_count,              // # GD
-        float? drawn_win_rate,              // GD WR
-        int? ever_drawn_game_count,         // # GIH
-        float? ever_drawn_win_rate,         // GIH WR
-        int? never_drawn_game_count,        // # GNS
-        float? never_drawn_win_rate,        // GNS WR
-        float? drawn_improvement_win_rate   // IWD,
+        int? seenCount,
+        float? avgSeen,
+        int? pickCount,
+        float? avgPick,
+        int? gameCount,
+        float? playRate,
+        float? winRate,
+        int? openingHandGameCount,
+        float? openingHandWinRate,
+        int? drawnGameCount,
+        float? drawnWinRate,
+        int? everDrawnGameCount,
+        float? everDrawnWinRate,
+        int? neverDrawnGameCount,
+        float? neverDrawnWinRate,
+        float? drawnImprovementWinRate
     )
     {
         Name = name;
         ArenaCardId = mtga_id;
         Colors = colors;
         Url = url;
+        SeenCount = seenCount;
+        AvgSeen = avgSeen;
+        PickCount = pickCount;
+        AvgPick = avgPick;
+        GameCount = gameCount;
+        PlayRate = playRate;
+        WinRate = winRate;
+        OpeningHandGameCount = openingHandGameCount;
+        OpeningHandWinRate = openingHandWinRate;
+        DrawnGameCount = drawnGameCount;
+        DrawnWinRate = drawnWinRate;
+        EverDrawnGameCount = everDrawnGameCount;
+        EverDrawnWinRate = everDrawnWinRate;
+        NeverDrawnGameCount = neverDrawnGameCount;
+        NeverDrawnWinRate = neverDrawnWinRate;
+        DrawnImprovementWinRate = drawnImprovementWinRate;
 
-        SeenMetric = SeenMetricDesc.NewMetric(seen_count);
-        AverageLastSeenAtMetric = AverageLastSeenAtMetricDesc.NewMetric(avg_seen);
-        PickedMetric = PickedMetricDesc.NewMetric(pick_count);
-        AveragePickedAtMetric = AveragePickedAtMetricDesc.NewMetric(avg_pick);
-        NumberOfGamesPlayedMetric = NumberOfGamesPlayedMetricDesc.NewMetric(game_count);
-        PlayRateMetric = PlayRateMetricDesc.NewMetric(play_rate);
-        WinRateWhenMaindeckedMetric = WinRateWhenMaindeckedMetricDesc.NewMetric(win_rate);
-        NumberOfGamesInOpeningHandMetric = NumberOfGamesInOpeningHandMetricDesc.NewMetric(opening_hand_game_count);
-        WinRateInOpeningHandMetric = WinRateInOpeningHandMetricDesc.NewMetric(opening_hand_win_rate);
-        NumberOfGamesDrawnTurn1OrLaterMetric = NumberOfGamesDrawnTurn1OrLaterMetricDesc.NewMetric(drawn_game_count);
-        WinRateWhenDrawnTurn1OrLaterMetric = WinRateWhenDrawnTurn1OrLaterMetricDesc.NewMetric(drawn_win_rate);
-        NumberOfGamesInHandMetric = NumberOfGamesInHandMetricDesc.NewMetric(ever_drawn_game_count);
-        WinRateInHandMetric = WinRateInHandMetricDesc.NewMetric(ever_drawn_win_rate);
-        NumberOfGamesNotSeenMetric = NumberOfGamesNotSeenMetricDesc.NewMetric(never_drawn_game_count);
-        WinRateNotSeenMetric = WinRateNotSeenMetricDesc.NewMetric(never_drawn_win_rate);
-        WinRateImprovementWhenDrawnMetric = WinRateImprovementWhenDrawnMetricDesc.NewMetric(drawn_improvement_win_rate);
-
-        Metrics =
-        [
-            SeenMetric,
-            AverageLastSeenAtMetric,
-            PickedMetric,
-            AveragePickedAtMetric,
-            NumberOfGamesPlayedMetric,
-            PlayRateMetric,
-            WinRateWhenMaindeckedMetric,
-            NumberOfGamesInOpeningHandMetric,
-            WinRateInOpeningHandMetric,
-            NumberOfGamesDrawnTurn1OrLaterMetric,
-            WinRateWhenDrawnTurn1OrLaterMetric,
-            NumberOfGamesInHandMetric,
-            WinRateInHandMetric,
-            NumberOfGamesNotSeenMetric,
-            WinRateNotSeenMetric,
-            WinRateImprovementWhenDrawnMetric,
-        ];
     }
 
     [JsonConstructor]
@@ -105,75 +78,45 @@ internal class SeventeenLandsRawCardData : ICardData
     {
     }
 
-    public string Name { get; init; }
+    internal string Name { get; init; }
 
-    public int ArenaCardId { get; init; }
+    internal int ArenaCardId { get; init; }
 
-    public List<Color> Colors { get; init; }
+    internal List<Color> Colors { get; init; }
 
-    public string? Url { get; set; }
+    internal string? Url { get; set; }
 
-    public List<ICardMetric> Metrics { get; init; }
+    internal int? SeenCount { get; init; }
 
-    internal CardMetric<int> SeenMetric { get; init; }
-    internal CardMetric<float> AverageLastSeenAtMetric { get; init; }
-    internal CardMetric<int> PickedMetric { get; init; }
-    internal CardMetric<float> AveragePickedAtMetric { get; init; }
-    internal CardMetric<int> NumberOfGamesPlayedMetric { get; init; }
-    internal CardMetric<float> PlayRateMetric { get; init; }
-    internal CardMetric<float> WinRateWhenMaindeckedMetric { get; init; }
-    internal CardMetric<int> NumberOfGamesInOpeningHandMetric { get; init; }
-    internal CardMetric<float> WinRateInOpeningHandMetric { get; init; }
-    internal CardMetric<int> NumberOfGamesDrawnTurn1OrLaterMetric { get; init; }
-    internal CardMetric<float> WinRateWhenDrawnTurn1OrLaterMetric { get; init; }
-    internal CardMetric<int> NumberOfGamesInHandMetric { get; init; }
-    internal CardMetric<float> WinRateInHandMetric { get; init; }
-    internal CardMetric<int> NumberOfGamesNotSeenMetric { get; init; }
-    internal CardMetric<float> WinRateNotSeenMetric { get; init; }
-    internal CardMetric<float> WinRateImprovementWhenDrawnMetric { get; init; }
+    internal float? AvgSeen { get; init; }
 
-    internal static readonly CardMetricDescription<int> SeenMetricDesc = new CardMetricDescription<int>("# Seen", false, false);
-    internal static readonly CardMetricDescription<float> AverageLastSeenAtMetricDesc = new CardMetricDescription<float>("ALSA", true, false, new CardMetricDecimalFormatter());
-    internal static readonly CardMetricDescription<int> PickedMetricDesc = new CardMetricDescription<int>("# Picked", false, false);
-    internal static readonly CardMetricDescription<float> AveragePickedAtMetricDesc = new CardMetricDescription<float>("ATA", true, false, new CardMetricDecimalFormatter());
-    internal static readonly CardMetricDescription<int> NumberOfGamesPlayedMetricDesc = new CardMetricDescription<int>("# GP", false, false);
-    internal static readonly CardMetricDescription<float> PlayRateMetricDesc = new CardMetricDescription<float>("% GP", false, false, new CardMetricPercentFormatter());
-    internal static readonly CardMetricDescription<float> WinRateWhenMaindeckedMetricDesc = new CardMetricDescription<float>("GP WR", false, false, new CardMetricPercentFormatter());
-    internal static readonly CardMetricDescription<int> NumberOfGamesInOpeningHandMetricDesc = new CardMetricDescription<int>("# OH", false, false);
-    internal static readonly CardMetricDescription<float> WinRateInOpeningHandMetricDesc = new CardMetricDescription<float>("OH WR", false, false, new CardMetricPercentFormatter());
-    internal static readonly CardMetricDescription<int> NumberOfGamesDrawnTurn1OrLaterMetricDesc = new CardMetricDescription<int>("# GD", false, false);
-    internal static readonly CardMetricDescription<float> WinRateWhenDrawnTurn1OrLaterMetricDesc = new CardMetricDescription<float>("GD WR", false, false, new CardMetricPercentFormatter());
-    internal static readonly CardMetricDescription<int> NumberOfGamesInHandMetricDesc = new CardMetricDescription<int>("# GIH", false, false);
-    internal static readonly CardMetricDescription<float> WinRateInHandMetricDesc = new CardMetricDescription<float>("GIH WR", true, true, new CardMetricPercentFormatter());
-    internal static readonly CardMetricDescription<int> NumberOfGamesNotSeenMetricDesc = new CardMetricDescription<int>("# GNS", false, false);
-    internal static readonly CardMetricDescription<float> WinRateNotSeenMetricDesc = new CardMetricDescription<float>("GNS WR", false, false, new CardMetricPercentFormatter());
-    internal static readonly CardMetricDescription<float> WinRateImprovementWhenDrawnMetricDesc = new CardMetricDescription<float>("IWD", false, false, new CardMetricPercentFormatter());
+    internal int? PickCount { get; init; }
 
-    internal static List<ICardMetricDescription> MetricDescriptions
-    {
-        get
-        {
-            return
-            [
-                SeenMetricDesc,
-                AverageLastSeenAtMetricDesc,
-                PickedMetricDesc,
-                AveragePickedAtMetricDesc,
-                NumberOfGamesPlayedMetricDesc,
-                PlayRateMetricDesc,
-                WinRateWhenMaindeckedMetricDesc,
-                NumberOfGamesInOpeningHandMetricDesc,
-                WinRateInOpeningHandMetricDesc,
-                NumberOfGamesDrawnTurn1OrLaterMetricDesc,
-                WinRateWhenDrawnTurn1OrLaterMetricDesc,
-                NumberOfGamesInHandMetricDesc,
-                WinRateInHandMetricDesc,
-                NumberOfGamesNotSeenMetricDesc,
-                WinRateNotSeenMetricDesc,
-                WinRateImprovementWhenDrawnMetricDesc,
-            ];
-        }
-    }
+    internal float? AvgPick { get; init; }
+
+    internal int? GameCount { get; init; }
+
+    internal float? PlayRate { get; init; }
+
+    internal float? WinRate { get; init; }
+
+    internal int? OpeningHandGameCount { get; init; }
+
+    internal float? OpeningHandWinRate { get; init; }
+
+    internal int? DrawnGameCount { get; init; }
+
+    internal float? DrawnWinRate { get; init; }
+
+    internal int? EverDrawnGameCount { get; init; }
+
+    internal float? EverDrawnWinRate { get; init; }
+
+    internal int? NeverDrawnGameCount { get; init; }
+
+    internal float? NeverDrawnWinRate { get; init; }
+
+    internal float? DrawnImprovementWinRate { get; init; }
 
     private static List<Color> ParseColors(string? colors)
     {
@@ -185,11 +128,11 @@ internal class SeventeenLandsRawCardData : ICardData
         var result = new List<Color>();
         foreach (var color in colors)
         {
-            if(color == 'W')
+            if (color == 'W')
             {
                 result.Add(Color.White);
             }
-            else if(color == 'U')
+            else if (color == 'U')
             {
                 result.Add(Color.Blue);
             }

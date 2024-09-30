@@ -1,8 +1,10 @@
-﻿namespace CardPile.CardData;
+﻿using CardPile.CardData.Parameters;
+
+namespace CardPile.CardData;
 
 public interface ICardDataSourceParameter
 {
     public string Name { get; }
 
-    public CardDataSourceParameterType Type { get; }
+    public ParameterType Type { get; }
 }

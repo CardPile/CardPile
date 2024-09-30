@@ -1,5 +1,8 @@
-﻿using Avalonia.Media.Imaging;
+﻿using Avalonia.Data.Converters;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using CardPile.App.Services;
+using CardPile.CardData.Importance;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +11,26 @@ namespace CardPile.App.ViewModels;
 
 public class CardDataViewModel : ViewModelBase
 {
+    public static FuncValueConverter<ImportanceLevel, IBrush> ImportanceConverter { get; } = new FuncValueConverter<ImportanceLevel, IBrush>(level =>
+    {
+        switch(level)
+        {
+            case ImportanceLevel.Low: return new SolidColorBrush(Colors.LightGray);
+            case ImportanceLevel.Regular:
+            {
+                if(!Avalonia.Application.Current!.TryGetResource("SystemControlForegroundBaseHighBrush", Avalonia.Application.Current.ActualThemeVariant, out object? foregroundBrush))
+                {
+                    return new SolidColorBrush(Colors.White);
+                }
+                var result = foregroundBrush as IBrush;
+                return result ?? new SolidColorBrush(Colors.White);
+            }
+            case ImportanceLevel.High: return new SolidColorBrush(Colors.Orange);
+            case ImportanceLevel.Critical: return new SolidColorBrush(Colors.Red);
+            default: throw new System.NotImplementedException();       
+        }
+    });
+
     internal CardDataViewModel(ICardDataService cardDataService)
     {
         this.cardDataService = cardDataService;

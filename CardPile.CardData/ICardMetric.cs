@@ -1,4 +1,6 @@
-﻿namespace CardPile.CardData;
+﻿using CardPile.CardData.Importance;
+
+namespace CardPile.CardData;
 
 public interface ICardMetric
 {
@@ -7,4 +9,6 @@ public interface ICardMetric
     public bool HasValue { get; }
 
     public string TextValue { get; }
+
+    public ImportanceLevel Importance { get; }
 };

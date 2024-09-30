@@ -1,60 +1,79 @@
 ﻿using CardPile.CardData.Formatting;
+using CardPile.CardData.Importance;
+using CardPile.CardData.Metrics;
 
 namespace CardPile.CardData.SeventeenLands;
 
 internal class SeventeenLandsCardData : ICardData
 {
-    internal SeventeenLandsCardData(string name, int mtga_id, List<Color> colors) : this(new SeventeenLandsRawCardData(name, mtga_id, colors, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null), null, null, null, null, null, null, null, null, null, null)
+
+
+    internal SeventeenLandsCardData(string name, int arenaCardId, List<Color> colors) : this(name, arenaCardId, colors, null)
     { }
 
-    internal SeventeenLandsCardData(string name, int mtga_id, List<Color> colors, string? url) : this(new SeventeenLandsRawCardData(name, mtga_id, colors, url, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null), null, null, null, null, null, null, null, null, null, null)
+    internal SeventeenLandsCardData(string name, int arenaCardId, List<Color> colors, string? url) : this(name,
+                                                                                                          arenaCardId,
+                                                                                                          colors,
+                                                                                                          url,
+                                                                                                          SeenMetricDesc.NewMetric(),
+                                                                                                          AverageLastSeenAtMetricDesc.NewMetric(),
+                                                                                                          PickedMetricDesc.NewMetric(),
+                                                                                                          AveragePickedAtMetricDesc.NewMetric(),
+                                                                                                          NumberOfGamesPlayedMetricDesc.NewMetric(),
+                                                                                                          PlayRateMetricDesc.NewMetric(),
+                                                                                                          WinRateWhenMaindeckedMetricDesc.NewMetric(),
+                                                                                                          NumberOfGamesInOpeningHandMetricDesc.NewMetric(),
+                                                                                                          WinRateInOpeningHandMetricDesc.NewMetric(),
+                                                                                                          NumberOfGamesDrawnTurn1OrLaterMetricDesc.NewMetric(),
+                                                                                                          WinRateWhenDrawnTurn1OrLaterMetricDesc.NewMetric(),
+                                                                                                          NumberOfGamesInHandMetricDesc.NewMetric(),
+                                                                                                          WinRateInHandMetricDesc.NewMetric(),
+                                                                                                          ColorsWinRateInHandMetricDesc.NewMetric(
+                                                                                                              WUWinRateInHandMetricDesc.NewMetric(),
+                                                                                                              WBWinRateInHandMetricDesc.NewMetric(),
+                                                                                                              WRWinRateInHandMetricDesc.NewMetric(),
+                                                                                                              WGWinRateInHandMetricDesc.NewMetric(),
+                                                                                                              UBWinRateInHandMetricDesc.NewMetric(),
+                                                                                                              URWinRateInHandMetricDesc.NewMetric(),
+                                                                                                              UGWinRateInHandMetricDesc.NewMetric(),
+                                                                                                              BRWinRateInHandMetricDesc.NewMetric(),
+                                                                                                              BGWinRateInHandMetricDesc.NewMetric(),
+                                                                                                              RGWinRateInHandMetricDesc.NewMetric()
+                                                                                                          ),
+                                                                                                          NumberOfGamesNotSeenMetricDesc.NewMetric(),
+                                                                                                          WinRateNotSeenMetricDesc.NewMetric(),
+                                                                                                          WinRateImprovementWhenDrawnMetricDesc.NewMetric())
     { }
 
     internal SeventeenLandsCardData
     (
-        SeventeenLandsRawCardData rawCardData,
-        float? wuEverDrawnWinRate,
-        float? wbEverDrawnWinRate,
-        float? wrEverDrawnWinRate,
-        float? wgEverDrawnWinRate,
-        float? ubEverDrawnWinRate,
-        float? urEverDrawnWinRate,
-        float? ugEverDrawnWinRate,
-        float? brEverDrawnWinRate,
-        float? bgEverDrawnWinRate,
-        float? rgEverDrawnWinRate
+        string name,
+        int arenaCardId,
+        List<Color> colors,
+        string? url,
+        ICardMetric seenMetric,
+        ICardMetric averageLastSeenAtMetric,
+        ICardMetric pickedMetric,
+        ICardMetric averagePickedAtMetric,
+        ICardMetric numberOfGamesPlayedMetric,
+        ICardMetric playRateMetric,
+        ICardMetric winRateWhenMaindeckedMetric,
+        ICardMetric numberOfGamesInOpeningHandMetric,
+        ICardMetric winRateInOpeningHandMetric,
+        ICardMetric numberOfGamesDrawnTurn1OrLaterMetric,
+        ICardMetric winRateWhenDrawnTurn1OrLaterMetric,
+        ICardMetric numberOfGamesInHandMetric,
+        ICardMetric winRateInHandMetric,
+        ICardMetric colorsWinRateInHandMetric,
+        ICardMetric numberOfGamesNotSeenMetric,
+        ICardMetric winRateNotSeenMetric,
+        ICardMetric winRateImprovementWhenDrawnMetric
     )
     {
-        this.rawCardData = rawCardData;
-
-        var seenMetric = rawCardData.SeenMetric;
-        var averageLastSeenAtMetric = rawCardData.AverageLastSeenAtMetric;
-        var pickedMetric = rawCardData.PickedMetric;
-        var averagePickedAtMetric = rawCardData.AveragePickedAtMetric;
-        var numberOfGamesPlayedMetric = rawCardData.NumberOfGamesPlayedMetric;
-        var playRateMetric = rawCardData.PlayRateMetric;
-        var winRateWhenMaindeckedMetric = rawCardData.WinRateWhenMaindeckedMetric;
-        var numberOfGamesInOpeningHandMetric = rawCardData.NumberOfGamesInOpeningHandMetric;
-        var winRateInOpeningHandMetric = rawCardData.WinRateInOpeningHandMetric;
-        var numberOfGamesDrawnTurn1OrLaterMetric = rawCardData.NumberOfGamesDrawnTurn1OrLaterMetric;
-        var winRateWhenDrawnTurn1OrLaterMetric = rawCardData.WinRateWhenDrawnTurn1OrLaterMetric;
-        var numberOfGamesInHandMetric = rawCardData.NumberOfGamesInHandMetric;
-        var winRateInHandMetric = rawCardData.WinRateInHandMetric;
-        var colorsWinRateInHandMetric = ColorsWinRateInHandMetricDesc.NewMetricWithSort(rawCardData.WinRateInHandMetric,
-                                                                                        WUWinRateInHandMetricDesc.NewMetric(wuEverDrawnWinRate),
-                                                                                        WBWinRateInHandMetricDesc.NewMetric(wbEverDrawnWinRate),
-                                                                                        WRWinRateInHandMetricDesc.NewMetric(wrEverDrawnWinRate),
-                                                                                        WGWinRateInHandMetricDesc.NewMetric(wgEverDrawnWinRate),
-                                                                                        UBWinRateInHandMetricDesc.NewMetric(ubEverDrawnWinRate),
-                                                                                        URWinRateInHandMetricDesc.NewMetric(urEverDrawnWinRate),
-                                                                                        UGWinRateInHandMetricDesc.NewMetric(ugEverDrawnWinRate),
-                                                                                        BRWinRateInHandMetricDesc.NewMetric(brEverDrawnWinRate),
-                                                                                        BGWinRateInHandMetricDesc.NewMetric(bgEverDrawnWinRate),
-                                                                                        RGWinRateInHandMetricDesc.NewMetric(rgEverDrawnWinRate));
-        var numberOfGamesNotSeenMetric = rawCardData.NumberOfGamesNotSeenMetric;
-        var winRateNotSeenMetric = rawCardData.WinRateNotSeenMetric;
-        var winRateImprovementWhenDrawnMetric = rawCardData.WinRateImprovementWhenDrawnMetric;
-
+        Name = name;
+        ArenaCardId = arenaCardId;
+        Colors = colors;
+        Url = url;
         Metrics =
         [
             seenMetric,
@@ -77,13 +96,13 @@ internal class SeventeenLandsCardData : ICardData
         ];
     }
 
-    public string Name { get => rawCardData.Name; }
+    public string Name { get; init; }
 
-    public int ArenaCardId { get => rawCardData.ArenaCardId; }
+    public int ArenaCardId { get; init; }
 
-    public List<Color> Colors { get => rawCardData.Colors; }
+    public List<Color> Colors { get; init; }
 
-    public string? Url { get => rawCardData.Url; set => rawCardData.Url = value; }
+    public string? Url { get; set; }
 
     public List<ICardMetric> Metrics { get; init; }
 
@@ -93,48 +112,63 @@ internal class SeventeenLandsCardData : ICardData
         {
             return
             [
-                SeventeenLandsRawCardData.SeenMetricDesc,
-                SeventeenLandsRawCardData.AverageLastSeenAtMetricDesc,
-                SeventeenLandsRawCardData.PickedMetricDesc,
-                SeventeenLandsRawCardData.AveragePickedAtMetricDesc,
-                SeventeenLandsRawCardData.NumberOfGamesPlayedMetricDesc,
-                SeventeenLandsRawCardData.PlayRateMetricDesc,
-                SeventeenLandsRawCardData.WinRateWhenMaindeckedMetricDesc,
-                SeventeenLandsRawCardData.NumberOfGamesInOpeningHandMetricDesc,
-                SeventeenLandsRawCardData.WinRateInOpeningHandMetricDesc,
-                SeventeenLandsRawCardData.NumberOfGamesDrawnTurn1OrLaterMetricDesc,
-                SeventeenLandsRawCardData.WinRateWhenDrawnTurn1OrLaterMetricDesc,
-                SeventeenLandsRawCardData.NumberOfGamesInHandMetricDesc,
-                SeventeenLandsRawCardData.WinRateInHandMetricDesc,
+                SeenMetricDesc,
+                AverageLastSeenAtMetricDesc,
+                PickedMetricDesc,
+                AveragePickedAtMetricDesc,
+                NumberOfGamesPlayedMetricDesc,
+                PlayRateMetricDesc,
+                WinRateWhenMaindeckedMetricDesc,
+                NumberOfGamesInOpeningHandMetricDesc,
+                WinRateInOpeningHandMetricDesc,
+                NumberOfGamesDrawnTurn1OrLaterMetricDesc,
+                WinRateWhenDrawnTurn1OrLaterMetricDesc,
+                NumberOfGamesInHandMetricDesc,
+                WinRateInHandMetricDesc,
                 ColorsWinRateInHandMetricDesc,
-                SeventeenLandsRawCardData.NumberOfGamesNotSeenMetricDesc,
-                SeventeenLandsRawCardData.WinRateNotSeenMetricDesc,
-                SeventeenLandsRawCardData.WinRateImprovementWhenDrawnMetricDesc,
+                NumberOfGamesNotSeenMetricDesc,
+                WinRateNotSeenMetricDesc,
+                WinRateImprovementWhenDrawnMetricDesc,
             ];
         }
     }
 
-    private static readonly CardMetricDescription<float> WUWinRateInHandMetricDesc = new CardMetricDescription<float>("WU", true, false, new CardMetricPercentFormatter());
-    private static readonly CardMetricDescription<float> WBWinRateInHandMetricDesc = new CardMetricDescription<float>("WB", true, false, new CardMetricPercentFormatter());
-    private static readonly CardMetricDescription<float> WRWinRateInHandMetricDesc = new CardMetricDescription<float>("WR", true, false, new CardMetricPercentFormatter());
-    private static readonly CardMetricDescription<float> WGWinRateInHandMetricDesc = new CardMetricDescription<float>("WG", true, false, new CardMetricPercentFormatter());
-    private static readonly CardMetricDescription<float> UBWinRateInHandMetricDesc = new CardMetricDescription<float>("UB", true, false, new CardMetricPercentFormatter());
-    private static readonly CardMetricDescription<float> URWinRateInHandMetricDesc = new CardMetricDescription<float>("UR", true, false, new CardMetricPercentFormatter());
-    private static readonly CardMetricDescription<float> UGWinRateInHandMetricDesc = new CardMetricDescription<float>("UG", true, false, new CardMetricPercentFormatter());
-    private static readonly CardMetricDescription<float> BRWinRateInHandMetricDesc = new CardMetricDescription<float>("BR", true, false, new CardMetricPercentFormatter());
-    private static readonly CardMetricDescription<float> BGWinRateInHandMetricDesc = new CardMetricDescription<float>("BG", true, false, new CardMetricPercentFormatter());
-    private static readonly CardMetricDescription<float> RGWinRateInHandMetricDesc = new CardMetricDescription<float>("RG", true, false, new CardMetricPercentFormatter());
-    private static readonly CompositeCardMetricDescription ColorsWinRateInHandMetricDesc = new CompositeCardMetricDescription("GIH WR (2C)", true, false,
-                                                                                                                               WUWinRateInHandMetricDesc,
-                                                                                                                               WBWinRateInHandMetricDesc,
-                                                                                                                               WRWinRateInHandMetricDesc,
-                                                                                                                               WGWinRateInHandMetricDesc,
-                                                                                                                               UBWinRateInHandMetricDesc,
-                                                                                                                               URWinRateInHandMetricDesc,
-                                                                                                                               UGWinRateInHandMetricDesc,
-                                                                                                                               BRWinRateInHandMetricDesc,
-                                                                                                                               BGWinRateInHandMetricDesc,
-                                                                                                                               RGWinRateInHandMetricDesc);
+    internal static readonly MetricDescription<int> SeenMetricDesc = new MetricDescription<int>("# Seen", false, false);
+    internal static readonly MetricDescription<float> AverageLastSeenAtMetricDesc = new MetricDescription<float>("ALSA", true, false, new MetricDecimalFormatter());
+    internal static readonly MetricDescription<int> PickedMetricDesc = new MetricDescription<int>("# Picked", false, false);
+    internal static readonly MetricDescription<float> AveragePickedAtMetricDesc = new MetricDescription<float>("ATA", true, false, new MetricDecimalFormatter());
+    internal static readonly MetricDescription<int> NumberOfGamesPlayedMetricDesc = new MetricDescription<int>("# GP", false, false);
+    internal static readonly MetricDescription<float> PlayRateMetricDesc = new MetricDescription<float>("% GP", false, false, new MetricPercentFormatter());
+    internal static readonly MetricDescription<float> WinRateWhenMaindeckedMetricDesc = new MetricDescription<float>("GP WR", false, false, new MetricPercentFormatter());
+    internal static readonly MetricDescription<int> NumberOfGamesInOpeningHandMetricDesc = new MetricDescription<int>("# OH", false, false);
+    internal static readonly MetricDescription<float> WinRateInOpeningHandMetricDesc = new MetricDescription<float>("OH WR", false, false, new MetricPercentFormatter());
+    internal static readonly MetricDescription<int> NumberOfGamesDrawnTurn1OrLaterMetricDesc = new MetricDescription<int>("# GD", false, false);
+    internal static readonly MetricDescription<float> WinRateWhenDrawnTurn1OrLaterMetricDesc = new MetricDescription<float>("GD WR", false, false, new MetricPercentFormatter());
+    internal static readonly MetricDescription<int> NumberOfGamesInHandMetricDesc = new MetricDescription<int>("# GIH", false, false);
+    internal static readonly MetricDescription<float> WinRateInHandMetricDesc = new MetricDescription<float>("GIH WR", true, true, new MetricPercentFormatter());
+    internal static readonly MetricDescription<int> NumberOfGamesNotSeenMetricDesc = new MetricDescription<int>("# GNS", false, false);
+    internal static readonly MetricDescription<float> WinRateNotSeenMetricDesc = new MetricDescription<float>("GNS WR", false, false, new MetricPercentFormatter());
+    internal static readonly MetricDescription<float> WinRateImprovementWhenDrawnMetricDesc = new MetricDescription<float>("IWD", false, false, new MetricPercentFormatter());
 
-    private SeventeenLandsRawCardData rawCardData;
+    internal static readonly MetricDescription<float> WUWinRateInHandMetricDesc = new MetricDescription<float>("WU", true, false, new MetricPercentFormatter());
+    internal static readonly MetricDescription<float> WBWinRateInHandMetricDesc = new MetricDescription<float>("WB", true, false, new MetricPercentFormatter());
+    internal static readonly MetricDescription<float> WRWinRateInHandMetricDesc = new MetricDescription<float>("WR", true, false, new MetricPercentFormatter());
+    internal static readonly MetricDescription<float> WGWinRateInHandMetricDesc = new MetricDescription<float>("WG", true, false, new MetricPercentFormatter());
+    internal static readonly MetricDescription<float> UBWinRateInHandMetricDesc = new MetricDescription<float>("UB", true, false, new MetricPercentFormatter());
+    internal static readonly MetricDescription<float> URWinRateInHandMetricDesc = new MetricDescription<float>("UR", true, false, new MetricPercentFormatter());
+    internal static readonly MetricDescription<float> UGWinRateInHandMetricDesc = new MetricDescription<float>("UG", true, false, new MetricPercentFormatter());
+    internal static readonly MetricDescription<float> BRWinRateInHandMetricDesc = new MetricDescription<float>("BR", true, false, new MetricPercentFormatter());
+    internal static readonly MetricDescription<float> BGWinRateInHandMetricDesc = new MetricDescription<float>("BG", true, false, new MetricPercentFormatter());
+    internal static readonly MetricDescription<float> RGWinRateInHandMetricDesc = new MetricDescription<float>("RG", true, false, new MetricPercentFormatter());
+    internal static readonly CompositeMetricDescription ColorsWinRateInHandMetricDesc = new CompositeMetricDescription("GIH WR (2C)", true, false,
+                                                                                                                       WUWinRateInHandMetricDesc,
+                                                                                                                       WBWinRateInHandMetricDesc,
+                                                                                                                       WRWinRateInHandMetricDesc,
+                                                                                                                       WGWinRateInHandMetricDesc,
+                                                                                                                       UBWinRateInHandMetricDesc,
+                                                                                                                       URWinRateInHandMetricDesc,
+                                                                                                                       UGWinRateInHandMetricDesc,
+                                                                                                                       BRWinRateInHandMetricDesc,
+                                                                                                                       BGWinRateInHandMetricDesc,
+                                                                                                                       RGWinRateInHandMetricDesc);
 }

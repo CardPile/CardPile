@@ -1,6 +1,8 @@
 ﻿using Avalonia.Threading;
 using CardPile.App.Services;
 using CardPile.CardData;
+using CardPile.CardData.Parameters;
+using CardPile.CardData.Settings;
 using ReactiveUI;
 using System;
 using System.Threading;
@@ -58,13 +60,13 @@ internal class CardPileModel : ReactiveObject
     {
         foreach (var parameter in builder.Parameters)
         {
-            if (parameter.Type == CardData.CardDataSourceParameterType.Options)
+            if (parameter.Type == ParameterType.Options)
             {
                 var options = parameter as ICardDataSourceParameterOptionsService;
                 options.ObservableForProperty(x => x.Value)
                        .Subscribe(x => BuildCardDataSource(builder));
             }
-            if(parameter.Type == CardData.CardDataSourceParameterType.Date)
+            if(parameter.Type == ParameterType.Date)
             {
                 var date = parameter as ICardDataSourceParameterDateService;
                 date.ObservableForProperty(x => x.Value)
@@ -77,7 +79,7 @@ internal class CardPileModel : ReactiveObject
     {
         foreach(var setting in builder.Settings)
         {
-            if(setting.Type == CardDataSourceSettingType.Path)
+            if(setting.Type == SettingType.Path)
             {
                 var path = setting as ICardDataSourceSettingPathService;
                 path.ObservableForProperty(x => x.Value)

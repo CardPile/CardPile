@@ -32,8 +32,8 @@
           <ItemsControl.ItemTemplate>
             <DataTemplate>
               <UniformGrid Margin="5 0" Rows="1" IsVisible="{Binding Visible}">
-                <TextBlock Grid.Column="0" Text="{Binding Metric.Description.Name}" Margin="5 2"></TextBlock>
-                <TextBlock Grid.Column="1" Text="{Binding Metric.TextValue}" Margin="5 2" HorizontalAlignment="Right"></TextBlock>
+                <TextBlock Grid.Column="0" Text="{Binding Metric.Description.Name}" Foreground="{Binding Metric.Importance, Converter={x:Static vm:CardDataViewModel.ImportanceConverter}}" Margin="5 2"></TextBlock>
+                <TextBlock Grid.Column="1" Text="{Binding Metric.TextValue}" Foreground="{Binding Metric.Importance, Converter={x:Static vm:CardDataViewModel.ImportanceConverter}}" Margin="5 2" HorizontalAlignment="Right"></TextBlock>
               </UniformGrid>
             </DataTemplate>
           </ItemsControl.ItemTemplate>

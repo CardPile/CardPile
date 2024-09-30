@@ -1,10 +1,11 @@
 ﻿using CardPile.CardData.Formatting;
+using CardPile.CardData.Importance;
 
-namespace CardPile.CardData;
+namespace CardPile.CardData.Metrics;
 
-public class CardMetricDescription<T> : ICardMetricDescription where T : struct 
+public class MetricDescription<T> : ICardMetricDescription where T : struct
 {
-    public CardMetricDescription(string name, bool isDefaultVisible, bool isDefault, ICardMetricFormatter<T>? formatter = null)
+    public MetricDescription(string name, bool isDefaultVisible, bool isDefault, IMetricFormatter<T>? formatter = null)
     {
         Name = name;
         IsDefaultVisible = isDefaultVisible;
@@ -20,21 +21,32 @@ public class CardMetricDescription<T> : ICardMetricDescription where T : struct
 
     public IComparer<ICardMetric> Comparer { get => new CompositeCardMetricComparer(); }
 
-    public CardMetric<T> NewMetric<E>(E? value)
+    public Metric<T> NewMetric<E>(E? value)
     {
-        if(value == null)
+        return NewMetric<E>(value, (T) => ImportanceLevel.Regular);
+    }
+
+    public Metric<T> NewMetric<E>(E? value, Func<T, ImportanceLevel> importanceCalculator)
+    {
+        if (value == null)
         {
-            return new CardMetric<T>(this, null);
+            return new Metric<T>(this, null, ImportanceLevel.Regular);
         }
 
         if (value is not T baseValue)
         {
             throw new ArgumentException("The metric value type must match the metric description type");
         }
-        return new CardMetric<T>(this, baseValue);
+
+        return new Metric<T>(this, baseValue, importanceCalculator(baseValue));
     }
 
-    internal ICardMetricFormatter<T>? Formatter { get; init; }
+    public Metric<T> NewMetric()
+    {
+        return new Metric<T>(this, null, ImportanceLevel.Regular);
+    }
+
+    internal IMetricFormatter<T>? Formatter { get; init; }
 
     private class CompositeCardMetricComparer : IComparer<ICardMetric>
     {
@@ -55,12 +67,12 @@ public class CardMetricDescription<T> : ICardMetricDescription where T : struct
                 return 1;
             }
 
-            if (x is not CardMetric<T> xMetric)
+            if (x is not Metric<T> xMetric)
             {
                 throw new ArgumentException("First comparer parameter is not a CardMetric<T>");
             }
 
-            if (y is not CardMetric<T> yMetric)
+            if (y is not Metric<T> yMetric)
             {
                 throw new ArgumentException("Second comparer parameter is not a CardMetric<T>");
             }

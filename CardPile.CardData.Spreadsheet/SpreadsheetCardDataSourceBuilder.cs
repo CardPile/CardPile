@@ -3,6 +3,7 @@ using System.Globalization;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using Newtonsoft.Json;
+using CardPile.CardData.Settings;
 
 namespace CardPile.CardData.Spreadsheet;
 
@@ -76,7 +77,7 @@ public class SpreadsheetCardDataSourceBuilder : ICardDataSourceBuilder
 
     private static readonly string CONFIG_LOCATION_KEY = "location";
 
-    private CardDataSourceSettingPath SpreadSheetFilenameSetting = new CardDataSourceSettingPath("Grade file", GetSpreadsheetFileName());
+    private SettingPath SpreadSheetFilenameSetting = new SettingPath("Grade file", GetSpreadsheetFileName());
 
     private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 }

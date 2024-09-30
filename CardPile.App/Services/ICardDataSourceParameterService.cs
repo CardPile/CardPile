@@ -1,4 +1,4 @@
-﻿using CardPile.CardData;
+﻿using CardPile.CardData.Parameters;
 using System.Reflection.Metadata;
 
 namespace CardPile.App.Services;
@@ -7,5 +7,5 @@ internal interface ICardDataSourceParameterService
 {
     public string Name { get; }
 
-    public CardDataSourceParameterType Type { get; }
+    public ParameterType Type { get; }
 }

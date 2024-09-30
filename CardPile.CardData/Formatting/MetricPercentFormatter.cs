@@ -1,6 +1,6 @@
 ﻿namespace CardPile.CardData.Formatting;
 
-public class CardMetricDecimalFormatter : ICardMetricFormatter<float>
+public class MetricPercentFormatter : IMetricFormatter<float>
 {
     public string Format(float? value)
     {
@@ -9,6 +9,6 @@ public class CardMetricDecimalFormatter : ICardMetricFormatter<float>
             return string.Empty;
         }
 
-        return string.Format("{0:0.00}", value.Value);
+        return string.Format("{0:0.00}%", 100.0f * value.Value);
     }
 }

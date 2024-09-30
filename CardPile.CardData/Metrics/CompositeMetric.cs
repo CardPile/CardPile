@@ -1,10 +1,12 @@
 ﻿using System.Text;
+using System.Threading.Tasks;
+using CardPile.CardData.Importance;
 
-namespace CardPile.CardData;
+namespace CardPile.CardData.Metrics;
 
-public class CompositeCardMetric : ICardMetric
+public class CompositeMetric : ICardMetric
 {
-    public CompositeCardMetric(CompositeCardMetricDescription description, params ICardMetric?[] values)
+    public CompositeMetric(CompositeMetricDescription description, params ICardMetric?[] values)
     {
         if (values.Length == 0)
         {
@@ -17,13 +19,14 @@ public class CompositeCardMetric : ICardMetric
         }
 
         Description = description;
+        Importance = InferImportance(values);
         Values = new List<ICardMetric?>(values);
         SortValue = Values.FirstOrDefault();
     }
 
     public ICardMetricDescription Description { get; init; }
 
-    public bool HasValue {  get => Values.Any(value => value != null && value.HasValue); }
+    public bool HasValue { get => Values.Any(value => value != null && value.HasValue); }
 
     public string TextValue
     {
@@ -36,7 +39,7 @@ public class CompositeCardMetric : ICardMetric
                 {
                     continue;
                 }
-                    
+
                 if (!metric.HasValue)
                 {
                     continue;
@@ -48,7 +51,25 @@ public class CompositeCardMetric : ICardMetric
         }
     }
 
+    public ImportanceLevel Importance { get; init; }
+
     internal List<ICardMetric?> Values { get; init; }
 
     internal ICardMetric? SortValue { get; set; }
+
+    private static ImportanceLevel InferImportance(params ICardMetric?[] values)
+    {
+        ImportanceLevel? result = null;
+        foreach (ICardMetric? metric in values)
+        {
+            if (metric == null)
+            {
+                continue;
+            }
+
+            result = ((result ?? ImportanceLevel.Low) < metric.Importance ? metric.Importance : result);
+        }
+
+        return result ?? ImportanceLevel.Regular;
+    }
 }

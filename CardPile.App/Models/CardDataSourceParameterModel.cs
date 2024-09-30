@@ -1,5 +1,6 @@
 ﻿using CardPile.App.Services;
 using CardPile.CardData;
+using CardPile.CardData.Parameters;
 using ReactiveUI;
 
 namespace CardPile.App.Models;
@@ -13,7 +14,7 @@ internal class CardDataSourceParameterModel : ReactiveObject, ICardDataSourcePar
 
     public string Name { get => parameter.Name; }
 
-    public CardDataSourceParameterType Type { get => parameter.Type; }
+    public ParameterType Type { get => parameter.Type; }
 
     protected T? As<T>() where T : class, ICardDataSourceParameter
     {

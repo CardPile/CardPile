@@ -1,6 +1,8 @@
 ﻿using CardPile.App.Services;
 using CardPile.App.ViewModels;
 using CardPile.CardData;
+using CardPile.CardData.Parameters;
+using CardPile.CardData.Settings;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -18,14 +20,14 @@ internal class CardDataSourceBuilderModel : ReactiveObject, ICardDataSourceBuild
 
         settings = builder.Settings.Select(p => p.Type switch
             { 
-                CardDataSourceSettingType.Path => new CardDataSourceSettingPathModel((p as ICardDataSourceSettingPath)!),
+                SettingType.Path => new CardDataSourceSettingPathModel((p as ICardDataSourceSettingPath)!),
                 _ => new CardDataSourceSettingModel(p)
             }).ToList<ICardDataSourceSettingService>();
 
         parameters = builder.Parameters.Select(p => p.Type switch
             {
-                CardDataSourceParameterType.Options => new CardDataSourceParameterOptionsModel((p as ICardDataSourceParameterOptions)!),
-                CardDataSourceParameterType.Date => new CardDataSourceParameterDateModel((p as ICardDataSourceParameterDate)!),
+                ParameterType.Options => new CardDataSourceParameterOptionsModel((p as ICardDataSourceParameterOptions)!),
+                ParameterType.Date => new CardDataSourceParameterDateModel((p as ICardDataSourceParameterDate)!),
                 _ => new CardDataSourceParameterModel(p)
             }).ToList<ICardDataSourceParameterService>();
 

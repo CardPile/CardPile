@@ -1,8 +1,11 @@
-﻿namespace CardPile.CardData;
+﻿using CardPile.CardData.Importance;
+using CardPile.Draft;
 
-public class CardLetterGradeMetricDescription : ICardMetricDescription
+namespace CardPile.CardData.Metrics;
+
+public class LetterGradeMetricDescription : ICardMetricDescription
 {
-    public CardLetterGradeMetricDescription(string name, bool isDefaultVisible, bool isDefault)
+    public LetterGradeMetricDescription(string name, bool isDefaultVisible, bool isDefault)
     {
         Name = name;
         IsDefaultVisible = isDefaultVisible;
@@ -19,28 +22,49 @@ public class CardLetterGradeMetricDescription : ICardMetricDescription
 
     public ICardMetric NewMetric(string? value)
     {
-        return new CardLetterGradeMetric(this, value!);
+        var importance = ImportanceLevel.Regular;
+        if(value != null && GRADE_TO_VALUE.TryGetValue(value, out int numericalValue))
+        {
+            if (numericalValue >= 10)
+            {
+                importance = ImportanceLevel.Critical;
+            }
+            else if (numericalValue >= 7)
+            {
+                importance = ImportanceLevel.High;
+            }
+            else if(numericalValue >= 4)
+            {
+                importance = ImportanceLevel.Regular;
+            }
+            else
+            {
+                importance = ImportanceLevel.Low;
+            }
+        };
+
+        return new LetterGradeMetric(this, value!, importance);
     }
+
+    private static readonly Dictionary<string, int> GRADE_TO_VALUE = new()
+    {
+        {"A+", 12 },
+        {"A",  11 },
+        {"A-", 10 },
+        {"B+",  9 },
+        {"B",   8 },
+        {"B-",  7 },
+        {"C+",  6 },
+        {"C",   5 },
+        {"C-",  4 },
+        {"D+",  3 },
+        {"D",   2 },
+        {"D-",  1 },
+        {"F",   0 },
+    };
 
     private class CardLetterGradeMetricComparer : IComparer<ICardMetric>
     {
-        private static readonly Dictionary<string, int> GRADE_TO_VALUE = new()
-        {
-            {"A+", 12 },
-            {"A",  11 },
-            {"A-", 10 },
-            {"B+",  9 },
-            {"B",   8 },
-            {"B-",  7 },
-            {"C+",  6 },
-            {"C",   5 },
-            {"C-",  4 },
-            {"D+",  3 },
-            {"D",   2 },
-            {"D-",  1 },
-            {"F",   0 },
-        };
-
         private static readonly string[] PREFIXES_TO_IGNORE =
         [
             "SB ",
@@ -65,12 +89,12 @@ public class CardLetterGradeMetricDescription : ICardMetricDescription
                 return 1;
             }
 
-            if (x is not CardLetterGradeMetric xMetric)
+            if (x is not LetterGradeMetric xMetric)
             {
                 throw new ArgumentException("First comparer parameter is not a CardLetterGradeMetric");
             }
 
-            if (y is not CardLetterGradeMetric yMetric)
+            if (y is not LetterGradeMetric yMetric)
             {
                 throw new ArgumentException("Second comparer parameter is not a CardLetterGradeMetric");
             }
@@ -91,9 +115,9 @@ public class CardLetterGradeMetricDescription : ICardMetricDescription
             }
 
             var xValue = xMetric.Value;
-            foreach(var prefix in PREFIXES_TO_IGNORE)
+            foreach (var prefix in PREFIXES_TO_IGNORE)
             {
-                if(xValue.StartsWith(prefix))
+                if (xValue.StartsWith(prefix))
                 {
                     xValue = xValue.Substring(prefix.Length);
                 }

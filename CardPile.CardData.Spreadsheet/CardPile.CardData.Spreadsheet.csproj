@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CardPile.CardData\CardPile.CardData.csproj" />
     <ProjectReference Include="..\CardPile.CardInfo\CardPile.CardInfo.csproj" />
+    <ProjectReference Include="..\CardPile.Draft\CardPile.Draft.csproj" />
   </ItemGroup>
 
 </Project>

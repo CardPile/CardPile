@@ -1,10 +1,14 @@
-﻿namespace CardPile.CardData;
+﻿using CardPile.CardData.Importance;
 
-public class CardMetric<T> : ICardMetric where T : struct
+namespace CardPile.CardData.Metrics;
+
+public class Metric<T> : ICardMetric where T : struct
 {
-    public CardMetric(CardMetricDescription<T> description, T? value)
+    public Metric(MetricDescription<T> description, T? value, ImportanceLevel importance)
     {
         this.description = description;
+
+        Importance = importance;
 
         Value = value;
     }
@@ -17,7 +21,7 @@ public class CardMetric<T> : ICardMetric where T : struct
     {
         get
         {
-            if(description.Formatter != null)
+            if (description.Formatter != null)
             {
                 return description.Formatter.Format(Value);
             }
@@ -28,7 +32,9 @@ public class CardMetric<T> : ICardMetric where T : struct
         }
     }
 
+    public ImportanceLevel Importance { get; init; }
+
     public T? Value { get; init; }
 
-    private CardMetricDescription<T> description;
+    private MetricDescription<T> description;
 }

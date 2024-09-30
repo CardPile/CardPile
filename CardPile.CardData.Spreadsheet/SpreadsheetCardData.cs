@@ -1,4 +1,7 @@
-﻿namespace CardPile.CardData.Spreadsheet;
+﻿using CardPile.CardData.Metrics;
+using CardPile.Draft;
+
+namespace CardPile.CardData.Spreadsheet;
 
 public class SpreadsheetCardData : ICardData
 {
@@ -38,6 +41,6 @@ public class SpreadsheetCardData : ICardData
         }
     }
 
-    private static readonly CardLetterGradeMetricDescription GradeMetricDesc = new CardLetterGradeMetricDescription("Grade", true, true);
+    private static readonly LetterGradeMetricDescription GradeMetricDesc = new LetterGradeMetricDescription("Grade", true, true);
 }
 

@@ -84,9 +84,6 @@ public class MainWindowViewModel : ViewModelBase
             var result = await ShowCardDataSourceSettingsDialog.Handle(settingsViewModel);
             if (result)
             {
-                // TODO(now): Rebuild the card data source
-                // ClearMetricViewModels();
-                // ClearCardData();
                 settingsViewModel.ApplyChanges();
             }
             else

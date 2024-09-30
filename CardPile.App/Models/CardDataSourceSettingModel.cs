@@ -1,5 +1,6 @@
 ﻿using CardPile.App.Services;
 using CardPile.CardData;
+using CardPile.CardData.Settings;
 using ReactiveUI;
 
 namespace CardPile.App.Models;
@@ -13,7 +14,7 @@ internal class CardDataSourceSettingModel : ReactiveObject, ICardDataSourceSetti
 
     public string Name { get => setting.Name; }
 
-    public CardDataSourceSettingType Type { get => setting.Type; }
+    public SettingType Type { get => setting.Type; }
 
     virtual public void ApplyChanges()
     { }
