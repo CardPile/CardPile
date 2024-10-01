@@ -1,10 +1,8 @@
 ﻿using CardPile.App.Services;
-using CardPile.App.ViewModels;
 using CardPile.CardData;
 using CardPile.CardData.Parameters;
 using CardPile.CardData.Settings;
 using ReactiveUI;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;

@@ -59,6 +59,33 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         set => this.RaiseAndSetIfChanged(ref previousPick, value);
     }
 
+    internal static void ClearOldDrafts()
+    {
+        string draftDirectory = GetDraftCacheDirectory();
+        if (!Directory.Exists(draftDirectory))
+        {
+            return;
+        }
+
+        var filePaths = Directory.GetFiles(draftDirectory);
+        foreach (var filePath in filePaths)
+        {
+            var lastAccessTime = File.GetLastAccessTimeUtc(filePath);
+            var lastAccessTimeSpan = DateTime.UtcNow.Subtract(lastAccessTime);
+            if (lastAccessTimeSpan.TotalDays >= CacheValidDays)
+            {
+                try
+                {
+                    File.Delete(filePath);
+                }
+                catch (Exception ex)
+                {
+                    logger.Error("Error removing card image {cardImageFilePath}. Exception: {exception}", filePath, ex);
+                }
+            }
+        }
+    }
+
     internal void SetCardDataSource(ICardDataSource newCardDataSource)
     {
         logger.Info($"Setting new card data source {newCardDataSource.Name}");
@@ -235,8 +262,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
             return;
         }
 
-        string executableDirectory = Environment.ProcessPath != null ? Path.GetDirectoryName(Environment.ProcessPath) ?? "." : ".";
-        string draftDirectory = Path.Combine(executableDirectory, "Drafts");
+        string draftDirectory = GetDraftCacheDirectory();
         string draftFilePath = Path.Combine(draftDirectory, $"{state.DraftId}.json");
 
         if(!Directory.Exists(draftDirectory))
@@ -281,7 +307,16 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         serializer.Populate(jsonReader, state);
     }
 
+    private static string GetDraftCacheDirectory()
+    {
+        string executableDirectory = Environment.ProcessPath != null ? Path.GetDirectoryName(Environment.ProcessPath) ?? "." : ".";
+        string draftDirectory = Path.Combine(executableDirectory, "Drafts");
+        return draftDirectory;
+    }
+
     private DraftState draftState;
+
+    private const int CacheValidDays = 7;
 
     private readonly ObservableCollection<ICardDataService> cardsInCurrentPack;
     private readonly ObservableCollection<ICardDataService> cardsMissingInCurrentPack;

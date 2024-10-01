@@ -13,7 +13,7 @@ public interface ICardDataSourceBuilder
     // TODO: Hook this up to draft start
     // ICardDataSource BuildForSetAndEvent(string set, string event);
 
-    ICardDataSource Build();
+    public ICardDataSource Build();
 
-    Task<ICardDataSource> BuildAsync(CancellationToken cancelation);
+    public Task<ICardDataSource> BuildAsync(CancellationToken cancelation);
 }

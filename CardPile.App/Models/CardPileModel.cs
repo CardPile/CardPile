@@ -16,6 +16,15 @@ internal class CardPileModel : ReactiveObject
     {
         progressCallback("Loading Arena data...");
         await Task.Run(CardInfo.Arena.Init, cancellationToken);
+        
+        progressCallback("Cleaning old card images...");
+        await Task.Run(CardDataModel.ClearOldCardImages, cancellationToken);
+
+        progressCallback("Cleaning old drafts...");
+        await Task.Run(DraftModel.ClearOldDrafts, cancellationToken);
+
+        progressCallback("Initializaing card data sources...");
+        await Task.Run(CardDataSourceBuilderCollectionModel.Init, cancellationToken);
     }
 
     internal CardPileModel()

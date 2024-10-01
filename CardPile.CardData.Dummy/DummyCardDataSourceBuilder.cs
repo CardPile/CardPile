@@ -6,6 +6,11 @@ namespace CardPile.CardData.Dummy;
 
 public class DummyCardDataSourceBuilder : ICardDataSourceBuilder
 {
+    public static void Init()
+    {
+        // NOOP
+    }
+
     public string Name => "Dummy";
 
     public List<ICardDataSourceSetting> Settings => [FirstSetting];

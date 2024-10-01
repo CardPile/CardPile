@@ -18,6 +18,33 @@ internal class CardDataModel : ReactiveObject, ICardDataService
         this.cardData = cardData;
     }
 
+    internal static void ClearOldCardImages()
+    {
+        if (!Directory.Exists(ScryfallCardImageCache))
+        {
+            return;
+        }
+
+        var filePaths = Directory.GetFiles(ScryfallCardImageCache);
+        foreach (var filePath in filePaths)
+        {
+            var lastAccessTime = File.GetLastAccessTimeUtc(filePath);
+            var lastAccessTimeSpan = DateTime.UtcNow.Subtract(lastAccessTime);
+            if (lastAccessTimeSpan.TotalDays >= CacheValidDays)
+            {
+                try
+                {
+                    File.Delete(filePath);
+                }
+                catch(Exception ex)
+                { 
+                    logger.Error("Error removing card image {cardImageFilePath}. Exception: {exception}", filePath, ex);
+                }
+            }
+        }
+    }
+
+
     public string Name
     {
         get => cardData.Name;
@@ -50,7 +77,7 @@ internal class CardDataModel : ReactiveObject, ICardDataService
 
     private async Task<Bitmap?> LoadCardImage()
     {
-        string CacheDirectory = Path.Combine(AppProgramData, "ScryfallCardImageCache");
+        string CacheDirectory = ScryfallCardImageCache;
         string CachePath = Path.Combine(CacheDirectory, $"{ArenaCardId}.jpg");
 
         Stream? stream = null;
@@ -99,6 +126,8 @@ internal class CardDataModel : ReactiveObject, ICardDataService
     }
 
     private readonly static string AppProgramData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "CardPile");
+    private readonly static string ScryfallCardImageCache = Path.Combine(AppProgramData, "ScryfallCardImageCache");
+    private const int CacheValidDays = 30;
 
     private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 

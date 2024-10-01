@@ -10,6 +10,13 @@ namespace CardPile.App.Models;
 
 internal class CardDataSourceBuilderCollectionModel : ReactiveObject, ICardDataSourceBuilderCollectionService
 {
+    static CardDataSourceBuilderCollectionModel()
+    {
+        DummyCardDataSourceBuilder.Init();
+        SeventeenLandsCardDataSourceBuilder.Init();
+        SpreadsheetCardDataSourceBuilder.Init();
+    }
+
     internal CardDataSourceBuilderCollectionModel()
     {
         currentCardDataSourceBuilder = AvailableCardDataSourceBuilders.First();
@@ -22,6 +29,11 @@ internal class CardDataSourceBuilderCollectionModel : ReactiveObject, ICardDataS
     {
         get => currentCardDataSourceBuilder;
         set => this.RaiseAndSetIfChanged(ref currentCardDataSourceBuilder, value);
+    }
+
+    internal static void Init()
+    {
+        // NOOP - runs static constructor
     }
 
     private static readonly CardDataSourceBuilderModel DummyCardDataSourceBuilderModel = new CardDataSourceBuilderModel(new DummyCardDataSourceBuilder());

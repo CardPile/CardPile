@@ -9,6 +9,11 @@ namespace CardPile.CardData.Spreadsheet;
 
 public class SpreadsheetCardDataSourceBuilder : ICardDataSourceBuilder
 {
+    public static void Init()
+    {
+        // NOOP
+    }
+
     public SpreadsheetCardDataSourceBuilder()
     {
         Settings = [SpreadSheetFilenameSetting];

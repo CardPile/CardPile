@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NLog;
 using System.Text;
 using System.Web;
 
@@ -21,11 +22,6 @@ public class SeventeenLandsCardDataSourceProvider
     internal const string BR_COLORS_DECK_TYPE = "BR";
     internal const string BG_COLORS_DECK_TYPE = "BG";
     internal const string RG_COLORS_DECK_TYPE = "RG";
-
-    static SeventeenLandsCardDataSourceProvider()
-    {
-        LoadFilters();
-    }
 
     internal static List<SeventeenLandsRawCardData> Load(string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
     {
@@ -63,6 +59,32 @@ public class SeventeenLandsCardDataSourceProvider
     {
         var result = JsonConvert.DeserializeObject<List<SeventeenLandsRawCardData>>(jsonText);
         return result == null ? throw new ArgumentException("Invalid JSON", nameof(jsonText)) : result;
+    }
+
+    internal static void ClearOldData()
+    {
+        if (!Directory.Exists(CacheDirectory))
+        {
+            return;
+        }
+
+        var filePaths = Directory.GetFiles(CacheDirectory);
+        foreach (var filePath in filePaths)
+        {
+            var lastWriteTime = File.GetLastWriteTimeUtc(filePath);
+            var lastWriteTimeSpan = DateTime.UtcNow.Subtract(lastWriteTime);
+            if (lastWriteTimeSpan.TotalHours >= CacheValidHours)
+            {
+                try
+                {
+                    File.Delete(filePath);
+                }
+                catch (Exception ex)
+                {
+                    logger.Error("Error removing card image {cardImageFilePath}. Exception: {exception}", filePath, ex);
+                }
+            }
+        }
     }
 
     internal static List<string> SetList = [];
@@ -121,22 +143,7 @@ public class SeventeenLandsCardDataSourceProvider
         ];
     }
 
-    private class SeventeenLandFilters
-    {
-        [JsonProperty("colors")]
-        internal List<string?> Colors = [];
-
-        [JsonProperty("expansions")]
-        internal List<string> Expansions = [];
-
-        [JsonProperty("formats")]
-        internal List<string> Formats = [];
-
-        [JsonProperty("groups")]
-        internal List<string?> Groups = [];
-    };
-
-    private static void LoadFilters()
+    internal static void LoadFilters()
     {
         Stream? stream = null;
         try
@@ -163,6 +170,21 @@ public class SeventeenLandsCardDataSourceProvider
         UserTypeList = filters!.Groups.Select(x => x == null ? ALL_USERS_USER_TYPE : System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(x)).ToList();
         ColorList = filters!.Colors.Select(x => x ?? ALL_COLORS_COLOR_TYPE).ToList();
     }
+
+    private class SeventeenLandFilters
+    {
+        [JsonProperty("colors")]
+        internal List<string?> Colors = [];
+
+        [JsonProperty("expansions")]
+        internal List<string> Expansions = [];
+
+        [JsonProperty("formats")]
+        internal List<string> Formats = [];
+
+        [JsonProperty("groups")]
+        internal List<string?> Groups = [];
+    };
 
     private static string BuildCacheFilename(string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
     {
@@ -210,7 +232,10 @@ public class SeventeenLandsCardDataSourceProvider
             {
                 File.Delete(cachePath);
             }
-            catch { }
+            catch(Exception ex)
+            {
+                logger.Error("Error deleting {cacheFilePath}. Exception {exception}", cachePath, ex);
+            }
             return null;
         }
 
@@ -287,6 +312,8 @@ public class SeventeenLandsCardDataSourceProvider
     }
 
     private static readonly HttpClient httpClient = new();
+
+    private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
     private const string FiltersUrl = "https://www.17lands.com/data/filters";
     private const string Url = "https://www.17lands.com/card_ratings/data";

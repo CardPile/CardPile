@@ -4,6 +4,17 @@ namespace CardPile.CardData.SeventeenLands;
 
 public class SeventeenLandsCardDataSourceBuilder : ICardDataSourceBuilder
 {
+    static SeventeenLandsCardDataSourceBuilder()
+    {
+        SeventeenLandsCardDataSourceProvider.ClearOldData();
+        SeventeenLandsCardDataSourceProvider.LoadFilters();
+    }
+
+    public static void Init()
+    {
+        // NOOP - runs static constructor
+    }
+
     public SeventeenLandsCardDataSourceBuilder()
     {
         Settings = [];
