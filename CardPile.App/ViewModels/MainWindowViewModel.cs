@@ -40,6 +40,9 @@ public class MainWindowViewModel : ViewModelBase
         model.CardDataSourceBuilderCollectionService.ObservableForProperty(p => p.CurrentCardDataSourceBuilder)
                                                     .Subscribe(p => UpdateMetricViewModels(p.Value));
 
+        model.ObservableForProperty(p => p.IsCardDataSourceBeingBuilt)
+             .Subscribe(p => IsCardDataSourceBeingBuilt = p.Value);
+
         UpdateMetricViewModels(cardDataSourceBuilderCollectionService.CurrentCardDataSourceBuilder);
 
         this.ObservableForProperty(p => p.SortByMetricDescription)
@@ -142,6 +145,12 @@ public class MainWindowViewModel : ViewModelBase
     internal ICommand ShowCardDataSourceSettingsCommand { get; init; }
 
     internal ICommand ShowSettingsCommand { get; init; }
+
+    internal bool IsCardDataSourceBeingBuilt
+    {
+        get => isCardDataSourceBeingBuilt;
+        private set => this.RaiseAndSetIfChanged(ref isCardDataSourceBeingBuilt, value);
+    }
 
     private static void SortCards<T, TKey>(ObservableCollection<T> collection, Func<T, TKey> selector, IComparer<TKey>? comparer = null)
     {
@@ -602,4 +611,6 @@ public class MainWindowViewModel : ViewModelBase
     private CardViewModel? previouslyPickedCardFromPack = null;
 
     private LogWindow logWindow;
+
+    private bool isCardDataSourceBeingBuilt = false;
 }

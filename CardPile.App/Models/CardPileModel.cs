@@ -49,6 +49,12 @@ internal class CardPileModel : ReactiveObject
         get => draftModel;
     }
 
+    public bool IsCardDataSourceBeingBuilt
+    {
+        get => isCardDataSourceBeingBuilt;
+        private set => this.RaiseAndSetIfChanged(ref isCardDataSourceBeingBuilt, value);
+    }
+
     private void SwitchCardDataSourceBuilder(ICardDataSourceBuilderService builder)
     {
         SubscribeToAllBuilderSourceParameters(builder);
@@ -90,9 +96,14 @@ internal class CardPileModel : ReactiveObject
 
     private void BuildCardDataSource(ICardDataSourceBuilderService builder)
     {
-        buildCardDataCancellationTokenSource?.Cancel();
-        buildCardDataCancellationTokenSource = new CancellationTokenSource();
-        Task.Run(() => builder.BuildDataSourceAsync(buildCardDataCancellationTokenSource.Token)).ContinueWith(x => Dispatcher.UIThread.Post(() => draftModel.SetCardDataSource(x.Result)), TaskContinuationOptions.OnlyOnRanToCompletion);
+        buildCardDataSourceCancellationToken?.Cancel();
+        IsCardDataSourceBeingBuilt = false;
+
+        buildCardDataSourceCancellationToken = new CancellationTokenSource();
+        Task.Run(() => builder.BuildDataSourceAsync(buildCardDataSourceCancellationToken.Token)).ContinueWith(x => Dispatcher.UIThread.Post(() => draftModel.SetCardDataSource(x.Result)), TaskContinuationOptions.OnlyOnRanToCompletion)
+                              .ContinueWith((x) => Dispatcher.UIThread.Post(() => IsCardDataSourceBeingBuilt = false));
+
+        IsCardDataSourceBeingBuilt = true;
     }
 
     private CardDataSourceBuilderCollectionModel cardDataSourceBuilderCollectionModel;
@@ -101,5 +112,6 @@ internal class CardPileModel : ReactiveObject
     private DraftModel draftModel;
     private LogModel logModel;
 
-    private CancellationTokenSource? buildCardDataCancellationTokenSource = null;
+    private CancellationTokenSource? buildCardDataSourceCancellationToken = null;
+    private bool isCardDataSourceBeingBuilt = false;
 }

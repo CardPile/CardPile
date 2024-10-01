@@ -4,6 +4,7 @@
         xmlns:services="using:CardPile.App.Services"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:li="using:LoadingIndicators.Avalonia"
         mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="600"
         x:Class="CardPile.App.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -69,6 +70,8 @@
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
+          <!-- Spinner -->
+          <li:LoadingIndicator DockPanel.Dock="Left" IsActive="{Binding IsCardDataSourceBeingBuilt}" Mode="Ring" SpeedRatio="0.6" VerticalAlignment="Center" Foreground="DarkGray" />
           <!-- Log Button -->
           <StackPanel DockPanel.Dock="Right" Margin="5" Orientation="Horizontal">
             <Button Background="Transparent" Command="{Binding ShowLogCommand}" ToolTip.Tip="Show log window">
