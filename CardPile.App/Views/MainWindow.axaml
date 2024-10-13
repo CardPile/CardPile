@@ -82,9 +82,10 @@
             </Button>
           </StackPanel>
         </DockPanel>
-      </Border>
-      <!-- Metrics -->
+      </Border>      
+      <!-- Metrics & stats -->
       <DockPanel Grid.Row="1" Margin="0, 2" LastChildFill="False">
+        <!-- Metric dropdown -->
         <Button DockPanel.Dock="Left" Margin="5 2 0 0" FontSize="18" FontWeight="DemiBold" Content="Metrics">
           <Button.Flyout>
             <Flyout>
@@ -103,6 +104,29 @@
             </Flyout>
           </Button.Flyout>
         </Button>
+        <!-- Stats -->
+        <ItemsControl DockPanel.Dock="Left" ItemsSource="{Binding Statistics}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <StackPanel Orientation="Horizontal" Margin="5 2" />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center" Margin="5 2">
+                  <TextBlock.Text>
+                    <MultiBinding StringFormat="{}{0}: {1}">
+                      <Binding Path="Name" />
+                      <Binding Path="TextValue" />
+                    </MultiBinding>
+                  </TextBlock.Text>
+                </TextBlock>
+              </StackPanel>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <!-- Metric sort by -->
         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="5 2">
           <TextBlock Margin="5" FontSize="18" FontWeight="DemiBold">Sort by</TextBlock>
           <ComboBox ItemsSource="{Binding MetricDescriptions}" SelectedItem="{Binding SortByMetricDescription, Mode=TwoWay}">

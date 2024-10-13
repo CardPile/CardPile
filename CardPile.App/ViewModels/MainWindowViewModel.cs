@@ -23,8 +23,10 @@ public class MainWindowViewModel : ViewModelBase
     {
         cardDataSourceBuilderCollectionService = model.CardDataSourceBuilderCollectionService;
         cardsInPackService = model.CurrentCardsInPackService;
+        statisticsService = model.StatisticsService;
         metricDescriptionViewModels = [];
         sortByMetricDescriptionViewModel = null;
+        statisticsViewModels = [];
 
         cardsInPackService.CardsInPack.CollectionChanged += UpdateCardsInPack;
         cardsInPackService.CardsMissingFromPack.CollectionChanged += UpdateCardsMissingFromPack;
@@ -33,8 +35,12 @@ public class MainWindowViewModel : ViewModelBase
         cardsInPackService.ObservableForProperty(x => x.PreviousPick)
                           .Subscribe(x => UpdatePreviouslyPickedCardFromPack(x.Value));
 
+        statisticsService.Statistics.CollectionChanged += UpdateStatistics;
+
         model.CardDataSourceBuilderCollectionService.ObservableForProperty(p => p.CurrentCardDataSourceBuilder, true)
                                                     .Subscribe(p => ClearMetricViewModels());
+        model.CardDataSourceBuilderCollectionService.ObservableForProperty(p => p.CurrentCardDataSourceBuilder, true)
+                                                    .Subscribe(p => ClearStatisticsViewModels());
         model.CardDataSourceBuilderCollectionService.ObservableForProperty(p => p.CurrentCardDataSourceBuilder, true)
                                                     .Subscribe(p => ClearCardData());
         model.CardDataSourceBuilderCollectionService.ObservableForProperty(p => p.CurrentCardDataSourceBuilder)
@@ -44,6 +50,8 @@ public class MainWindowViewModel : ViewModelBase
              .Subscribe(p => IsCardDataSourceBeingBuilt = p.Value);
 
         UpdateMetricViewModels(cardDataSourceBuilderCollectionService.CurrentCardDataSourceBuilder);
+
+        InitializeStatistics();
 
         this.ObservableForProperty(p => p.SortByMetricDescription)
             .Subscribe(p => SortCardsDescendingBySelectedMetric(CardsInPack));
@@ -116,6 +124,12 @@ public class MainWindowViewModel : ViewModelBase
     {
         get => sortByMetricDescriptionViewModel;
         set => this.RaiseAndSetIfChanged(ref sortByMetricDescriptionViewModel, value);
+    }
+
+    internal ObservableCollection<CardDataSourceStatisticViewModel> Statistics
+    {
+        get => statisticsViewModels;
+        set => this.RaiseAndSetIfChanged(ref statisticsViewModels, value);
     }
 
     internal ObservableCollection<CardDataViewModel> CardsInPack { get; } = [];
@@ -201,9 +215,6 @@ public class MainWindowViewModel : ViewModelBase
                     if (item is ICardDataService cardDataService)
                     {
                         CardsInPack.Remove(CardsInPack.Where(x => x.CardDataService == item));
-                        var newCardDataVm = new CardDataViewModel(cardDataService);
-                        UpdateCardMetricVisibility(newCardDataVm);
-                        CardsInPack.Add(newCardDataVm);
                     }
                     else
                     {
@@ -252,8 +263,6 @@ public class MainWindowViewModel : ViewModelBase
                     if (item is ICardDataService cardDataService)
                     {
                         CardsMissingFromPack.Remove(CardsMissingFromPack.Where(x => x.CardDataService == item));
-                        var newCardDataVm = new CardViewModel(cardDataService);
-                        CardsMissingFromPack.Add(newCardDataVm);
                     }
                     else
                     {
@@ -301,8 +310,6 @@ public class MainWindowViewModel : ViewModelBase
                     if (item is ICardDataService cardDataService)
                     {
                         CardsUpcomingAfterPack.Remove(CardsUpcomingAfterPack.Where(x => x.CardDataService == item));
-                        var oldCardVm = new CardViewModel(cardDataService);
-                        CardsUpcomingAfterPack.Add(oldCardVm);
                     }
                     else
                     {
@@ -380,45 +387,36 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     if (item is ICardDataService cardDataService)
                     {
-                        var oldCardVm = new CardDataViewModel(cardDataService);
-                        ClearCardMetricVisibility(oldCardVm);
                         if (cardDataService.Colors.Count == 0)
                         {
                             ColorlessCardsSeen.Remove(ColorlessCardsSeen.Where(x => x.CardDataService == item));
-                            ColorlessCardsSeen.Add(oldCardVm);
                         }
                         else if (cardDataService.Colors.Count == 1)
                         {
                             if (cardDataService.Colors.First() == Color.White)
                             {
                                 WhiteCardsSeen.Remove(WhiteCardsSeen.Where(x => x.CardDataService == item));
-                                WhiteCardsSeen.Add(oldCardVm);
                             }
                             else if (cardDataService.Colors.First() == Color.Blue)
                             {
                                 BlueCardsSeen.Remove(BlueCardsSeen.Where(x => x.CardDataService == item));
-                                BlueCardsSeen.Add(oldCardVm);
                             }
                             else if (cardDataService.Colors.First() == Color.Black)
                             {
                                 BlackCardsSeen.Remove(BlackCardsSeen.Where(x => x.CardDataService == item));
-                                BlackCardsSeen.Add(oldCardVm);
                             }
                             else if (cardDataService.Colors.First() == Color.Red)
                             {
                                 RedCardsSeen.Remove(RedCardsSeen.Where(x => x.CardDataService == item));
-                                RedCardsSeen.Add(oldCardVm);
                             }
                             else if (cardDataService.Colors.First() == Color.Green)
                             {
                                 GreenCardsSeen.Remove(GreenCardsSeen.Where(x => x.CardDataService == item));
-                                GreenCardsSeen.Add(oldCardVm);
                             }
                         }
                         else
                         {
                             MulticolorCardsSeen.Remove(MulticolorCardsSeen.Where(x => x.CardDataService == item));
-                            MulticolorCardsSeen.Add(oldCardVm);
                         }
                     }
                     else
@@ -478,10 +476,69 @@ public class MainWindowViewModel : ViewModelBase
         PreviouslyPickedCardFromPack = cardDataService != null ? new CardViewModel(cardDataService, true) : null;
     }
 
+    private void InitializeStatistics()
+    {
+        foreach (var statisticService in statisticsService.Statistics)
+        {
+            Statistics.Add(new CardDataSourceStatisticViewModel(statisticService));
+        }
+    }
+
+    private void UpdateStatistics(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        void processNewItems(IList? newItems)
+        {
+            if (newItems != null)
+            {
+                foreach (var item in newItems)
+                {
+                    if (item is ICardDataSourceStatisticService statisticService)
+                    {
+                        Statistics.Add(new CardDataSourceStatisticViewModel(statisticService));
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Expected a ICardDataSourceStatisticService as a new item");
+                    }
+                }
+            }
+        }
+
+        void processOldItems(IList? oldItems)
+        {
+            if (oldItems != null)
+            {
+                foreach (var item in oldItems)
+                {
+                    if (item is ICardDataSourceStatisticService statisticService)
+                    {
+                        Statistics.Remove(Statistics.Where(x => x.CardDataSourceStatisticService == item));
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Expected a ICardDataSourceStatisticService as a old item");
+                    }
+                }
+            }
+        }
+
+        void clearItems()
+        {
+            Statistics.Clear();
+        }
+
+        DispatchObservableCardCollection(e, clearItems, processNewItems, processOldItems);
+    }
+
     private void ClearMetricViewModels()
     {
         metricDescriptionViewModels.Clear();
         SortByMetricDescription = null;
+    }
+
+    private void ClearStatisticsViewModels()
+    {
+        statisticsViewModels.Clear();
     }
 
     private void ClearCardData()
@@ -604,9 +661,12 @@ public class MainWindowViewModel : ViewModelBase
 
     private ICardDataSourceBuilderCollectionService cardDataSourceBuilderCollectionService;
     private ICardsInPackService cardsInPackService;
+    private ICardDataSourceStatisticsService statisticsService;
 
     private ObservableCollection<CardDataMetricDescriptionViewModel> metricDescriptionViewModels;
     private CardDataMetricDescriptionViewModel? sortByMetricDescriptionViewModel;
+
+    private ObservableCollection<CardDataSourceStatisticViewModel> statisticsViewModels;
 
     private CardViewModel? previouslyPickedCardFromPack = null;
 

@@ -41,6 +41,7 @@ internal class CardPileModel : ReactiveObject
 
         watcherModel = new WatcherModel();
         draftModel = new DraftModel(watcherModel, cardDataSource);
+        statisticsModel = new CardDataSourceStatisticsModel(cardDataSource);
     }
 
     public ICardDataSourceBuilderCollectionService CardDataSourceBuilderCollectionService
@@ -56,6 +57,11 @@ internal class CardPileModel : ReactiveObject
     public ICardsInPackService CurrentCardsInPackService
     {
         get => draftModel;
+    }
+
+    public ICardDataSourceStatisticsService StatisticsService
+    {
+        get => statisticsModel;
     }
 
     public bool IsCardDataSourceBeingBuilt
@@ -109,7 +115,8 @@ internal class CardPileModel : ReactiveObject
         IsCardDataSourceBeingBuilt = false;
 
         buildCardDataSourceCancellationToken = new CancellationTokenSource();
-        Task.Run(() => builder.BuildDataSourceAsync(buildCardDataSourceCancellationToken.Token)).ContinueWith(x => Dispatcher.UIThread.Post(() => draftModel.SetCardDataSource(x.Result)), TaskContinuationOptions.OnlyOnRanToCompletion)
+        Task.Run(() => builder.BuildDataSourceAsync(buildCardDataSourceCancellationToken.Token))
+                              .ContinueWith(x => Dispatcher.UIThread.Post(() => { draftModel.SetCardDataSource(x.Result); statisticsModel.SetCardDataSource(x.Result); }), TaskContinuationOptions.OnlyOnRanToCompletion)
                               .ContinueWith((x) => Dispatcher.UIThread.Post(() => IsCardDataSourceBeingBuilt = false));
 
         IsCardDataSourceBeingBuilt = true;
@@ -119,6 +126,7 @@ internal class CardPileModel : ReactiveObject
     private WatcherModel watcherModel;
     private ICardDataSource cardDataSource;
     private DraftModel draftModel;
+    private CardDataSourceStatisticsModel statisticsModel;
     private LogModel logModel;
 
     private CancellationTokenSource? buildCardDataSourceCancellationToken = null;

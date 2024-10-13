@@ -7,6 +7,7 @@ using NLog;
 using System;
 using System.IO;
 using Newtonsoft.Json;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CardPile.App.Models;
 
@@ -30,7 +31,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         this.logModel.DraftPickEvent += DraftPickHandler;
         this.logModel.DraftLeaveEvent += DraftLeaveHandler;
 
-        this.cardDataSource = cardDataSource;
+        SetCardDataSource(cardDataSource);
     }
 
     public ObservableCollection<ICardDataService> CardsInPack
@@ -86,9 +87,9 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         }
     }
 
+    [MemberNotNull(nameof(cardDataSource))]
     internal void SetCardDataSource(ICardDataSource newCardDataSource)
     {
-        logger.Info($"Setting new card data source {newCardDataSource.Name}");
         cardDataSource = newCardDataSource;
         UpdateCardDataAfterChoice(cardDataSource);
         UpdateCardDataAfterPick(cardDataSource);
@@ -318,11 +319,11 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
 
     private const int CacheValidDays = 7;
 
-    private readonly ObservableCollection<ICardDataService> cardsInCurrentPack;
-    private readonly ObservableCollection<ICardDataService> cardsMissingInCurrentPack;
-    private readonly ObservableCollection<ICardDataService> cardsUpcomingAfterCurrentPack;
-    private readonly ObservableCollection<ICardDataService> cardsSeen;
-    private readonly ObservableCollection<ICardDataService> cardsInDeck;
+    private readonly ObservableCollection<ICardDataService> cardsInCurrentPack = [];
+    private readonly ObservableCollection<ICardDataService> cardsMissingInCurrentPack = [];
+    private readonly ObservableCollection<ICardDataService> cardsUpcomingAfterCurrentPack = [];
+    private readonly ObservableCollection<ICardDataService> cardsSeen = [];
+    private readonly ObservableCollection<ICardDataService> cardsInDeck = [];
     private ICardDataService? previousPick;
 
     private readonly WatcherModel logModel;

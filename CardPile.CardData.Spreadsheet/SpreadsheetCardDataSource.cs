@@ -36,5 +36,7 @@ public class SpreadsheetCardDataSource : ICardDataSource
         return new SpreadsheetCardData(cardNameFromArena, cardNumber, colors, url, grade);
     }
 
+    public List<ICardDataSourceStatistic> Statistics { get => []; }
+
     private readonly Dictionary<string, string> cardGrades = [];
 }

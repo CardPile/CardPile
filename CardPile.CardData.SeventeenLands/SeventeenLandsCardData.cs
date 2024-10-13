@@ -134,32 +134,32 @@ internal class SeventeenLandsCardData : ICardData
     }
 
     internal static readonly MetricDescription<int> SeenMetricDesc = new MetricDescription<int>("# Seen", false, false);
-    internal static readonly MetricDescription<float> AverageLastSeenAtMetricDesc = new MetricDescription<float>("ALSA", true, false, new MetricDecimalFormatter());
+    internal static readonly MetricDescription<float> AverageLastSeenAtMetricDesc = new MetricDescription<float>("ALSA", true, false, new DecimalFormatter());
     internal static readonly MetricDescription<int> PickedMetricDesc = new MetricDescription<int>("# Picked", false, false);
-    internal static readonly MetricDescription<float> AveragePickedAtMetricDesc = new MetricDescription<float>("ATA", true, false, new MetricDecimalFormatter());
+    internal static readonly MetricDescription<float> AveragePickedAtMetricDesc = new MetricDescription<float>("ATA", true, false, new DecimalFormatter());
     internal static readonly MetricDescription<int> NumberOfGamesPlayedMetricDesc = new MetricDescription<int>("# GP", false, false);
-    internal static readonly MetricDescription<float> PlayRateMetricDesc = new MetricDescription<float>("% GP", false, false, new MetricPercentFormatter());
-    internal static readonly MetricDescription<float> WinRateWhenMaindeckedMetricDesc = new MetricDescription<float>("GP WR", false, false, new MetricPercentFormatter());
+    internal static readonly MetricDescription<float> PlayRateMetricDesc = new MetricDescription<float>("% GP", false, false, new PercentFormatter());
+    internal static readonly MetricDescription<float> WinRateWhenMaindeckedMetricDesc = new MetricDescription<float>("GP WR", false, false, new PercentFormatter());
     internal static readonly MetricDescription<int> NumberOfGamesInOpeningHandMetricDesc = new MetricDescription<int>("# OH", false, false);
-    internal static readonly MetricDescription<float> WinRateInOpeningHandMetricDesc = new MetricDescription<float>("OH WR", false, false, new MetricPercentFormatter());
+    internal static readonly MetricDescription<float> WinRateInOpeningHandMetricDesc = new MetricDescription<float>("OH WR", false, false, new PercentFormatter());
     internal static readonly MetricDescription<int> NumberOfGamesDrawnTurn1OrLaterMetricDesc = new MetricDescription<int>("# GD", false, false);
-    internal static readonly MetricDescription<float> WinRateWhenDrawnTurn1OrLaterMetricDesc = new MetricDescription<float>("GD WR", false, false, new MetricPercentFormatter());
+    internal static readonly MetricDescription<float> WinRateWhenDrawnTurn1OrLaterMetricDesc = new MetricDescription<float>("GD WR", false, false, new PercentFormatter());
     internal static readonly MetricDescription<int> NumberOfGamesInHandMetricDesc = new MetricDescription<int>("# GIH", false, false);
-    internal static readonly MetricDescription<float> WinRateInHandMetricDesc = new MetricDescription<float>("GIH WR", true, true, new MetricPercentFormatter());
+    internal static readonly MetricDescription<float> WinRateInHandMetricDesc = new MetricDescription<float>("GIH WR", true, true, new PercentFormatter());
     internal static readonly MetricDescription<int> NumberOfGamesNotSeenMetricDesc = new MetricDescription<int>("# GNS", false, false);
-    internal static readonly MetricDescription<float> WinRateNotSeenMetricDesc = new MetricDescription<float>("GNS WR", false, false, new MetricPercentFormatter());
-    internal static readonly MetricDescription<float> WinRateImprovementWhenDrawnMetricDesc = new MetricDescription<float>("IWD", false, false, new MetricPercentFormatter());
+    internal static readonly MetricDescription<float> WinRateNotSeenMetricDesc = new MetricDescription<float>("GNS WR", false, false, new PercentFormatter());
+    internal static readonly MetricDescription<float> WinRateImprovementWhenDrawnMetricDesc = new MetricDescription<float>("IWD", false, false, new PercentFormatter());
 
-    internal static readonly MetricDescription<float> WUWinRateInHandMetricDesc = new MetricDescription<float>("WU", true, false, new MetricPercentFormatter());
-    internal static readonly MetricDescription<float> WBWinRateInHandMetricDesc = new MetricDescription<float>("WB", true, false, new MetricPercentFormatter());
-    internal static readonly MetricDescription<float> WRWinRateInHandMetricDesc = new MetricDescription<float>("WR", true, false, new MetricPercentFormatter());
-    internal static readonly MetricDescription<float> WGWinRateInHandMetricDesc = new MetricDescription<float>("WG", true, false, new MetricPercentFormatter());
-    internal static readonly MetricDescription<float> UBWinRateInHandMetricDesc = new MetricDescription<float>("UB", true, false, new MetricPercentFormatter());
-    internal static readonly MetricDescription<float> URWinRateInHandMetricDesc = new MetricDescription<float>("UR", true, false, new MetricPercentFormatter());
-    internal static readonly MetricDescription<float> UGWinRateInHandMetricDesc = new MetricDescription<float>("UG", true, false, new MetricPercentFormatter());
-    internal static readonly MetricDescription<float> BRWinRateInHandMetricDesc = new MetricDescription<float>("BR", true, false, new MetricPercentFormatter());
-    internal static readonly MetricDescription<float> BGWinRateInHandMetricDesc = new MetricDescription<float>("BG", true, false, new MetricPercentFormatter());
-    internal static readonly MetricDescription<float> RGWinRateInHandMetricDesc = new MetricDescription<float>("RG", true, false, new MetricPercentFormatter());
+    internal static readonly MetricDescription<float> WUWinRateInHandMetricDesc = new MetricDescription<float>("WU", true, false, new PercentFormatter());
+    internal static readonly MetricDescription<float> WBWinRateInHandMetricDesc = new MetricDescription<float>("WB", true, false, new PercentFormatter());
+    internal static readonly MetricDescription<float> WRWinRateInHandMetricDesc = new MetricDescription<float>("WR", true, false, new PercentFormatter());
+    internal static readonly MetricDescription<float> WGWinRateInHandMetricDesc = new MetricDescription<float>("WG", true, false, new PercentFormatter());
+    internal static readonly MetricDescription<float> UBWinRateInHandMetricDesc = new MetricDescription<float>("UB", true, false, new PercentFormatter());
+    internal static readonly MetricDescription<float> URWinRateInHandMetricDesc = new MetricDescription<float>("UR", true, false, new PercentFormatter());
+    internal static readonly MetricDescription<float> UGWinRateInHandMetricDesc = new MetricDescription<float>("UG", true, false, new PercentFormatter());
+    internal static readonly MetricDescription<float> BRWinRateInHandMetricDesc = new MetricDescription<float>("BR", true, false, new PercentFormatter());
+    internal static readonly MetricDescription<float> BGWinRateInHandMetricDesc = new MetricDescription<float>("BG", true, false, new PercentFormatter());
+    internal static readonly MetricDescription<float> RGWinRateInHandMetricDesc = new MetricDescription<float>("RG", true, false, new PercentFormatter());
     internal static readonly CompositeMetricDescription ColorsWinRateInHandMetricDesc = new CompositeMetricDescription("GIH WR (2C)", true, false,
                                                                                                                        WUWinRateInHandMetricDesc,
                                                                                                                        WBWinRateInHandMetricDesc,

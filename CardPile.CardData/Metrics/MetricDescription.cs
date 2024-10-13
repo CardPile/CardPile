@@ -5,7 +5,7 @@ namespace CardPile.CardData.Metrics;
 
 public class MetricDescription<T> : ICardMetricDescription where T : struct
 {
-    public MetricDescription(string name, bool isDefaultVisible, bool isDefault, IMetricFormatter<T>? formatter = null)
+    public MetricDescription(string name, bool isDefaultVisible, bool isDefault, IFormatter<T>? formatter = null)
     {
         Name = name;
         IsDefaultVisible = isDefaultVisible;
@@ -46,7 +46,7 @@ public class MetricDescription<T> : ICardMetricDescription where T : struct
         return new Metric<T>(this, null, ImportanceLevel.Regular);
     }
 
-    internal IMetricFormatter<T>? Formatter { get; init; }
+    internal IFormatter<T>? Formatter { get; init; }
 
     private class CompositeCardMetricComparer : IComparer<ICardMetric>
     {

@@ -1,4 +1,6 @@
-﻿using CardPile.CardData.Importance;
+﻿using CardPile.CardData.Formatting;
+using CardPile.CardData.Importance;
+using CardPile.CardData.Metrics;
 using CardPile.Draft;
 using MathNet.Numerics.Distributions;
 
@@ -36,6 +38,9 @@ public class SeventeenLandsCardDataSource : ICardDataSource
             var gihWrStdDev = (float)Math.Sqrt(Variance(archetypeEntry.Value, gihWrMean, (SeventeenLandsRawCardData data) => (data.EverDrawnGameCount ?? 0) > CARD_EVER_DRAWN_CUTOFF ? data.EverDrawnWinRate : null));
             archetypeGihWrDistribution[archetypeEntry.Key] = new Normal(gihWrMean, gihWrStdDev);
         }
+
+        var avgGihWr = new Statistic<float>("Avg GIH WR", (float)archetypeGihWrDistribution[ColorPair.None].Mean, new PercentFormatter());
+        Statistics = [avgGihWr];
     }
 
     public string Name => "17Lands";
@@ -95,6 +100,8 @@ public class SeventeenLandsCardDataSource : ICardDataSource
 
         return null;
     }
+    
+    public List<ICardDataSourceStatistic> Statistics { get; init; }
 
     private const int CARD_EVER_DRAWN_CUTOFF = 500;
     private const float CARD_GIH_WR_CRITICAL_THRESHOLD = 0.9f;

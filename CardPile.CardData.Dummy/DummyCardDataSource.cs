@@ -1,9 +1,17 @@
-﻿using CardPile.Draft;
+﻿using CardPile.CardData.Formatting;
+using CardPile.CardData.Metrics;
+using CardPile.Draft;
 
 namespace CardPile.CardData.Dummy;
 
 public class DummyCardDataSource : ICardDataSource
 {
+    public DummyCardDataSource()
+    {
+        firstStatistic = new Statistic<float>("Stat 1", 7.5f, new PercentFormatter());
+        secondStatistic = new Statistic<int>("Stat 2", 3);
+    }
+
     public string Name => "Dummy";
 
     public ICardData? GetDataForCard(int cardNumber, DraftState state)
@@ -93,12 +101,12 @@ public class DummyCardDataSource : ICardDataSource
         }
     }
 
-    public void Update(DraftState state)
-    {
-        // NOOP
-    }
+    public List<ICardDataSourceStatistic> Statistics { get => [firstStatistic, secondStatistic]; }
 
     int? firstCardNumber = null;
     int? secondCardNumber = null;
     int? thirdCardNumber = null;
+
+    Statistic<float> firstStatistic;
+    Statistic<int> secondStatistic;
 }
