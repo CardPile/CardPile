@@ -13,6 +13,12 @@ namespace CardPile.App.Models;
 
 internal class CardDataModel : ReactiveObject, ICardDataService
 {
+    static CardDataModel()
+    {
+        httpClient.DefaultRequestHeaders.Add("User-Agent", "CardPile/0.1");
+        httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
+    }
+
     internal CardDataModel(ICardData cardData)
     {
         this.cardData = cardData;
@@ -99,7 +105,7 @@ internal class CardDataModel : ReactiveObject, ICardDataService
             {
                 var content = response.Content.ReadAsStringAsync();
                 logger.Warn("Error fetching image for car {cardId} from {url}", ArenaCardId, Url);
-                logger.Warn("Status: {status} Response: {response}", response.StatusCode, content);
+                logger.Warn("Status: {status} Response: {response}", response.StatusCode, content.Result);
             }
         }
 
