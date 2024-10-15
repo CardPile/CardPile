@@ -1,4 +1,4 @@
-﻿namespace CardPile.Parser;
+﻿namespace CardPile.Watchers.ArenaLog;
 
 public class NewLineEvent : EventArgs
 {

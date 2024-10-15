@@ -1,9 +1,8 @@
 ﻿using CardPile.Draft;
-using CardPile.Parser.Matchers;
 using Newtonsoft.Json.Linq;
 using NGuid;
 
-namespace CardPile.Parser;
+namespace CardPile.Watchers.ArenaLog.Matchers;
 
 public class DraftChoiceMatcher : ILogMatcher
 {

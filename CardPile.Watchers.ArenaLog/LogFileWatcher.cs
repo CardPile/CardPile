@@ -1,7 +1,7 @@
 ﻿using NLog;
 using System.Text;
 
-namespace CardPile.Parser;
+namespace CardPile.Watchers.ArenaLog;
 
 public class LogFileWatcher
 {

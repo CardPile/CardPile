@@ -4,11 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardPile.App", "CardPile.App\CardPile.App.csproj", "{255DCB49-E3C5-4931-A69D-775BD8C62033}"
-	ProjectSection(ProjectDependencies) = postProject
-		{97C3A68F-1AE5-408C-840F-9F165F5D5646} = {97C3A68F-1AE5-408C-840F-9F165F5D5646}
-	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardPile.Parser", "CardPile.Parser\CardPile.Parser.csproj", "{97C3A68F-1AE5-408C-840F-9F165F5D5646}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardPile.Draft", "CardPile.Draft\CardPile.Draft.csproj", "{99A2AF49-F164-49FB-BF3A-5F6B469C2713}"
 EndProject
@@ -24,7 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitySpy", "UnitySpy\UnityS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardPile.Feeder", "CardPile.Feeder\CardPile.Feeder.csproj", "{A5839192-A2EC-402A-ACA0-1FDF1BB7B755}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardPile.CardData.Spreadsheet", "CardPile.CardData.Spreadsheet\CardPile.CardData.Spreadsheet.csproj", "{7EEAE0DF-C404-43D0-8CBD-61F90BBE5CB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardPile.CardData.Spreadsheet", "CardPile.CardData.Spreadsheet\CardPile.CardData.Spreadsheet.csproj", "{7EEAE0DF-C404-43D0-8CBD-61F90BBE5CB8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardPile.Watchers.ArenaLog", "CardPile.Watchers.ArenaLog\CardPile.Watchers.ArenaLog.csproj", "{68F0EB45-6C0A-432F-BDB4-8BC4CCB9B903}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardPile.Watchers.Unity", "CardPile.Watchers.Unity\CardPile.Watchers.Unity.csproj", "{D88191D2-551F-4FCD-8102-F58600C041FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,10 +35,6 @@ Global
 		{255DCB49-E3C5-4931-A69D-775BD8C62033}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{255DCB49-E3C5-4931-A69D-775BD8C62033}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{255DCB49-E3C5-4931-A69D-775BD8C62033}.Release|Any CPU.Build.0 = Release|Any CPU
-		{97C3A68F-1AE5-408C-840F-9F165F5D5646}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{97C3A68F-1AE5-408C-840F-9F165F5D5646}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{97C3A68F-1AE5-408C-840F-9F165F5D5646}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{97C3A68F-1AE5-408C-840F-9F165F5D5646}.Release|Any CPU.Build.0 = Release|Any CPU
 		{99A2AF49-F164-49FB-BF3A-5F6B469C2713}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{99A2AF49-F164-49FB-BF3A-5F6B469C2713}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99A2AF49-F164-49FB-BF3A-5F6B469C2713}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -72,6 +67,14 @@ Global
 		{7EEAE0DF-C404-43D0-8CBD-61F90BBE5CB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EEAE0DF-C404-43D0-8CBD-61F90BBE5CB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EEAE0DF-C404-43D0-8CBD-61F90BBE5CB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68F0EB45-6C0A-432F-BDB4-8BC4CCB9B903}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68F0EB45-6C0A-432F-BDB4-8BC4CCB9B903}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68F0EB45-6C0A-432F-BDB4-8BC4CCB9B903}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68F0EB45-6C0A-432F-BDB4-8BC4CCB9B903}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D88191D2-551F-4FCD-8102-F58600C041FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D88191D2-551F-4FCD-8102-F58600C041FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D88191D2-551F-4FCD-8102-F58600C041FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D88191D2-551F-4FCD-8102-F58600C041FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

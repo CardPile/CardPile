@@ -5,7 +5,7 @@ using System.Diagnostics;
 using NLog;
 using CardPile.Draft;
 
-namespace CardPile.Parser;
+namespace CardPile.Watchers.Unity;
 
 public class MemoryWatcher
 {

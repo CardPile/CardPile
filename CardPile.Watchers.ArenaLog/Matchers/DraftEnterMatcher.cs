@@ -1,11 +1,10 @@
 using CardPile.Draft;
-using CardPile.Parser.Matchers;
 
-namespace CardPile.Parser;
+namespace CardPile.Watchers.ArenaLog.Matchers;
 
-public class DraftLeaveMatcher : ILogMatcher
+public class DraftEnterMatcher : ILogMatcher
 {
-    public event EventHandler<DraftLeaveEvent>? DraftLeaveEvent;
+    public event EventHandler<DraftEnterEvent>? DraftEnterEvent;
 
     public bool Match(string line)
     {
@@ -20,21 +19,21 @@ public class DraftLeaveMatcher : ILogMatcher
             return false;  
         }
 
-        DraftLeaveEvent?.Invoke(this, e);
+        DraftEnterEvent?.Invoke(this, e);
 
         return true;        
     }
 
-    private static DraftLeaveEvent? ParseDraftEventInfo(string line, string needle)
+    private static DraftEnterEvent? ParseDraftEventInfo(string line, string needle)
     {
         dynamic data = MatcherHelpers.ParseUnchecked(line, needle);
-        var sourceScene = data.fromSceneName?.Value;
-        if (sourceScene == null)
+        var destinationScene = data.toSceneName?.Value;
+        if (destinationScene == null)
         {
             return null;
         }
 
-        if (sourceScene != SOURCE_SCENE_NAME_NEEDLE)
+        if (destinationScene != DESTINATION_SCENE_NAME_NEEDLE)
         {
             return null;
         }
@@ -43,5 +42,5 @@ public class DraftLeaveMatcher : ILogMatcher
     }
 
     private static readonly string SCENE_CHANGE_NEEDLE = "[UnityCrossThreadLogger]Client.SceneChange";
-    private static readonly string SOURCE_SCENE_NAME_NEEDLE = "Draft";
+    private static readonly string DESTINATION_SCENE_NAME_NEEDLE = "Draft";
 }

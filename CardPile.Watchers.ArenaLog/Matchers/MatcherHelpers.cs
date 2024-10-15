@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 
-namespace CardPile.Parser.Matchers;
+namespace CardPile.Watchers.ArenaLog.Matchers;
 
 internal class MatcherHelpers
 {

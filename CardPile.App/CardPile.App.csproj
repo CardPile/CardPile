@@ -35,7 +35,8 @@
     <ProjectReference Include="..\CardPile.CardData.Spreadsheet\CardPile.CardData.Spreadsheet.csproj" />
     <ProjectReference Include="..\CardPile.CardData\CardPile.CardData.csproj" />
     <ProjectReference Include="..\CardPile.Draft\CardPile.Draft.csproj" />
-    <ProjectReference Include="..\CardPile.Parser\CardPile.Parser.csproj" />
+    <ProjectReference Include="..\CardPile.Watchers.ArenaLog\CardPile.Watchers.ArenaLog.csproj" />
+    <ProjectReference Include="..\CardPile.Watchers.Unity\CardPile.Watchers.Unity.csproj" />
   </ItemGroup>
 
   <ItemGroup>

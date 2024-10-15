@@ -1,4 +1,5 @@
-﻿using CardPile.Parser;
+﻿using CardPile.Watchers.ArenaLog;
+using CardPile.Watchers.ArenaLog.Matchers;
 
 namespace CardPile.Feeder;
 

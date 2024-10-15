@@ -1,7 +1,7 @@
 ﻿using UnitySpy;
 using NLog;
 
-namespace CardPile.Parser;
+namespace CardPile.Watchers.Unity;
 
 internal static class UnitySpyHelpers
 {

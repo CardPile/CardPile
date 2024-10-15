@@ -1,6 +1,4 @@
-﻿using System.Reflection.Metadata.Ecma335;
-
-namespace CardPile.Parser;
+﻿namespace CardPile.Watchers.ArenaLog;
 
 public class MatcherDispatcher
 {

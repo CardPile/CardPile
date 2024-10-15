@@ -1,7 +1,9 @@
 ﻿using Avalonia.Threading;
 using CardPile.App.Services;
 using CardPile.Draft;
-using CardPile.Parser;
+using CardPile.Watchers.ArenaLog;
+using CardPile.Watchers.ArenaLog.Matchers;
+using CardPile.Watchers.Unity;
 using ReactiveUI;
 using System;
 using System.IO;
