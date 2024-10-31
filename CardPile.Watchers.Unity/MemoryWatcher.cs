@@ -249,20 +249,8 @@ public class MemoryWatcher
         }
         else if(OperatingSystem.IsMacOS())
         {
-            // MTGA for MacOS uses il2cpp - a different soltion is required
+            // MTGA for MacOS uses il2cpp
             return default;
-            
-            /*
-            if(mtgaProcess.MainModule == null)
-            {
-                logger.Warn("Found MTGA process, but MainModule is null");
-                return default;
-            }
-
-            var processFacade = new ProcessFacadeMacOSDirect(mtgaProcess);
-            var monoLibraryOffsets = MonoLibraryOffsets.GetOffsets(mtgaProcess.MainModule.FileName);
-            unityProcessFacade = new UnityProcessFacade(processFacade, monoLibraryOffsets);
-            */
         }
         else
         {
