@@ -32,6 +32,7 @@ public class MainWindowViewModel : ViewModelBase
         cardsInPackService.CardsMissingFromPack.CollectionChanged += UpdateCardsMissingFromPack;
         cardsInPackService.CardsUpcomingAfterPack.CollectionChanged += UpdateCardsUpcomingAfterPack;
         cardsInPackService.CardsSeen.CollectionChanged += UpdateCardsSeen;
+        cardsInPackService.CardsInDeck.CollectionChanged += UpdateDeck;
         cardsInPackService.ObservableForProperty(x => x.PreviousPick)
                           .Subscribe(x => UpdatePreviouslyPickedCardFromPack(x.Value));
 
@@ -107,6 +108,11 @@ public class MainWindowViewModel : ViewModelBase
         {
             // TODO....
         });
+
+        ClearCardsSeenAndDeckCommand = ReactiveCommand.Create(() =>
+        {
+            cardsInPackService.ClearCardsSeenAndDeck();
+        });
     }
 
     internal ICardDataSourceBuilderCollectionService CardDataSourceBuilderCollectionService
@@ -146,6 +152,8 @@ public class MainWindowViewModel : ViewModelBase
     internal ObservableCollection<CardDataViewModel> MulticolorCardsSeen { get; } = [];
     internal ObservableCollection<CardDataViewModel> ColorlessCardsSeen { get; } = [];
 
+    internal ObservableCollection<CardViewModel> CardsInDeck { get; } = [];
+
     internal CardViewModel? PreviouslyPickedCardFromPack
     {
         get => previouslyPickedCardFromPack;
@@ -159,6 +167,8 @@ public class MainWindowViewModel : ViewModelBase
     internal ICommand ShowCardDataSourceSettingsCommand { get; init; }
 
     internal ICommand ShowSettingsCommand { get; init; }
+
+    internal ICommand ClearCardsSeenAndDeckCommand { get; init; }
 
     internal bool IsCardDataSourceBeingBuilt
     {
@@ -448,6 +458,53 @@ public class MainWindowViewModel : ViewModelBase
         SortCardsDescendingBySelectedMetric(ColorlessCardsSeen);
     }
 
+    private void UpdateDeck(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        void processNewItems(IList? newItems)
+        {
+            if (newItems != null)
+            {
+                foreach (var item in newItems)
+                {
+                    if (item is ICardDataService cardDataService)
+                    {
+                        var newCardDataVm = new CardViewModel(cardDataService);
+                        CardsInDeck.Add(newCardDataVm);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Expected a ICardDataService as a new item");
+                    }
+                }
+            }
+        }
+
+        void processOldItems(IList? oldItems)
+        {
+            if (oldItems != null)
+            {
+                foreach (var item in oldItems)
+                {
+                    if (item is ICardDataService cardDataService)
+                    {
+                        CardsInDeck.Remove(CardsInDeck.Where(x => x.CardDataService == item));
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Expected a ICardDataService as a old item");
+                    }
+                }
+            }
+        }
+
+        void clearItems()
+        {
+            CardsInDeck.Clear();
+        }
+
+        DispatchObservableCardCollection(e, clearItems, processNewItems, processOldItems);
+    }
+
     private void DispatchObservableCardCollection(System.Collections.Specialized.NotifyCollectionChangedEventArgs e, Action clearItems, Action<IList?> processNewItems, Action<IList?> processOldItems)
     {
         switch (e.Action)
@@ -553,6 +610,7 @@ public class MainWindowViewModel : ViewModelBase
         GreenCardsSeen.Clear();
         MulticolorCardsSeen.Clear();
         ColorlessCardsSeen.Clear();
+        CardsInDeck.Clear();
         PreviouslyPickedCardFromPack = null;
     }
 

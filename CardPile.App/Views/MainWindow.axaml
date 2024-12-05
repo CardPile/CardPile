@@ -126,6 +126,8 @@
             </DataTemplate>
           </ItemsControl.ItemTemplate>
         </ItemsControl>
+        <!-- Clear button -->
+        <Button DockPanel.Dock="Right" Margin="5 2 5 0" FontSize="18" FontWeight="DemiBold" Content="Clear" Command="{Binding ClearCardsSeenAndDeckCommand}" />
         <!-- Metric sort by -->
         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="5 2">
           <TextBlock Margin="5" FontSize="18" FontWeight="DemiBold">Sort by</TextBlock>
@@ -140,7 +142,7 @@
       </DockPanel>  
       <!-- Picks & missing -->
       <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Name="ContentContainer">
-        <Grid RowDefinitions="Auto,Auto,Auto,*">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,*">
           <!-- Picks -->
           <Expander Grid.Row="0" IsExpanded="true" VerticalAlignment="Top" Width="{Binding #ContentContainer.Bounds.Width}" Margin="0, 2" Padding="5 0 5 0">
             <Expander.Header>
@@ -183,8 +185,21 @@
               </ItemsControl.ItemsPanel>
             </ItemsControl>
           </Expander>
-          <!-- Passed -->
+          <!-- Deck -->
           <Expander Grid.Row="3" VerticalAlignment="Top" Width="{Binding #ContentContainer.Bounds.Width}" Margin="0, 2">
+            <Expander.Header>
+              <TextBlock FontSize="18" FontWeight="DemiBold">Current deck</TextBlock>
+            </Expander.Header>
+            <ItemsControl ItemsSource="{Binding CardsInDeck}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+            </ItemsControl>
+          </Expander>
+          <!-- Passed -->
+          <Expander Grid.Row="4" VerticalAlignment="Top" Width="{Binding #ContentContainer.Bounds.Width}" Margin="0, 2">
             <Expander.Header>
               <TextBlock FontSize="18" FontWeight="DemiBold">Passed cards</TextBlock>
             </Expander.Header>

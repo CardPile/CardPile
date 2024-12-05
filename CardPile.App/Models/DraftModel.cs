@@ -54,10 +54,21 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         get => cardsSeen;
     }
 
+    public ObservableCollection<ICardDataService> CardsInDeck
+    {
+        get => cardsInDeck;
+    }
+
     public ICardDataService? PreviousPick
     {
         get => previousPick;
         set => this.RaiseAndSetIfChanged(ref previousPick, value);
+    }
+
+    public void ClearCardsSeenAndDeck()
+    {
+        cardsSeen.Clear();
+        cardsInDeck.Clear();
     }
 
     internal static void ClearOldDrafts()
@@ -102,8 +113,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         cardsInCurrentPack.Clear();
         cardsMissingInCurrentPack.Clear();
         cardsUpcomingAfterCurrentPack.Clear();
-        cardsSeen.Clear();
-        cardsInDeck.Clear();
+        ClearCardsSeenAndDeck();
 
         PreviousPick = null;
     }
@@ -162,8 +172,6 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         cardsInCurrentPack.Clear();
         cardsMissingInCurrentPack.Clear();
         cardsUpcomingAfterCurrentPack.Clear();
-        cardsSeen.Clear();
-        cardsInDeck.Clear();
 
         PreviousPick = null;
 
