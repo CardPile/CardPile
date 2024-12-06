@@ -13,6 +13,8 @@ namespace CardPile.App.Models;
 
 internal class CardDataModel : ReactiveObject, ICardDataService
 {
+    public const int CARD_IMAGE_WIDTH = 172;
+
     static CardDataModel()
     {
         httpClient.DefaultRequestHeaders.Add("User-Agent", "CardPile/0.1");
@@ -112,7 +114,7 @@ internal class CardDataModel : ReactiveObject, ICardDataService
         Bitmap? bitmap = null;
         if (stream != null)
         {
-            bitmap = Bitmap.DecodeToWidth(stream, 172);
+            bitmap = Bitmap.DecodeToWidth(stream, CARD_IMAGE_WIDTH);
 
             if (!cached)
             {

@@ -11,11 +11,22 @@ using System.Collections.Generic;
 using CardPile.CardData;
 using System.Windows.Input;
 using CardPile.App.Views;
+using Avalonia.Data.Converters;
 
 namespace CardPile.App.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
+    public static FuncValueConverter<ObservableCollection<CardDataViewModel>, int> CardCollectionToStackHeightConverter { get; } = new FuncValueConverter<ObservableCollection<CardDataViewModel>, int>(collection =>
+    {
+        if (collection == null || collection.Count == 0)
+        {
+            return 0;
+        }
+
+        return (collection.Count - 1) * CardDataViewModel.CARD_HEADER_SIZE + (CardDataModel.CARD_IMAGE_WIDTH * 7) / 5;
+    });
+
     public MainWindowViewModel() : this(new CardPileModel())
     { }
 
@@ -145,11 +156,17 @@ public class MainWindowViewModel : ViewModelBase
     internal ObservableCollection<CardViewModel> CardsUpcomingAfterPack { get; } = [];
 
     internal ObservableCollection<CardDataViewModel> WhiteCardsSeen { get; } = [];
+
     internal ObservableCollection<CardDataViewModel> BlueCardsSeen { get; } = [];
+
     internal ObservableCollection<CardDataViewModel> BlackCardsSeen { get; } = [];
+
     internal ObservableCollection<CardDataViewModel> RedCardsSeen { get; } = [];
+
     internal ObservableCollection<CardDataViewModel> GreenCardsSeen { get; } = [];
+
     internal ObservableCollection<CardDataViewModel> MulticolorCardsSeen { get; } = [];
+
     internal ObservableCollection<CardDataViewModel> ColorlessCardsSeen { get; } = [];
 
     internal ObservableCollection<CardViewModel> CardsInDeck { get; } = [];
@@ -176,21 +193,23 @@ public class MainWindowViewModel : ViewModelBase
         private set => this.RaiseAndSetIfChanged(ref isCardDataSourceBeingBuilt, value);
     }
 
-    private static void SortCards<T, TKey>(ObservableCollection<T> collection, Func<T, TKey> selector, IComparer<TKey>? comparer = null)
+    private static void SortCards<T, TKey>(ObservableCollection<T> collection, Func<T, TKey> selector, IComparer<TKey>? comparer = null) where T : CardDataViewModel
     {
         List<T> sorted = [.. collection.OrderBy(selector, comparer ?? Comparer<TKey>.Default)];
         for (int i = 0; i < sorted.Count; i++)
         {
             collection.Move(collection.IndexOf(sorted[i]), i);
+            sorted[i].Index = i;
         }
     }
 
-    private static void SortCardsDescending<T, TKey>(ObservableCollection<T> collection, Func<T, TKey> selector, IComparer<TKey>? comparer = null)
+    private static void SortCardsDescending<T, TKey>(ObservableCollection<T> collection, Func<T, TKey> selector, IComparer<TKey>? comparer = null) where T : CardDataViewModel
     {
         List<T> sorted = [.. collection.OrderByDescending(selector, comparer ?? Comparer<TKey>.Default)];
         for (int i = 0; i < sorted.Count; i++)
         {
             collection.Move(collection.IndexOf(sorted[i]), i);
+            sorted[i].Index = i;
         }
     }
 
@@ -204,7 +223,7 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     if (item is ICardDataService cardDataService)
                     {
-                        var newCardDataVm = new CardDataViewModel(cardDataService);
+                        var newCardDataVm = new CardDataViewModel(cardDataService, CardsInPack.Count);
                         UpdateCardMetricVisibility(newCardDataVm);
                         CardsInPack.Add(newCardDataVm);
                     }
@@ -347,37 +366,49 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     if (item is ICardDataService cardDataService)
                     {
-                        var newCardVm = new CardDataViewModel(cardDataService);
-                        ClearCardMetricVisibility(newCardVm);
                         if (cardDataService.Colors.Count == 0)
                         {
+                            var newCardVm = new CardDataViewModel(cardDataService, ColorlessCardsSeen.Count, false);
+                            ClearCardMetricVisibility(newCardVm);
                             ColorlessCardsSeen.Add(newCardVm);
                         }
                         else if (cardDataService.Colors.Count == 1)
                         {
                             if(cardDataService.Colors.First() == Color.White)
                             {
+                                var newCardVm = new CardDataViewModel(cardDataService, WhiteCardsSeen.Count, false);
+                                ClearCardMetricVisibility(newCardVm);
                                 WhiteCardsSeen.Add(newCardVm);
                             }
                             else if(cardDataService.Colors.First() == Color.Blue)
                             {
+                                var newCardVm = new CardDataViewModel(cardDataService, BlueCardsSeen.Count, false);
+                                ClearCardMetricVisibility(newCardVm);
                                 BlueCardsSeen.Add(newCardVm);
                             }
                             else if (cardDataService.Colors.First() == Color.Black)
                             {
+                                var newCardVm = new CardDataViewModel(cardDataService, BlackCardsSeen.Count, false);
+                                ClearCardMetricVisibility(newCardVm);
                                 BlackCardsSeen.Add(newCardVm);
                             }
                             else if (cardDataService.Colors.First() == Color.Red)
                             {
+                                var newCardVm = new CardDataViewModel(cardDataService, RedCardsSeen.Count, false);
+                                ClearCardMetricVisibility(newCardVm);
                                 RedCardsSeen.Add(newCardVm);
                             }
                             else if (cardDataService.Colors.First() == Color.Green)
                             {
+                                var newCardVm = new CardDataViewModel(cardDataService, GreenCardsSeen.Count, false);
+                                ClearCardMetricVisibility(newCardVm);
                                 GreenCardsSeen.Add(newCardVm);
                             }
                         }
                         else
                         {
+                            var newCardVm = new CardDataViewModel(cardDataService, MulticolorCardsSeen.Count, false);
+                            ClearCardMetricVisibility(newCardVm);
                             MulticolorCardsSeen.Add(newCardVm);
                         }
                     }
@@ -449,6 +480,7 @@ public class MainWindowViewModel : ViewModelBase
         }
 
         DispatchObservableCardCollection(e, clearItems, processNewItems, processOldItems);
+
         SortCardsDescendingBySelectedMetric(WhiteCardsSeen);
         SortCardsDescendingBySelectedMetric(BlueCardsSeen);
         SortCardsDescendingBySelectedMetric(BlackCardsSeen);
@@ -456,6 +488,14 @@ public class MainWindowViewModel : ViewModelBase
         SortCardsDescendingBySelectedMetric(GreenCardsSeen);
         SortCardsDescendingBySelectedMetric(MulticolorCardsSeen);
         SortCardsDescendingBySelectedMetric(ColorlessCardsSeen);
+
+        this.RaisePropertyChanged(nameof(WhiteCardsSeen));
+        this.RaisePropertyChanged(nameof(BlueCardsSeen));
+        this.RaisePropertyChanged(nameof(BlackCardsSeen));
+        this.RaisePropertyChanged(nameof(RedCardsSeen));
+        this.RaisePropertyChanged(nameof(GreenCardsSeen));
+        this.RaisePropertyChanged(nameof(MulticolorCardsSeen));
+        this.RaisePropertyChanged(nameof(ColorlessCardsSeen));
     }
 
     private void UpdateDeck(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

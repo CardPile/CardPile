@@ -16,7 +16,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         this.WhenActivated(action => action(ViewModel!.ShowCardDataSourceSettingsDialog.RegisterHandler(DoShowCardDataSourceSettingsDialogAsync)));
     }
 
-    private async Task DoShowCardDataSourceSettingsDialogAsync(InteractionContext<CardDataSourceSettingsDialogViewModel, bool> interaction)
+    private async Task DoShowCardDataSourceSettingsDialogAsync(IInteractionContext<CardDataSourceSettingsDialogViewModel, bool> interaction)
     {
         var dialog = new CardDataSourceSettingsWindow
         {

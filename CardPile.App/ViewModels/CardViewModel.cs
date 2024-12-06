@@ -4,30 +4,22 @@ using System.Threading.Tasks;
 
 namespace CardPile.App.ViewModels;
 
-public class CardViewModel : ViewModelBase
+public class CardViewModel : CardViewModelBase
 {
-    internal CardViewModel(ICardDataService cardDataService, bool highlight = false)
+    internal CardViewModel(ICardDataService cardDataService, bool highlight = false, bool showLabel = true) : base(cardDataService, showLabel)
     {
-        this.cardDataService = cardDataService;
         Highlight = highlight;
-    }
-
-    internal ICardDataService CardDataService
-    {
-        get => cardDataService;
     }
 
     internal string CardName
     {
-        get => cardDataService.Name;
+        get => CardDataService.Name;
     }
 
     internal Task<Bitmap?> CardImage
     { 
-        get => cardDataService.CardImage; 
+        get => CardDataService.CardImage; 
     }
 
     internal bool Highlight { get; init; }
-
-    private readonly ICardDataService cardDataService;
 }

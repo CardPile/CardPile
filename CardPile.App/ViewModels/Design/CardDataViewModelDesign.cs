@@ -24,5 +24,10 @@ public class CardDataViewModelDesign : ViewModelBase
         get => true;
     }
 
+    internal bool ShowLabel
+    {
+        get => true;
+    }
+
     internal Task<Bitmap?> CardImage { get => Task.FromResult<Bitmap?>(null); }
 }

@@ -24,7 +24,7 @@ public partial class CardDataSourceSettingsWindow : ReactiveWindow<CardDataSourc
         this.WhenActivated(action => action(ViewModel!.BrowseFileInteraction.RegisterHandler(BrowseFileInteractionHandler)));
     }
 
-    private async Task BrowseFileInteractionHandler(InteractionContext<string, string?> context)
+    private async Task BrowseFileInteractionHandler(IInteractionContext<string, string?> context)
     {
         var topLevel = GetTopLevel(this);
 

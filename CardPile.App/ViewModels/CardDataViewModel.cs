@@ -3,14 +3,17 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using CardPile.App.Services;
 using CardPile.CardData.Importance;
+using ReactiveUI;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace CardPile.App.ViewModels;
 
-public class CardDataViewModel : ViewModelBase
+public class CardDataViewModel : CardViewModelBase
 {
+    public const int CARD_HEADER_SIZE = 26;
+
     public static FuncValueConverter<ImportanceLevel, IBrush> ImportanceConverter { get; } = new FuncValueConverter<ImportanceLevel, IBrush>(level =>
     {
         switch(level)
@@ -31,20 +34,16 @@ public class CardDataViewModel : ViewModelBase
         }
     });
 
-    internal CardDataViewModel(ICardDataService cardDataService)
+    internal CardDataViewModel(ICardDataService cardDataService, int index, bool showLabel = true) : base(cardDataService, showLabel)
     {
-        this.cardDataService = cardDataService;
-        this.metrics = [.. this.cardDataService.Metrics.Select(x => new CardMetricViewModel(x))];
-    }
+        metrics = [.. CardDataService.Metrics.Select(x => new CardMetricViewModel(x))];
 
-    internal ICardDataService CardDataService
-    { 
-        get => cardDataService;
+        Index = index;
     }
 
     internal string CardName
     { 
-        get => cardDataService.Name; 
+        get => CardDataService.Name; 
     }
 
     internal List<CardMetricViewModel> Metrics
@@ -59,9 +58,34 @@ public class CardDataViewModel : ViewModelBase
 
     internal Task<Bitmap?> CardImage
     { 
-        get => cardDataService.CardImage; 
+        get => CardDataService.CardImage; 
     }
 
-    private readonly ICardDataService cardDataService;
+    internal int Index
+    {
+        get => index;
+        set
+        {
+            if (index != value)
+            {
+                this.RaisePropertyChanging(nameof(Index));
+                this.RaisePropertyChanging(nameof(OffsetInStack));
+                index = value;
+                this.RaisePropertyChanged(nameof(OffsetInStack));
+                this.RaisePropertyChanged(nameof(Index));
+            }
+        }
+    }
+
+    internal float OffsetInStack
+    {
+        get
+        {
+            return index * CARD_HEADER_SIZE;
+        }
+    }
+
     private readonly List<CardMetricViewModel> metrics;
+
+    private int index;
 }

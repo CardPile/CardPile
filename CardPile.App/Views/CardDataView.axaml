@@ -16,7 +16,7 @@
   
   <StackPanel>
     <Grid RowDefinitions="*,*" ColumnDefinitions="*,Auto">
-      <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Content="{Binding CardName}"/>
+      <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Content="{Binding CardName}" IsVisible="{Binding ShowLabel}" />
       <StackPanel Grid.Column="0" Grid.Row="1" Spacing="5" Margin="5 0">
         <Border CornerRadius="10" ClipToBounds="True">
           <Panel>
