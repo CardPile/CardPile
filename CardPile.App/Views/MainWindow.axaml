@@ -71,7 +71,7 @@
             </ItemsControl.ItemTemplate>
           </ItemsControl>
           <!-- Spinner -->
-          <li:LoadingIndicator DockPanel.Dock="Left" IsActive="{Binding IsCardDataSourceBeingBuilt}" Mode="Ring" SpeedRatio="0.6" VerticalAlignment="Center" Foreground="DarkGray" />
+          <li:LoadingIndicator DockPanel.Dock="Left" IsActive="{Binding IsCardDataSourceBeingBuilt}" Mode="Ring" SpeedRatio="0.6" VerticalAlignment="Center" Foreground="DarkGray" Height="{Binding $parent[DockPanel].Bounds.Height}" Width="{Binding $parent[DockPanel].Bounds.Height}" />
           <!-- Log Button -->
           <StackPanel DockPanel.Dock="Right" Margin="5" Orientation="Horizontal">
             <Button Background="Transparent" Command="{Binding ShowLogCommand}" ToolTip.Tip="Show log window">
