@@ -228,13 +228,13 @@ namespace CardPile.Draft
             var result = new List<int>();
             for (int packIndex = 0; packIndex < packsSeen.Count; ++packIndex)
             {
-                var packLoopBackCount = Math.Min(PACK_LOOK_BACK, Math.Min(packsSeen[packIndex].Count, packIndex < picks.Count ? picks[packIndex].Count : 0));
-                for (int i = 0; i < packLoopBackCount; i++)
+                var packLookBackCount = Math.Min(PACK_LOOK_BACK, Math.Min(packsSeen[packIndex].Count, packIndex < picks.Count ? picks[packIndex].Count : 0));
+                for (int i = 0; i < packLookBackCount; i++)
                 {
                     result.AddRange(packsSeen[packIndex][i]);
                 }
 
-                for (int i = 0; i < packLoopBackCount; i++)
+                for (int i = 0; i < picks[packIndex].Count; i++)
                 {
                     result.Remove(picks[packIndex][i]);
                 }
