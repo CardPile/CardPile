@@ -6,7 +6,7 @@ namespace CardPile.App.ViewModels;
 
 public class CardViewModel : CardViewModelBase
 {
-    internal CardViewModel(ICardDataService cardDataService, bool highlight = false, bool showLabel = true) : base(cardDataService, showLabel)
+    internal CardViewModel(ICardDataService cardDataService, bool highlight = false) : base(cardDataService)
     {
         Highlight = highlight;
     }

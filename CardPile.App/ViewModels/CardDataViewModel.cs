@@ -34,7 +34,7 @@ public class CardDataViewModel : CardViewModelBase
         }
     });
 
-    internal CardDataViewModel(ICardDataService cardDataService, int index, bool showLabel = true) : base(cardDataService, showLabel)
+    internal CardDataViewModel(ICardDataService cardDataService, int index) : base(cardDataService)
     {
         metrics = [.. CardDataService.Metrics.Select(x => new CardMetricViewModel(x))];
 
