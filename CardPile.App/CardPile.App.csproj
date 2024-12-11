@@ -55,5 +55,8 @@
     <Compile Update="Views\CardDataSourceSettingsDialog.axaml.cs">
       <DependentUpon>CardDataSourceSettingsDialog.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\CardMetricsView.axaml.cs">
+      <DependentUpon>CardMetricsView.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

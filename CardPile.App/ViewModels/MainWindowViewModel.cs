@@ -169,7 +169,7 @@ public class MainWindowViewModel : ViewModelBase
 
     internal ObservableCollection<CardDataViewModel> ColorlessCardsSeen { get; } = [];
 
-    internal ObservableCollection<CardViewModel> CardsInDeck { get; } = [];
+    internal ObservableCollection<CardDataViewModel> CardsInDeck { get; } = [];
 
     internal CardViewModel? PreviouslyPickedCardFromPack
     {
@@ -372,7 +372,7 @@ public class MainWindowViewModel : ViewModelBase
                             {
                                 ShowLabel = false
                             };
-                            ClearCardMetricVisibility(newCardVm);
+                            UpdateCardMetricVisibility(newCardVm);
                             ColorlessCardsSeen.Add(newCardVm);
                         }
                         else if (cardDataService.Colors.Count == 1)
@@ -383,7 +383,7 @@ public class MainWindowViewModel : ViewModelBase
                                 {
                                     ShowLabel = false
                                 };
-                                ClearCardMetricVisibility(newCardVm);
+                                UpdateCardMetricVisibility(newCardVm);
                                 WhiteCardsSeen.Add(newCardVm);
                             }
                             else if(cardDataService.Colors.First() == Color.Blue)
@@ -392,7 +392,7 @@ public class MainWindowViewModel : ViewModelBase
                                 {
                                     ShowLabel = false
                                 };
-                                ClearCardMetricVisibility(newCardVm);
+                                UpdateCardMetricVisibility(newCardVm);
                                 BlueCardsSeen.Add(newCardVm);
                             }
                             else if (cardDataService.Colors.First() == Color.Black)
@@ -401,7 +401,7 @@ public class MainWindowViewModel : ViewModelBase
                                 {
                                     ShowLabel = false
                                 };
-                                ClearCardMetricVisibility(newCardVm);
+                                UpdateCardMetricVisibility(newCardVm);
                                 BlackCardsSeen.Add(newCardVm);
                             }
                             else if (cardDataService.Colors.First() == Color.Red)
@@ -410,7 +410,7 @@ public class MainWindowViewModel : ViewModelBase
                                 {
                                     ShowLabel = false
                                 };
-                                ClearCardMetricVisibility(newCardVm);
+                                UpdateCardMetricVisibility(newCardVm);
                                 RedCardsSeen.Add(newCardVm);
                             }
                             else if (cardDataService.Colors.First() == Color.Green)
@@ -419,7 +419,7 @@ public class MainWindowViewModel : ViewModelBase
                                 {
                                     ShowLabel = false
                                 };
-                                ClearCardMetricVisibility(newCardVm);
+                                UpdateCardMetricVisibility(newCardVm);
                                 GreenCardsSeen.Add(newCardVm);
                             }
                         }
@@ -429,7 +429,7 @@ public class MainWindowViewModel : ViewModelBase
                             {
                                 ShowLabel = false
                             };
-                            ClearCardMetricVisibility(newCardVm);
+                            UpdateCardMetricVisibility(newCardVm);
                             MulticolorCardsSeen.Add(newCardVm);
                         }
                     }
@@ -529,7 +529,8 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     if (item is ICardDataService cardDataService)
                     {
-                        var newCardDataVm = new CardViewModel(cardDataService);
+                        var newCardDataVm = new CardDataViewModel(cardDataService, CardsInDeck.Count);
+                        UpdateCardMetricVisibility(newCardDataVm);
                         CardsInDeck.Add(newCardDataVm);
                     }
                     else
@@ -564,6 +565,8 @@ public class MainWindowViewModel : ViewModelBase
         }
 
         DispatchObservableCardCollection(e, clearItems, processNewItems, processOldItems);
+
+        this.RaisePropertyChanged(nameof(CardsInDeck));
     }
 
     private void DispatchObservableCardCollection(System.Collections.Specialized.NotifyCollectionChangedEventArgs e, Action clearItems, Action<IList?> processNewItems, Action<IList?> processOldItems)
@@ -725,7 +728,7 @@ public class MainWindowViewModel : ViewModelBase
                 return 1;
             }
 
-            var comparisonResult = internalComparer.Compare(x.Metrics[metricIndex].Metric, y.Metrics[metricIndex].Metric);
+            var comparisonResult = internalComparer.Compare(x.Metrics.Metrics[metricIndex].Metric, y.Metrics.Metrics[metricIndex].Metric);
             if (comparisonResult == 0)
             {
 
@@ -758,7 +761,7 @@ public class MainWindowViewModel : ViewModelBase
         int metricIndex = metricDescriptionViewModels.IndexOf(vm);
         foreach (var card in CardsInPack)
         {
-            card.Metrics[metricIndex].Visible = visible;
+            card.Metrics.Metrics[metricIndex].Visible = visible;
         }
     }
 
@@ -766,7 +769,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         for(int i = 0; i < metricDescriptionViewModels.Count; ++i)
         {
-            cardVm.Metrics[i].Visible = metricDescriptionViewModels[i].Visible;
+            cardVm.Metrics.Metrics[i].Visible = metricDescriptionViewModels[i].Visible;
         }
     }
 
@@ -774,7 +777,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         for (int i = 0; i < metricDescriptionViewModels.Count; ++i)
         {
-            cardVm.Metrics[i].Visible = false;
+            cardVm.Metrics.Metrics[i].Visible = false;
         }
     }
 
