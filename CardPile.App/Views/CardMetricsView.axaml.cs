@@ -5,7 +5,11 @@ namespace CardPile.App.Views;
 
 public partial class CardMetricsView : UserControl
 {
-    public static readonly StyledProperty<bool> HighlightImportanceProperty = AvaloniaProperty.Register<CardMetricsView, bool>(nameof(HighlightImportance), defaultValue: true);
+    public static readonly DirectProperty<CardMetricsView, bool> HighlightImportanceProperty = AvaloniaProperty.RegisterDirect<CardMetricsView, bool>(
+        nameof(HighlightImportance),
+        o => o.HighlightImportance,
+        (o, v) => o.HighlightImportance = v
+    );
 
     public CardMetricsView()
     {
@@ -14,7 +18,9 @@ public partial class CardMetricsView : UserControl
 
     public bool HighlightImportance
     {
-        get => GetValue(HighlightImportanceProperty);
-        set => SetValue(HighlightImportanceProperty, value);
+        get => highlightImportance;
+        set => SetAndRaise(HighlightImportanceProperty, ref highlightImportance, value);
     }
+
+    private bool highlightImportance;
 }
