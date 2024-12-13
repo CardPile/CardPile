@@ -19,6 +19,7 @@
   <UserControl.Styles>
     <Style Selector="ToolTip">
       <Setter Property="IsVisible" Value="{Binding #root.ShowPopup}" />
+      <Setter Property="MaxWidth" Value="600" />
     </Style>
   </UserControl.Styles>
   
@@ -29,7 +30,22 @@
         <Border CornerRadius="10" ClipToBounds="True">
           <Panel>
             <ToolTip.Tip>
-              <v:CardMetricsView DataContext="{Binding Metrics}" />
+              <Grid RowDefinitions="*,*" ColumnDefinitions="*,Auto">
+                <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Content="{Binding CardName}" />
+                <StackPanel Grid.Column="0" Grid.Row="1" Spacing="5" Margin="5 0">
+                  <Border CornerRadius="10" ClipToBounds="True">
+                    <Panel>
+                      <Image Width="172" Height="240" Source="{Binding CardImage^}"/>
+                      <Panel Height="240" Background="LightGray" IsVisible="{Binding CardImage^, Converter={x:Static ObjectConverters.IsNull}}">
+                        <PathIcon Height="75" Width="75" Data="{StaticResource card_placeholder}" />
+                      </Panel>
+                    </Panel>
+                  </Border>
+                </StackPanel>
+                <Border Grid.Column="1" Grid.Row="1" CornerRadius="10" ClipToBounds="True" Background="Gray">
+                  <v:CardMetricsView DataContext="{Binding Metrics}" HighlightImportance="False" IsVisible="{Binding AnyMetricVisible}"/>
+                </Border>
+              </Grid>
             </ToolTip.Tip>
             <Image Width="172" Height="240" Source="{Binding CardImage^}"/>
             <Panel Height="240" Background="LightGray" IsVisible="{Binding CardImage^, Converter={x:Static ObjectConverters.IsNull}}">
