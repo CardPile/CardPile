@@ -12,9 +12,9 @@ internal class CardDataSourceBuilderCollectionModel : ReactiveObject, ICardDataS
 {
     static CardDataSourceBuilderCollectionModel()
     {
-        DummyCardDataSourceBuilder.Init();
-        SeventeenLandsCardDataSourceBuilder.Init();
-        SpreadsheetCardDataSourceBuilder.Init();
+        CardData.Dummy.CardDataSourceBuilder.Init();
+        CardData.SeventeenLands.CardDataSourceBuilder.Init();
+        CardData.Spreadsheet.CardDataSourceBuilder.Init();
     }
 
     internal CardDataSourceBuilderCollectionModel()
@@ -36,9 +36,9 @@ internal class CardDataSourceBuilderCollectionModel : ReactiveObject, ICardDataS
         // NOOP - runs static constructor
     }
 
-    private static readonly CardDataSourceBuilderModel DummyCardDataSourceBuilderModel = new CardDataSourceBuilderModel(new DummyCardDataSourceBuilder());
-    private static readonly CardDataSourceBuilderModel SeventeenLandsCardDataSourceBuilderModel = new CardDataSourceBuilderModel(new SeventeenLandsCardDataSourceBuilder());
-    private static readonly CardDataSourceBuilderModel SpreadsheetCardDataSourceBuilderModel = new CardDataSourceBuilderModel(new SpreadsheetCardDataSourceBuilder());
+    private static readonly CardDataSourceBuilderModel DummyCardDataSourceBuilderModel = new CardDataSourceBuilderModel(new CardData.Dummy.CardDataSourceBuilder());
+    private static readonly CardDataSourceBuilderModel SeventeenLandsCardDataSourceBuilderModel = new CardDataSourceBuilderModel(new CardData.SeventeenLands.CardDataSourceBuilder());
+    private static readonly CardDataSourceBuilderModel SpreadsheetCardDataSourceBuilderModel = new CardDataSourceBuilderModel(new CardData.Spreadsheet.CardDataSourceBuilder());
 
     private ICardDataSourceBuilderService currentCardDataSourceBuilder;
 }

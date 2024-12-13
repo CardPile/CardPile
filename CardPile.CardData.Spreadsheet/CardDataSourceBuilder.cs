@@ -7,14 +7,14 @@ using CardPile.CardData.Settings;
 
 namespace CardPile.CardData.Spreadsheet;
 
-public class SpreadsheetCardDataSourceBuilder : ICardDataSourceBuilder
+public class CardDataSourceBuilder : ICardDataSourceBuilder
 {
     public static void Init()
     {
         // NOOP
     }
 
-    public SpreadsheetCardDataSourceBuilder()
+    public CardDataSourceBuilder()
     {
         Settings = [SpreadSheetFilenameSetting];
 
@@ -27,7 +27,7 @@ public class SpreadsheetCardDataSourceBuilder : ICardDataSourceBuilder
 
     public List<ICardDataSourceParameter> Parameters { get; init; }
 
-    public List<ICardMetricDescription> MetricDescriptions { get => SpreadsheetCardData.MetricDescriptions; }
+    public List<ICardMetricDescription> MetricDescriptions { get => CardData.MetricDescriptions; }
 
     public ICardDataSource Build()
     {
@@ -40,7 +40,7 @@ public class SpreadsheetCardDataSourceBuilder : ICardDataSourceBuilder
 
         if (!File.Exists(SpreadSheetFilenameSetting.Value))
         {
-            return new SpreadsheetCardDataSource();
+            return new CardDataSource();
         }
 
         List<SpreadsheetEntry> entries = [];
@@ -53,7 +53,7 @@ public class SpreadsheetCardDataSourceBuilder : ICardDataSourceBuilder
             }
         }
 
-        return new SpreadsheetCardDataSource(entries);
+        return new CardDataSource(entries);
     }
 
     private async Task SaveConfiguration()

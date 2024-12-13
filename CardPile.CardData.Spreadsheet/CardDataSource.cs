@@ -2,12 +2,12 @@
 
 namespace CardPile.CardData.Spreadsheet;
 
-public class SpreadsheetCardDataSource : ICardDataSource
+public class CardDataSource : ICardDataSource
 {
-    internal SpreadsheetCardDataSource()
+    internal CardDataSource()
     { }
 
-    internal SpreadsheetCardDataSource(IEnumerable<SpreadsheetEntry> entries)
+    internal CardDataSource(IEnumerable<SpreadsheetEntry> entries)
     {
         cardGrades = entries.ToDictionary(x => x.Name, x => x.Grade);
     }
@@ -33,7 +33,7 @@ public class SpreadsheetCardDataSource : ICardDataSource
         cardGrades.TryGetValue(cardNameFromArena, out grade);
 
         var colors = CardInfo.Arena.GetCardColorsFromId(cardNumber) ?? [];
-        return new SpreadsheetCardData(cardNameFromArena, cardNumber, colors, url, grade);
+        return new CardData(cardNameFromArena, cardNumber, colors, url, grade);
     }
 
     public List<ICardDataSourceStatistic> Statistics { get => []; }

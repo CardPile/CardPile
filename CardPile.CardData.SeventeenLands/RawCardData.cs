@@ -2,9 +2,9 @@
 
 namespace CardPile.CardData.SeventeenLands;
 
-internal class SeventeenLandsRawCardData
+internal class RawCardData
 {
-    internal SeventeenLandsRawCardData
+    internal RawCardData
     (
         string name,
         int mtga_id,
@@ -52,7 +52,7 @@ internal class SeventeenLandsRawCardData
     }
 
     [JsonConstructor]
-    internal SeventeenLandsRawCardData
+    internal RawCardData
     (
         string name,
         int mtga_id,

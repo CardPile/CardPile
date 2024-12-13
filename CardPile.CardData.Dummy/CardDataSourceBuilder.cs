@@ -4,7 +4,7 @@ using CardPile.CardData.Settings;
 
 namespace CardPile.CardData.Dummy;
 
-public class DummyCardDataSourceBuilder : ICardDataSourceBuilder
+public class CardDataSourceBuilder : ICardDataSourceBuilder
 {
     public static void Init()
     {
@@ -21,12 +21,12 @@ public class DummyCardDataSourceBuilder : ICardDataSourceBuilder
 
     public ICardDataSource Build()
     {
-        return new DummyCardDataSource();
+        return new CardDataSource();
     }
 
     public Task<ICardDataSource> BuildAsync(CancellationToken cancelation)
     {
-        return Task.FromResult(new DummyCardDataSource() as ICardDataSource);
+        return Task.FromResult(new CardDataSource() as ICardDataSource);
     }
 
     internal static MetricDescription<float> MetricADesc { get; } = new MetricDescription<float>("Metric A", false, false);

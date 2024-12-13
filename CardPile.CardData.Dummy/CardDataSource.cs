@@ -4,9 +4,9 @@ using CardPile.Draft;
 
 namespace CardPile.CardData.Dummy;
 
-public class DummyCardDataSource : ICardDataSource
+public class CardDataSource : ICardDataSource
 {
-    public DummyCardDataSource()
+    public CardDataSource()
     {
         firstStatistic = new Statistic<float>("Stat 1", 7.5f, new PercentFormatter());
         secondStatistic = new Statistic<int>("Stat 2", 3);
@@ -31,12 +31,12 @@ public class DummyCardDataSource : ICardDataSource
 
         if (cardNumber == firstCardNumber)
         {
-            var metricA = DummyCardDataSourceBuilder.MetricADesc.NewMetric<float>(75.1f);
-            var metricB = DummyCardDataSourceBuilder.MetricBDesc.NewMetric<int>(4);
-            var metricC = DummyCardDataSourceBuilder.MetricCDesc.NewMetric<float>(0.16f);
-            var metricD = DummyCardDataSourceBuilder.MetricDDesc.NewMetric("SB A+");
-            var metricE = DummyCardDataSourceBuilder.MetricEDesc.NewMetricWithSort(metricB, metricA, metricC, metricD);
-            return new DummyCardData("Card A",
+            var metricA = CardDataSourceBuilder.MetricADesc.NewMetric<float>(75.1f);
+            var metricB = CardDataSourceBuilder.MetricBDesc.NewMetric<int>(4);
+            var metricC = CardDataSourceBuilder.MetricCDesc.NewMetric<float>(0.16f);
+            var metricD = CardDataSourceBuilder.MetricDDesc.NewMetric("SB A+");
+            var metricE = CardDataSourceBuilder.MetricEDesc.NewMetricWithSort(metricB, metricA, metricC, metricD);
+            return new CardData("Card A",
                                      cardNumber,
                                      [Color.White],
                                      null,
@@ -48,12 +48,12 @@ public class DummyCardDataSource : ICardDataSource
         }
         else if(cardNumber == secondCardNumber)
         {
-            var metricA = DummyCardDataSourceBuilder.MetricADesc.NewMetric<float>(73.1f);
-            var metricB = DummyCardDataSourceBuilder.MetricBDesc.NewMetric<int>(5);
-            var metricC = DummyCardDataSourceBuilder.MetricCDesc.NewMetric<float>(0.14f);
-            var metricD = DummyCardDataSourceBuilder.MetricDDesc.NewMetric("SYN D+");
-            var metricE = DummyCardDataSourceBuilder.MetricEDesc.NewMetricWithSort(metricB, metricA, metricC, metricD);
-            return new DummyCardData("Card B",
+            var metricA = CardDataSourceBuilder.MetricADesc.NewMetric<float>(73.1f);
+            var metricB = CardDataSourceBuilder.MetricBDesc.NewMetric<int>(5);
+            var metricC = CardDataSourceBuilder.MetricCDesc.NewMetric<float>(0.14f);
+            var metricD = CardDataSourceBuilder.MetricDDesc.NewMetric("SYN D+");
+            var metricE = CardDataSourceBuilder.MetricEDesc.NewMetricWithSort(metricB, metricA, metricC, metricD);
+            return new CardData("Card B",
                                      cardNumber,
                                      [Color.Green],
                                      null,
@@ -65,12 +65,12 @@ public class DummyCardDataSource : ICardDataSource
         }
         else if (cardNumber == thirdCardNumber)
         {
-            var metricA = DummyCardDataSourceBuilder.MetricADesc.NewMetric<float>(79.1f);
-            var metricB = DummyCardDataSourceBuilder.MetricBDesc.NewMetric<int>(6);
-            var metricC = DummyCardDataSourceBuilder.MetricCDesc.NewMetric<float>(0.10f);
-            var metricD = DummyCardDataSourceBuilder.MetricDDesc.NewMetric("BA C+");
-            var metricE = DummyCardDataSourceBuilder.MetricEDesc.NewMetricWithSort(metricB, metricA, metricC, metricD);
-            return new DummyCardData("Card C",
+            var metricA = CardDataSourceBuilder.MetricADesc.NewMetric<float>(79.1f);
+            var metricB = CardDataSourceBuilder.MetricBDesc.NewMetric<int>(6);
+            var metricC = CardDataSourceBuilder.MetricCDesc.NewMetric<float>(0.10f);
+            var metricD = CardDataSourceBuilder.MetricDDesc.NewMetric("BA C+");
+            var metricE = CardDataSourceBuilder.MetricEDesc.NewMetricWithSort(metricB, metricA, metricC, metricD);
+            return new CardData("Card C",
                                      cardNumber,
                                      [Color.Red],
                                      null,
@@ -94,7 +94,7 @@ public class DummyCardDataSource : ICardDataSource
                 }
 
                 var colors = CardInfo.Arena.GetCardColorsFromId(cardNumber) ?? [];
-                return new DummyCardData(cardNameFromArena, cardNumber, colors, url, null, null, null, null, null);
+                return new CardData(cardNameFromArena, cardNumber, colors, url, null, null, null, null, null);
             }
 
             return null;

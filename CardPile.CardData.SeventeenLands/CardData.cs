@@ -4,14 +4,14 @@ using CardPile.CardData.Metrics;
 
 namespace CardPile.CardData.SeventeenLands;
 
-internal class SeventeenLandsCardData : ICardData
+internal class CardData : ICardData
 {
 
 
-    internal SeventeenLandsCardData(string name, int arenaCardId, List<Color> colors) : this(name, arenaCardId, colors, null)
+    internal CardData(string name, int arenaCardId, List<Color> colors) : this(name, arenaCardId, colors, null)
     { }
 
-    internal SeventeenLandsCardData(string name, int arenaCardId, List<Color> colors, string? url) : this(name,
+    internal CardData(string name, int arenaCardId, List<Color> colors, string? url) : this(name,
                                                                                                           arenaCardId,
                                                                                                           colors,
                                                                                                           url,
@@ -45,7 +45,7 @@ internal class SeventeenLandsCardData : ICardData
                                                                                                           WinRateImprovementWhenDrawnMetricDesc.NewMetric())
     { }
 
-    internal SeventeenLandsCardData
+    internal CardData
     (
         string name,
         int arenaCardId,

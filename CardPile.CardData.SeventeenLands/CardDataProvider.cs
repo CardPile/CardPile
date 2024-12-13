@@ -23,12 +23,12 @@ public class SeventeenLandsCardDataSourceProvider
     internal const string BG_COLORS_DECK_TYPE = "BG";
     internal const string RG_COLORS_DECK_TYPE = "RG";
 
-    internal static List<SeventeenLandsRawCardData> Load(string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
+    internal static List<RawCardData> Load(string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
     {
         return Task.Run(() => LoadAsync(CancellationToken.None, set, eventType, userType, deckType, startDate, endDate)).Result;
     }
 
-    internal static async Task<List<SeventeenLandsRawCardData>> LoadAsync(CancellationToken cancelation, string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
+    internal static async Task<List<RawCardData>> LoadAsync(CancellationToken cancelation, string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
     {
         string cacheFilename = BuildCacheFilename(set, eventType, userType, deckType, startDate, endDate);
         Stream? fileStream = await ReadFromCache(cacheFilename, cancelation);
@@ -48,16 +48,16 @@ public class SeventeenLandsCardDataSourceProvider
         return [];
     }
 
-    internal static List<SeventeenLandsRawCardData> Load(Stream steam)
+    internal static List<RawCardData> Load(Stream steam)
     {
         var reader = new StreamReader(steam);
         var data = reader.ReadToEnd();
         return Load(data);
     }
 
-    internal static List<SeventeenLandsRawCardData> Load(string jsonText)
+    internal static List<RawCardData> Load(string jsonText)
     {
-        var result = JsonConvert.DeserializeObject<List<SeventeenLandsRawCardData>>(jsonText);
+        var result = JsonConvert.DeserializeObject<List<RawCardData>>(jsonText);
         return result == null ? throw new ArgumentException("Invalid JSON", nameof(jsonText)) : result;
     }
 

@@ -3,12 +3,12 @@ using CardPile.Draft;
 
 namespace CardPile.CardData.Spreadsheet;
 
-public class SpreadsheetCardData : ICardData
+public class CardData : ICardData
 {
-    internal SpreadsheetCardData(string name, int arenaCardId, List<Color> colors, string? url) : this(name, arenaCardId, colors, url, null)
+    internal CardData(string name, int arenaCardId, List<Color> colors, string? url) : this(name, arenaCardId, colors, url, null)
     { }
 
-    internal SpreadsheetCardData(string name, int arenaCardId, List<Color> colors, string? url, string? grade)
+    internal CardData(string name, int arenaCardId, List<Color> colors, string? url, string? grade)
     {
         Name = name;
         ArenaCardId = arenaCardId;

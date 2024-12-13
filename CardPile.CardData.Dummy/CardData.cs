@@ -1,9 +1,9 @@
 ﻿
 namespace CardPile.CardData.Dummy;
 
-public class DummyCardData : ICardData
+public class CardData : ICardData
 {
-    internal DummyCardData(string name, int arenaCardId, List<Color> colors, string? url, ICardMetric? metricA, ICardMetric? metricB, ICardMetric? metricC, ICardMetric? metricD, ICardMetric? metricE)
+    internal CardData(string name, int arenaCardId, List<Color> colors, string? url, ICardMetric? metricA, ICardMetric? metricB, ICardMetric? metricC, ICardMetric? metricD, ICardMetric? metricE)
     {
         Name = name;
         ArenaCardId = arenaCardId;
