@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json;
 using NLog;
 using System.Text;
 using System.Web;
@@ -23,41 +24,79 @@ public class SeventeenLandsCardDataSourceProvider
     internal const string BG_COLORS_DECK_TYPE = "BG";
     internal const string RG_COLORS_DECK_TYPE = "RG";
 
-    internal static List<RawCardData> Load(string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
+    internal static List<RawCardData> LoadCardData(string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
     {
-        return Task.Run(() => LoadAsync(CancellationToken.None, set, eventType, userType, deckType, startDate, endDate)).Result;
+        return Task.Run(() => LoadCardDataAsync(CancellationToken.None, set, eventType, userType, deckType, startDate, endDate)).Result;
     }
 
-    internal static async Task<List<RawCardData>> LoadAsync(CancellationToken cancelation, string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
+    internal static async Task<List<RawCardData>> LoadCardDataAsync(CancellationToken cancelation, string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
     {
-        string cacheFilename = BuildCacheFilename(set, eventType, userType, deckType, startDate, endDate);
+        string cacheFilename = BuildCardDataCacheFilename(set, eventType, userType, deckType, startDate, endDate);
         Stream? fileStream = await ReadFromCache(cacheFilename, cancelation);
         if (fileStream != null)
         {
-            return Load(fileStream);
+            return LoadCardData(fileStream);
         }
 
-        Stream? webStream = await ReadFromWeb(cancelation, set, eventType, userType, deckType, startDate, endDate);
+        Stream? webStream = await ReadCardDataFromWeb(cancelation, set, eventType, userType, deckType, startDate, endDate);
         if (webStream != null)
         {
             SaveToCache(webStream, cacheFilename);
             webStream.Position = 0;
-            return Load(webStream);
+            return LoadCardData(webStream);
         }
 
         return [];
     }
 
-    internal static List<RawCardData> Load(Stream steam)
+    internal static List<RawCardData> LoadCardData(Stream steam)
     {
         var reader = new StreamReader(steam);
         var data = reader.ReadToEnd();
-        return Load(data);
+        return LoadCardData(data);
     }
 
-    internal static List<RawCardData> Load(string jsonText)
+    internal static List<RawCardData> LoadCardData(string jsonText)
     {
         var result = JsonConvert.DeserializeObject<List<RawCardData>>(jsonText);
+        return result == null ? throw new ArgumentException("Invalid JSON", nameof(jsonText)) : result;
+    }
+
+    internal static List<RawWinData> LoadWinData(string? set, string? eventType, DateTime startDate, DateTime endDate, bool combineSplashes)
+    {
+        return Task.Run(() => LoadWinDataAsync(CancellationToken.None, set, eventType, startDate, endDate, combineSplashes)).Result;
+    }
+
+    internal static async Task<List<RawWinData>> LoadWinDataAsync(CancellationToken cancelation, string? set, string? eventType, DateTime startDate, DateTime endDate, bool combineSplashes)
+    {
+        string cacheFilename = BuildWinDataCacheFilename(set, eventType, startDate, endDate, combineSplashes);
+        Stream? fileStream = await ReadFromCache(cacheFilename, cancelation);
+        if (fileStream != null)
+        {
+            return LoadWinData(fileStream);
+        }
+
+        Stream? webStream = await ReadWinDataFromWeb(cancelation, set, eventType, startDate, endDate, combineSplashes);
+        if (webStream != null)
+        {
+            SaveToCache(webStream, cacheFilename);
+            webStream.Position = 0;
+            return LoadWinData(webStream);
+        }
+
+        return [];
+    }
+
+    internal static List<RawWinData> LoadWinData(Stream steam)
+    {
+        var reader = new StreamReader(steam);
+        var data = reader.ReadToEnd();
+        return LoadWinData(data);
+    }
+
+    internal static List<RawWinData> LoadWinData(string jsonText)
+    {
+        var result = JsonConvert.DeserializeObject<List<RawWinData>>(jsonText);
         return result == null ? throw new ArgumentException("Invalid JSON", nameof(jsonText)) : result;
     }
 
@@ -81,7 +120,7 @@ public class SeventeenLandsCardDataSourceProvider
                 }
                 catch (Exception ex)
                 {
-                    logger.Error("Error removing card image {cardImageFilePath}. Exception: {exception}", filePath, ex);
+                    logger.Error("Error removing 17Lands card data {filePath}. Exception: {exception}", filePath, ex);
                 }
             }
         }
@@ -186,7 +225,7 @@ public class SeventeenLandsCardDataSourceProvider
         internal List<string?> Groups = [];
     };
 
-    private static string BuildCacheFilename(string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
+    private static string BuildCardDataCacheFilename(string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
     {
         var sb = new StringBuilder("17Lands_");
         if (set != null)
@@ -252,6 +291,27 @@ public class SeventeenLandsCardDataSourceProvider
         return fileStream;
     }
 
+    private static string BuildWinDataCacheFilename(string? set, string? eventType, DateTime startDate, DateTime endDate, bool combineSplashes)
+    {
+        var sb = new StringBuilder("17Lands_winData_");
+        if (set != null)
+        {
+            sb.AppendFormat("{0}_", set);
+        }
+
+        if (eventType != null)
+        {
+            sb.AppendFormat("{0}_", eventType);
+        }
+
+        sb.AppendFormat("{0}_", startDate.ToString("yyyy-MM-dd"));
+        sb.AppendFormat("{0}_", endDate.ToString("yyyy-MM-dd"));
+        sb.Append(combineSplashes);
+        sb.Append(".json");
+
+        return sb.ToString();
+    }
+
     private static void SaveToCache(Stream stream, string cacheFilename)
     {
         if (!Directory.Exists(CacheDirectory))
@@ -267,7 +327,7 @@ public class SeventeenLandsCardDataSourceProvider
         catch { }
     }
 
-    private static async Task<Stream?> ReadFromWeb(CancellationToken cancelation, string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
+    private static async Task<Stream?> ReadCardDataFromWeb(CancellationToken cancelation, string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
     {
         var queryParameters = HttpUtility.ParseQueryString(string.Empty);
         if (set != null)
@@ -293,7 +353,42 @@ public class SeventeenLandsCardDataSourceProvider
         queryParameters["start_date"] = startDate.ToString("yyyy-MM-dd");
         queryParameters["end_date"] = endDate.ToString("yyyy-MM-dd");
 
-        var urlBuilder = new UriBuilder(Url)
+        var urlBuilder = new UriBuilder(CardDataUrl)
+        {
+            Query = queryParameters.ToString()
+        };
+
+        Stream? webStream = null;
+        try
+        {
+            var url = urlBuilder.ToString();
+            var data = await httpClient.GetByteArrayAsync(url, cancelation);
+            webStream = new MemoryStream(data);
+        }
+        catch (HttpRequestException)
+        { }
+
+        return webStream;
+    }
+
+    private static async Task<Stream?> ReadWinDataFromWeb(CancellationToken cancelation, string? set, string? eventType, DateTime startDate, DateTime endDate, bool combineSplashes)
+    {
+        var queryParameters = HttpUtility.ParseQueryString(string.Empty);
+        if (set != null)
+        {
+            queryParameters["expansion"] = set;
+        }
+
+        if (eventType != null)
+        {
+            queryParameters["event_type"] = eventType;
+        }
+
+        queryParameters["start_date"] = startDate.ToString("yyyy-MM-dd");
+        queryParameters["end_date"] = endDate.ToString("yyyy-MM-dd");
+        queryParameters["combine_splash"] = combineSplashes.ToString().ToLowerInvariant();
+
+        var urlBuilder = new UriBuilder(WinDataUrl)
         {
             Query = queryParameters.ToString()
         };
@@ -316,7 +411,8 @@ public class SeventeenLandsCardDataSourceProvider
     private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
     private const string FiltersUrl = "https://www.17lands.com/data/filters";
-    private const string Url = "https://www.17lands.com/card_ratings/data";
+    private const string CardDataUrl = "https://www.17lands.com/card_ratings/data";
+    private const string WinDataUrl = "https://www.17lands.com/color_ratings/data";
     private readonly static string AppProgramData = OperatingSystem.IsMacOS() ? "/Users/Shared" : Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
     private readonly static string CardPileProgramData = Path.Combine(AppProgramData, "CardPile");
     private readonly static string CacheDirectory = Path.Combine(CardPileProgramData, "17LandsCache");

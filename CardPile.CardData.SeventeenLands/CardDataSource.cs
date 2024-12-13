@@ -9,16 +9,17 @@ namespace CardPile.CardData.SeventeenLands;
 public class CardDataSource : ICardDataSource
 {
     internal CardDataSource(RawCardDataSource cardData,
-                                          RawCardDataSource wuCardData,
-                                          RawCardDataSource wbCardData,
-                                          RawCardDataSource wrCardData,
-                                          RawCardDataSource wgCardData,
-                                          RawCardDataSource ubCardData,
-                                          RawCardDataSource urCardData,
-                                          RawCardDataSource ugCardData,
-                                          RawCardDataSource brCardData,
-                                          RawCardDataSource bgCardData,
-                                          RawCardDataSource rgCardData)
+                            RawCardDataSource wuCardData,
+                            RawCardDataSource wbCardData,
+                            RawCardDataSource wrCardData,
+                            RawCardDataSource wgCardData,
+                            RawCardDataSource ubCardData,
+                            RawCardDataSource urCardData,
+                            RawCardDataSource ugCardData,
+                            RawCardDataSource brCardData,
+                            RawCardDataSource bgCardData,
+                            RawCardDataSource rgCardData,
+                            WinDataSource winData)
     {
         archetypeCardData[ColorPair.None] = cardData;
         archetypeCardData[ColorPair.WU] = wuCardData;
@@ -41,6 +42,19 @@ public class CardDataSource : ICardDataSource
 
         var avgGihWr = new Statistic<float>("Avg GIH WR", (float)archetypeGihWrDistribution[ColorPair.None].Mean, new PercentFormatter());
         Statistics = [avgGihWr];
+
+        foreach (ColorPair pair in Enum.GetValues<ColorPair>().Cast<ColorPair>())
+        {
+            float winRate = winData.GetWinPercentage((Color)(int)pair);
+            if(float.IsNaN(winRate))
+            {
+                continue;
+            }
+
+            var colroPairWinRateName = string.Format("{0} WR", Enum.GetName(pair));
+            var colorPairWinRateStatistic = new Statistic<float>(colroPairWinRateName, winRate, new PercentFormatter());
+            Statistics.Add(colorPairWinRateStatistic);
+        }
     }
 
     public string Name => "17Lands";

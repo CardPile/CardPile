@@ -48,7 +48,6 @@ internal class RawCardData
         NeverDrawnGameCount = neverDrawnGameCount;
         NeverDrawnWinRate = neverDrawnWinRate;
         DrawnImprovementWinRate = drawnImprovementWinRate;
-
     }
 
     [JsonConstructor]
@@ -74,7 +73,7 @@ internal class RawCardData
         int? never_drawn_game_count,        // # GNS
         float? never_drawn_win_rate,        // GNS WR
         float? drawn_improvement_win_rate   // IWD,
-    ) : this(name, mtga_id, ParseColors(color), url, seen_count, avg_seen, pick_count, avg_pick, game_count, play_rate, win_rate, opening_hand_game_count, opening_hand_win_rate, drawn_game_count, drawn_win_rate, ever_drawn_game_count, ever_drawn_win_rate, never_drawn_game_count, never_drawn_win_rate, drawn_improvement_win_rate)
+    ) : this(name, mtga_id, Utils.ParseColors(color), url, seen_count, avg_seen, pick_count, avg_pick, game_count, play_rate, win_rate, opening_hand_game_count, opening_hand_win_rate, drawn_game_count, drawn_win_rate, ever_drawn_game_count, ever_drawn_win_rate, never_drawn_game_count, never_drawn_win_rate, drawn_improvement_win_rate)
     {
     }
 
@@ -117,39 +116,4 @@ internal class RawCardData
     internal float? NeverDrawnWinRate { get; init; }
 
     internal float? DrawnImprovementWinRate { get; init; }
-
-    private static List<Color> ParseColors(string? colors)
-    {
-        if (colors == null)
-        {
-            return [];
-        }
-
-        var result = new List<Color>();
-        foreach (var color in colors)
-        {
-            if (color == 'W')
-            {
-                result.Add(Color.White);
-            }
-            else if (color == 'U')
-            {
-                result.Add(Color.Blue);
-            }
-            else if (color == 'B')
-            {
-                result.Add(Color.Black);
-            }
-            else if (color == 'R')
-            {
-                result.Add(Color.Red);
-            }
-            else if (color == 'G')
-            {
-                result.Add(Color.Green);
-            }
-        }
-
-        return result;
-    }
 }

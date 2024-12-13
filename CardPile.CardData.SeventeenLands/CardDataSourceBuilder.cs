@@ -46,30 +46,33 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
 
     public async Task<ICardDataSource> BuildAsync(CancellationToken cancelation)
     {
-        var cardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, DeckTypeParameter.Value, StartDateParameter.Value, EndDateParameter.Value));
+        var cardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, DeckTypeParameter.Value, StartDateParameter.Value, EndDateParameter.Value));
 
-        var wuCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, SeventeenLandsCardDataSourceProvider.WU_COLORS_DECK_TYPE, StartDateParameter.Value, EndDateParameter.Value));
-        var wbCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, SeventeenLandsCardDataSourceProvider.WB_COLORS_DECK_TYPE, StartDateParameter.Value, EndDateParameter.Value));
-        var wrCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, SeventeenLandsCardDataSourceProvider.WR_COLORS_DECK_TYPE, StartDateParameter.Value, EndDateParameter.Value));
-        var wgCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, SeventeenLandsCardDataSourceProvider.WG_COLORS_DECK_TYPE, StartDateParameter.Value, EndDateParameter.Value));
-        var ubCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, SeventeenLandsCardDataSourceProvider.UB_COLORS_DECK_TYPE, StartDateParameter.Value, EndDateParameter.Value));
-        var urCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, SeventeenLandsCardDataSourceProvider.UR_COLORS_DECK_TYPE, StartDateParameter.Value, EndDateParameter.Value));
-        var ugCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, SeventeenLandsCardDataSourceProvider.UG_COLORS_DECK_TYPE, StartDateParameter.Value, EndDateParameter.Value));
-        var brCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, SeventeenLandsCardDataSourceProvider.BR_COLORS_DECK_TYPE, StartDateParameter.Value, EndDateParameter.Value));
-        var bgCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, SeventeenLandsCardDataSourceProvider.BG_COLORS_DECK_TYPE, StartDateParameter.Value, EndDateParameter.Value));
-        var rgCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, SeventeenLandsCardDataSourceProvider.RG_COLORS_DECK_TYPE, StartDateParameter.Value, EndDateParameter.Value));
-        
+        var wuCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, SeventeenLandsCardDataSourceProvider.WU_COLORS_DECK_TYPE, StartDateParameter.Value, EndDateParameter.Value));
+        var wbCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, SeventeenLandsCardDataSourceProvider.WB_COLORS_DECK_TYPE, StartDateParameter.Value, EndDateParameter.Value));
+        var wrCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, SeventeenLandsCardDataSourceProvider.WR_COLORS_DECK_TYPE, StartDateParameter.Value, EndDateParameter.Value));
+        var wgCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, SeventeenLandsCardDataSourceProvider.WG_COLORS_DECK_TYPE, StartDateParameter.Value, EndDateParameter.Value));
+        var ubCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, SeventeenLandsCardDataSourceProvider.UB_COLORS_DECK_TYPE, StartDateParameter.Value, EndDateParameter.Value));
+        var urCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, SeventeenLandsCardDataSourceProvider.UR_COLORS_DECK_TYPE, StartDateParameter.Value, EndDateParameter.Value));
+        var ugCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, SeventeenLandsCardDataSourceProvider.UG_COLORS_DECK_TYPE, StartDateParameter.Value, EndDateParameter.Value));
+        var brCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, SeventeenLandsCardDataSourceProvider.BR_COLORS_DECK_TYPE, StartDateParameter.Value, EndDateParameter.Value));
+        var bgCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, SeventeenLandsCardDataSourceProvider.BG_COLORS_DECK_TYPE, StartDateParameter.Value, EndDateParameter.Value));
+        var rgCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, UserTypeParameter.Value, SeventeenLandsCardDataSourceProvider.RG_COLORS_DECK_TYPE, StartDateParameter.Value, EndDateParameter.Value));
+
+        var winData = new WinDataSource(await SeventeenLandsCardDataSourceProvider.LoadWinDataAsync(cancelation, SetParameter.Value, EventTypeParameter.Value, StartDateParameter.Value, EndDateParameter.Value, true));
+
         return new CardDataSource(cardDataSource,
-                                                wuCardDataSource,
-                                                wbCardDataSource,
-                                                wrCardDataSource,
-                                                wgCardDataSource,
-                                                ubCardDataSource,
-                                                urCardDataSource,
-                                                ugCardDataSource,
-                                                brCardDataSource,
-                                                bgCardDataSource,
-                                                rgCardDataSource);
+                                  wuCardDataSource,
+                                  wbCardDataSource,
+                                  wrCardDataSource,
+                                  wgCardDataSource,
+                                  ubCardDataSource,
+                                  urCardDataSource,
+                                  ugCardDataSource,
+                                  brCardDataSource,
+                                  bgCardDataSource,
+                                  rgCardDataSource,
+                                  winData);
     }
 
     private const string SET_PARAMETER_NAME = "Set";
