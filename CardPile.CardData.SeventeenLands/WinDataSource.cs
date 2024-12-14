@@ -7,16 +7,16 @@ internal class WinDataSource
         archetypeWinData = winData.Where(x => !x.IsSummary.GetValueOrDefault(true)).ToDictionary(x => CombineColors(x.Colors), x => x);
     }
 
-    internal float GetWinPercentage(Color color)
+    internal float? GetWinPercentage(Color color)
     {
         if (!archetypeWinData.TryGetValue(color, out var winData))
         {
-            return float.NaN;
+            return null;
         }
 
         if(!winData.Wins.HasValue || !winData.Games.HasValue)
         {
-            return float.NaN;
+            return null;
         }
 
         return (float)Math.Round((double)winData.Wins / (double)winData.Games, 3);

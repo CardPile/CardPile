@@ -71,4 +71,9 @@ public static class ImportanceCalculators
             return ImportanceLevel.Low;
         };
     }
+
+    static public Func<T, ImportanceLevel> AboveThreshold<T>(T criticalThreshold, T highThreshold, T regularThreshold) where T : INumber<T>
+    {
+        return AboveThreshold<T>(criticalThreshold, highThreshold, regularThreshold, x => x);
+    }
 }

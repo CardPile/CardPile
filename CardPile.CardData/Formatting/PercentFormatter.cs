@@ -2,6 +2,13 @@
 
 public class PercentFormatter : IFormatter<float>
 {
+    public PercentFormatter(bool showPositiveSign = false)
+    {
+        ShowPositiveSign = showPositiveSign;
+    }
+
+    public bool ShowPositiveSign { get; init; }
+
     public string Format(float? value)
     {
         if (!value.HasValue)
@@ -9,6 +16,6 @@ public class PercentFormatter : IFormatter<float>
             return string.Empty;
         }
 
-        return string.Format("{0:0.00}%", 100.0f * value.Value);
+        return string.Format("{0}{1:0.00}%", ShowPositiveSign && value.Value >= 0.0 ? "+" : "", 100.0f * value.Value);
     }
 }
