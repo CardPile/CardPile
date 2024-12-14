@@ -1,0 +1,22 @@
+name: Build CardPile Release
+
+on:
+  workflow_dispatch
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-windows:
+    name: Build CardPile on Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Main
+        uses: actions/checkout@v4
+  build-macos:
+    name: Build CardPile on MacOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Main
+        uses: actions/checkout@v4
