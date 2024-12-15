@@ -21,14 +21,13 @@ jobs:
       - name: Build Release
         run: dotnet build -c Release
       - name: Zip Release
-        run: Compress-Archive -Path CardPile.App/bin/Release/net8.0/* Windows.zip
+        run: Compress-Archive -Path CardPile.App/bin/Release/net8.0/* "${{ github.ref_name }}-Windows.zip"
       - name: Create Release
-        id: create_release
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: Windows.zip
+          files: ${{ github.ref_name }}-Windows.zip
           draft: true
 
   build-macos:
@@ -44,12 +43,11 @@ jobs:
       - name: Build Release
         run: dotnet build -c Release
       - name: Zip Release
-        run: zip macOS.zip CardPile.App/bin/Release/net8.0/* -r
+        run: zip "${{ github.ref_name }}-macOS.zip" CardPile.App/bin/Release/net8.0/* -r
       - name: Create Release
-        id: create_release
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: macOS.zip
+          files: ${{ github.ref_name }}-macOS.zip
           draft: true
