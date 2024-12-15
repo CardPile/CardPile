@@ -14,6 +14,20 @@ jobs:
     steps:
       - name: Checkout Main
         uses: actions/checkout@v4
+      - name: Install .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Build Release
+        run: dotnet build -c Release
+      - name: Zip Release
+        run: zip Windows.zip CardPile.App/bin/Release/net8.0/* -r
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Windows.zip
+          draft: true
+
   build-macos:
     name: Build CardPile on MacOS
     runs-on: macos-latest
