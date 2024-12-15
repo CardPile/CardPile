@@ -27,6 +27,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          body: ${{ github.ref_name }}
           files: ${{ github.ref_name }}-Windows.zip
           draft: true
 
@@ -49,5 +50,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          body: ${{ github.ref_name }}
           files: ${{ github.ref_name }}-macOS.zip
           draft: true
