@@ -44,7 +44,7 @@ jobs:
       - name: Build Release
         run: dotnet build -c Release
       - name: Zip Release
-        run: Compress-Archive -Path CardPile.App/bin/Release/net8.0/* macOS.zip
+        run: zip macOS.zip CardPile.App/bin/Release/net8.0/* -r
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
