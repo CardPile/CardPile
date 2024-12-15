@@ -24,7 +24,7 @@ jobs:
         run: Compress-Archive -Path CardPile.App/bin/Release/net8.0/* Windows.zip
       - name: Create Release
         id: create_release
-        uses: actions/action-gh-release@v2
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -47,7 +47,7 @@ jobs:
         run: zip macOS.zip CardPile.App/bin/Release/net8.0/* -r
       - name: Create Release
         id: create_release
-        uses: actions/action-gh-release@v2
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
