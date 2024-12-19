@@ -397,5 +397,7 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
+# IDEA
+.idea/*
 # Test data
 Test data/*
