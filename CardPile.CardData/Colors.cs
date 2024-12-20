@@ -9,11 +9,7 @@ public enum Color : int
     Black     = 0b000100,
     Red       = 0b001000,
     Green     = 0b010000,
-}
-
-public enum ColorPair : int
-{
-    None = Color.None,
+    
     WU   = Color.White | Color.Blue,
     WB   = Color.White | Color.Black,
     WR   = Color.White | Color.Red,
@@ -23,5 +19,5 @@ public enum ColorPair : int
     UG   = Color.Blue  | Color.Green,
     BR   = Color.Black | Color.Red,
     BG   = Color.Black | Color.Green,
-    RG   = Color.Red   | Color.Green,
+    RG   = Color.Red   | Color.Green,    
 }
