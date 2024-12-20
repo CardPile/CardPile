@@ -133,8 +133,9 @@ internal class CardDataModel : ReactiveObject, ICardDataService
         return bitmap;
     }
 
-    private readonly static string AppProgramData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "CardPile");
-    private readonly static string ScryfallCardImageCache = Path.Combine(AppProgramData, "ScryfallCardImageCache");
+    private readonly static string AppProgramData = OperatingSystem.IsMacOS() ? "/Users/Shared" : Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+    private readonly static string CardPileProgramData = Path.Combine(AppProgramData, "CardPile");
+    private readonly static string ScryfallCardImageCache = Path.Combine(CardPileProgramData, "ScryfallCardImageCache");
     private const int CacheValidDays = 30;
 
     private static readonly Logger logger = LogManager.GetCurrentClassLogger();

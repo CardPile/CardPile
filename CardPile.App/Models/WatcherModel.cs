@@ -36,7 +36,7 @@ internal class WatcherModel : ReactiveObject, IWatcherService
 
     private string GetPlayerLogLocation()
     {
-        // return @"D:\Programming\GitHub\CardPile\Logs\Player_fed.log";
+        // return Path.Combine(Util.GetRepositoryRoot() ?? "\\", "Test data", "Logs", "Player_fed.log");
 
         if(OperatingSystem.IsMacOS())
         {
@@ -45,7 +45,7 @@ internal class WatcherModel : ReactiveObject, IWatcherService
             {
                 throw new InvalidOperationException("UserProfile is null. Cannot resolve path to Player.log");
             }
-            return Path.Combine(userProfile, "Library", "Logs", "com.wizards.mtga", "Wizards Of The Coast", "MTGA", "Player.log");
+            return Path.Combine(userProfile, "Library", "Logs", "Wizards Of The Coast", "MTGA", "Player.log");
         }
         else
         {
@@ -181,7 +181,7 @@ internal class WatcherModel : ReactiveObject, IWatcherService
     {
         DraftLeaveEvent?.Invoke(this, e);
     }
-
+    
     private LogFileWatcher logWatcher;
     private MemoryWatcher memoryWatcher;
     private MatcherDispatcher dispatcher;

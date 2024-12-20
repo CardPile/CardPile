@@ -1,14 +1,16 @@
-﻿using CardPile.Feeder;
+﻿using CardPile.Watchers.ArenaLog;
 
-class Program
+namespace CardPile.Feeder;
+
+internal static class Program
 {
     static void Main(string[] args)
     {
-        const string DefaultSource = @"D:\Programming\GitHub\CardPile\Logs\Player_to_feed.log";
-        const string DefaultDestination = @"D:\Programming\GitHub\CardPile\Logs\Player_fed.log";
+        string defaultSource = Path.Combine(Util.GetRepositoryRoot() ?? "\\", "Test data", "Logs", "Player_to_feed.log"); 
+        string defaultDestination = Path.Combine(Util.GetRepositoryRoot() ?? "\\", "Test data", "Logs", "Player_fed.log");
 
-        var source = DefaultSource;
-        var destination = DefaultDestination;
+        var source = defaultSource;
+        var destination = defaultDestination;
         if (args.Length == 2)
         {
             source = args[0];
