@@ -15,10 +15,12 @@ internal class LogModel : ReactiveObject, ILogService
         logContents = string.Empty;
 
         var config = new NLog.Config.LoggingConfiguration();
+        config.AddRule(LogLevel.Debug, LogLevel.Fatal, new FileTarget(){ FileName = "${basedir}/CardPile.log"});
+        
         var target = new Target(this);
         target.Layout = new SimpleLayout { Text = "${longdate} ${logger} [${uppercase:${level}}]: ${message} ${exception:format=tostring}" };
         config.AddRule(LogLevel.Debug, LogLevel.Fatal, target);
-
+        
         LogManager.Configuration = config;
     }
 
