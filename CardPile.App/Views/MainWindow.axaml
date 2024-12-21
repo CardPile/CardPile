@@ -3,7 +3,6 @@
         xmlns:vm="using:CardPile.App.ViewModels"
         xmlns:v="using:CardPile.App.Views"
         xmlns:services="using:CardPile.App.Services"
-        xmlns:ext="using:CardPile.App.Extensions"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:li="using:LoadingIndicators.Avalonia"
