@@ -46,7 +46,24 @@
 
   <ItemGroup>
     <Content Include="Assets\cardpile.ico" />
+
+    <Content Include="Assets\cardpile.icns" Condition="'$(IsOSX)'=='true'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
+
+  <PropertyGroup Condition="'$(IsOSX)'=='true'">
+    <CFBundleName>$(AssemblyName)</CFBundleName>
+    <CFBundleDisplayName>$(AssemblyName)</CFBundleDisplayName>
+    <CFBundleIdentifier>com.$(username).$(AssemblyName)</CFBundleIdentifier>
+    <CFBundleVersion>1.0.0</CFBundleVersion>
+    <CFBundlePackageType>APPL</CFBundlePackageType>
+    <CFBundleExecutable>$(AssemblyName)</CFBundleExecutable>
+    <CFBundleIconFile>Assets/cardpile.icns</CFBundleIconFile>
+    <NSPrincipalClass>NSApplication</NSPrincipalClass>
+    <NSHighResolutionCapable>true</NSHighResolutionCapable>
+    <CFBundleShortVersionString>1.0</CFBundleShortVersionString>
+  </PropertyGroup>
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\SplashWindow.axaml" />
