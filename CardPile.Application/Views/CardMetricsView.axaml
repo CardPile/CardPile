@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CardPile.Application.ViewModels"
+             xmlns:v="using:CardPile.Application.Views"
+             xmlns:vmd="using:CardPile.Application.ViewModels.Design"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="CardPile.Application.Views.CardMetricsView"
+             x:DataType="vm:CardMetricsViewModel"
+             x:Name="Root">
+ 
+  <Design.DataContext>
+    <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+    <vmd:CardMetricsViewModelDesign />
+  </Design.DataContext>
+ 
+  <ItemsControl ItemsSource="{Binding Metrics}" >
+    <ItemsControl.ItemTemplate>
+      <DataTemplate>
+        <UniformGrid Margin="5 0" Rows="1" IsVisible="{Binding Visible}">
+          <TextBlock Text="{Binding Metric.Description.Name}" Margin="5 2">
+            <TextBlock.Styles>
+              <Style Selector="v|CardMetricsView#Root[HighlightImportance=true] TextBlock">
+                <Setter Property="Foreground" Value="{Binding Metric.Importance, Converter={x:Static vm:CardMetricsViewModel.ImportanceConverter}}" />
+              </Style>
+            </TextBlock.Styles>
+          </TextBlock>
+          <TextBlock Text="{Binding Metric.TextValue}" Margin="5 2" HorizontalAlignment="Right">
+            <TextBlock.Styles>
+              <Style Selector="v|CardMetricsView#Root[HighlightImportance=true] TextBlock">
+                <Setter Property="Foreground" Value="{Binding Metric.Importance, Converter={x:Static vm:CardMetricsViewModel.ImportanceConverter}}" />
+              </Style>  
+            </TextBlock.Styles>
+          </TextBlock>
+        </UniformGrid>
+      </DataTemplate>
+    </ItemsControl.ItemTemplate>
+  </ItemsControl>
+</UserControl>

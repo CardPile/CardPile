@@ -1,0 +1,25 @@
+﻿using Avalonia.Media.Imaging;
+using CardPile.Application.Services;
+using System.Threading.Tasks;
+
+namespace CardPile.Application.ViewModels;
+
+public class CardViewModel : CardViewModelBase
+{
+    internal CardViewModel(ICardDataService cardDataService, bool highlight = false) : base(cardDataService)
+    {
+        Highlight = highlight;
+    }
+
+    internal string CardName
+    {
+        get => CardDataService.Name;
+    }
+
+    internal Task<Bitmap?> CardImage
+    { 
+        get => CardDataService.CardImage; 
+    }
+
+    internal bool Highlight { get; init; }
+}

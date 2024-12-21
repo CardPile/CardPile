@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardPile.App", "CardPile.App\CardPile.App.csproj", "{255DCB49-E3C5-4931-A69D-775BD8C62033}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardPile.Application", "CardPile.Application\CardPile.Application.csproj", "{255DCB49-E3C5-4931-A69D-775BD8C62033}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardPile.Draft", "CardPile.Draft\CardPile.Draft.csproj", "{99A2AF49-F164-49FB-BF3A-5F6B469C2713}"
 EndProject

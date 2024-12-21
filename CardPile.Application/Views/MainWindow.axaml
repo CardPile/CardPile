@@ -1,0 +1,360 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CardPile.Application.ViewModels"
+        xmlns:v="using:CardPile.Application.Views"
+        xmlns:services="using:CardPile.Application.Services"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:li="using:LoadingIndicators.Avalonia"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="600"
+        x:Class="CardPile.Application.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/cardpile.ico"
+        Title="Card Pile"
+        WindowStartupLocation="CenterScreen">
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto, Auto, *" ColumnDefinitions="*">
+      <!-- Dropdowns -->
+      <Border Grid.Row="0" Margin="0 0 0 2" Background="LightGray" BorderThickness="0 0 0 1" BorderBrush="Gray">
+        <DockPanel LastChildFill="False">
+          <!-- Source dropdown -->
+          <StackPanel DockPanel.Dock="Left" Margin="5">
+            <Label Content="Source" DockPanel.Dock="Left"/>
+            <ComboBox ItemsSource="{Binding CardDataSourceBuilderCollectionService.AvailableCardDataSourceBuilders}" SelectedItem="{Binding CardDataSourceBuilderCollectionService.CurrentCardDataSourceBuilder, Mode=TwoWay}">
+              <ComboBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+          </StackPanel>
+          <Button DockPanel.Dock="Left" Background="Transparent" Command="{Binding ShowCardDataSourceSettingsCommand}" IsVisible="{Binding CardDataSourceBuilderCollectionService.CurrentCardDataSourceBuilder.Settings.Count}" ToolTip.Tip="Card data source settings">
+            <PathIcon Height="20" Width="20" Foreground="Black" Data="{StaticResource card_data_source_settings_icon}"/>
+          </Button>
+          <!-- Parameters -->
+          <ItemsControl DockPanel.Dock="Left" ItemsSource="{Binding CardDataSourceBuilderCollectionService.CurrentCardDataSourceBuilder.Parameters}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal"/>
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <ContentControl Content="{Binding}">
+                  <ContentControl.DataTemplates>
+                    <DataTemplate DataType="{x:Type services:ICardDataSourceParameterOptionsService}">
+                      <StackPanel Margin="5">
+                        <Label Content="{Binding Name}"/>
+                        <ComboBox ItemsSource="{Binding Options}" SelectedItem="{Binding Value, Mode=TwoWay}">
+                          <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                              <TextBlock Text="{Binding}" />
+                            </DataTemplate>
+                          </ComboBox.ItemTemplate>
+                        </ComboBox>
+                      </StackPanel>
+                    </DataTemplate>
+
+                    <DataTemplate DataType="{x:Type services:ICardDataSourceParameterDateService}">
+                      <StackPanel Margin="5">
+                        <Label Content="{Binding Name}"/>
+                        <CalendarDatePicker SelectedDate="{Binding Value, Mode=TwoWay}" />
+                      </StackPanel>
+                    </DataTemplate>
+                  </ContentControl.DataTemplates>
+                </ContentControl>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <!-- Spinner -->
+          <li:LoadingIndicator DockPanel.Dock="Left" IsActive="{Binding IsCardDataSourceBeingBuilt}" Mode="Ring" SpeedRatio="0.6" VerticalAlignment="Center" Foreground="DarkGray" Height="{Binding $parent[DockPanel].Bounds.Height}" Width="{Binding $parent[DockPanel].Bounds.Height}" />
+          <!-- Log Button -->
+          <StackPanel DockPanel.Dock="Right" Margin="5" Orientation="Horizontal">
+            <Button Background="Transparent" Command="{Binding ShowLogCommand}" ToolTip.Tip="Show log window">
+              <PathIcon Height="20" Width="20" Foreground="Black" Data="{StaticResource log_icon}"/>
+            </Button>
+            <Button Background="Transparent" Command="{Binding ShowSettingsCommand}" ToolTip.Tip="Settings">
+              <PathIcon Height="20" Width="20" Foreground="Black" Data="{StaticResource settings_icon}"/>
+            </Button>
+          </StackPanel>
+        </DockPanel>
+      </Border>      
+      <!-- Metrics & stats -->
+      <Grid Grid.Row="1" RowDefinitions="*" ColumnDefinitions="Auto,*,Auto" Margin="0, 2">
+        <!-- Metric dropdown -->
+        <Button Grid.Column="0" Margin="5 2 0 0" FontSize="18" FontWeight="DemiBold" Content="Metrics">
+          <Button.Flyout>
+            <Flyout>
+              <ItemsControl DockPanel.Dock="Bottom" ItemsSource="{Binding MetricDescriptions}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical"/>
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <CheckBox Content="{Binding Name}" Margin="5 0 0 0" IsChecked="{Binding Visible, Mode=TwoWay}" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </Flyout>
+          </Button.Flyout>
+        </Button>
+        <!-- Stats -->
+        <ItemsControl Grid.Column="1" VerticalAlignment="Center" ItemsSource="{Binding Statistics}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <WrapPanel Orientation="Horizontal" Margin="5 2" />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock Inlines="{Binding Converter={x:Static vm:CardDataSourceStatisticViewModel.StatisticToInlinesConverter}}" VerticalAlignment="Center" Margin="10 2" />
+              </StackPanel>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <StackPanel Grid.Column="2" Orientation="Horizontal">
+          <!-- Metric sort by -->
+          <StackPanel Orientation="Horizontal" Margin="5 2">
+            <TextBlock Margin="5" FontSize="18" FontWeight="DemiBold">Sort by</TextBlock>
+            <ComboBox ItemsSource="{Binding MetricDescriptions}" SelectedItem="{Binding SortByMetricDescription, Mode=TwoWay}">
+              <ComboBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+          </StackPanel>
+          <!-- Clear button -->
+          <Button Margin="5 2 5 0" FontSize="18" FontWeight="DemiBold" Content="Clear" Command="{Binding ClearCardsSeenAndDeckCommand}" />
+        </StackPanel>
+      </Grid>  
+      <!-- Picks & missing -->
+      <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Name="ContentContainer">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,*">
+          <!-- Picks -->
+          <Expander Grid.Row="0" IsExpanded="true" VerticalAlignment="Top" Width="{Binding #ContentContainer.Bounds.Width}" Margin="0, 2" Padding="5 0 5 0">
+            <Expander.Header>
+              <TextBlock FontSize="18" FontWeight="DemiBold">Picks</TextBlock>
+            </Expander.Header>
+            <ItemsControl ItemsSource="{Binding CardsInPack}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+            </ItemsControl>
+          </Expander>
+          <!-- Missing -->
+          <Expander Grid.Row="1" VerticalAlignment="Top" Width="{Binding #ContentContainer.Bounds.Width}" Margin="0, 2">
+            <Expander.Header>
+              <TextBlock FontSize="18" FontWeight="DemiBold">Missing</TextBlock>
+            </Expander.Header>
+            <DockPanel>
+              <ContentControl DockPanel.Dock="Left" Content="{Binding PreviouslyPickedCardFromPack}" />
+              <ItemsControl DockPanel.Dock="Right" ItemsSource="{Binding CardsMissingFromPack}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+              </ItemsControl>
+            </DockPanel>
+          </Expander>
+          <!-- Upcoming -->
+          <Expander Grid.Row="2" VerticalAlignment="Top" Width="{Binding #ContentContainer.Bounds.Width}" Margin="0, 2">
+            <Expander.Header>
+              <TextBlock FontSize="18" FontWeight="DemiBold">Possible upcoming cards</TextBlock>
+            </Expander.Header>
+            <ItemsControl ItemsSource="{Binding CardsUpcomingAfterPack}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+            </ItemsControl>
+          </Expander>
+          <!-- Deck -->
+          <Expander Grid.Row="3" VerticalAlignment="Top" Width="{Binding #ContentContainer.Bounds.Width}" Margin="0, 2">
+            <Expander.Header>
+              <TextBlock FontSize="18" FontWeight="DemiBold">Current deck</TextBlock>
+            </Expander.Header>
+            <ItemsControl ItemsSource="{Binding CardsInDeck}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </Expander>
+          <!-- Passed -->
+          <Expander Grid.Row="4" VerticalAlignment="Top" Width="{Binding #ContentContainer.Bounds.Width}" Margin="0, 2">
+            <Expander.Header>
+              <TextBlock FontSize="18" FontWeight="DemiBold">Passed cards</TextBlock>
+            </Expander.Header>
+            <Grid ColumnDefinitions="*,*,*,*,*,*,*" >
+              <!-- Passed white -->
+              <ItemsControl Grid.Column="0" VerticalAlignment="Top" Classes="CardStack" ItemsSource="{Binding WhiteCardsSeen}">
+                <ItemsControl.Styles>
+                  <Style Selector=".CardStack > ContentPresenter" x:DataType="vm:CardDataViewModel">
+                    <Setter Property="Canvas.Top" Value="{Binding OffsetInStack}"/>
+                    <Setter Property="Canvas.Left" Value="0" />
+                    <Setter Property="Height" Value="{Binding Bounds.Height, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
+                    <Setter Property="ZIndex" Value="{Binding Index}" />
+                  </Style>
+                </ItemsControl.Styles>
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding WhiteCardsSeen, Converter={x:Static vm:MainWindowViewModel.CardCollectionToStackHeightConverter}}" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <!-- Passed blue -->
+              <ItemsControl Grid.Column="1" VerticalAlignment="Top" Classes="CardStack" ItemsSource="{Binding BlueCardsSeen}">
+                <ItemsControl.Styles>
+                  <Style Selector=".CardStack > ContentPresenter" x:DataType="vm:CardDataViewModel">
+                    <Setter Property="Canvas.Top" Value="{Binding OffsetInStack}"/>
+                    <Setter Property="Canvas.Left" Value="0" />
+                    <Setter Property="Height" Value="{Binding Bounds.Height, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
+                    <Setter Property="ZIndex" Value="{Binding Index}" />
+                  </Style>
+                </ItemsControl.Styles>
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding BlueCardsSeen, Converter={x:Static vm:MainWindowViewModel.CardCollectionToStackHeightConverter}}" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <!-- Passed black -->            
+              <ItemsControl Grid.Column="2" VerticalAlignment="Top" Classes="CardStack" ItemsSource="{Binding BlackCardsSeen}">
+                <ItemsControl.Styles>
+                  <Style Selector=".CardStack > ContentPresenter" x:DataType="vm:CardDataViewModel">
+                    <Setter Property="Canvas.Top" Value="{Binding OffsetInStack}"/>
+                    <Setter Property="Canvas.Left" Value="0" />
+                    <Setter Property="Height" Value="{Binding Bounds.Height, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
+                    <Setter Property="ZIndex" Value="{Binding Index}" />
+                  </Style>
+                </ItemsControl.Styles>
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding BlackCardsSeen, Converter={x:Static vm:MainWindowViewModel.CardCollectionToStackHeightConverter}}" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <!-- Passed red -->
+              <ItemsControl Grid.Column="3" VerticalAlignment="Top" Classes="CardStack" ItemsSource="{Binding RedCardsSeen}">
+                <ItemsControl.Styles>
+                  <Style Selector=".CardStack > ContentPresenter" x:DataType="vm:CardDataViewModel">
+                    <Setter Property="Canvas.Top" Value="{Binding OffsetInStack}"/>
+                    <Setter Property="Canvas.Left" Value="0" />
+                    <Setter Property="Height" Value="{Binding Bounds.Height, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
+                    <Setter Property="ZIndex" Value="{Binding Index}" />
+                  </Style>
+                </ItemsControl.Styles>
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding RedCardsSeen, Converter={x:Static vm:MainWindowViewModel.CardCollectionToStackHeightConverter}}" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <!-- Passed green -->
+              <ItemsControl Grid.Column="4" VerticalAlignment="Top" Classes="CardStack" ItemsSource="{Binding GreenCardsSeen}">
+                <ItemsControl.Styles>
+                  <Style Selector=".CardStack > ContentPresenter" x:DataType="vm:CardDataViewModel">
+                    <Setter Property="Canvas.Top" Value="{Binding OffsetInStack}"/>
+                    <Setter Property="Canvas.Left" Value="0" />
+                    <Setter Property="Height" Value="{Binding Bounds.Height, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
+                    <Setter Property="ZIndex" Value="{Binding Index}" />
+                  </Style>
+                </ItemsControl.Styles>
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding GreenCardsSeen, Converter={x:Static vm:MainWindowViewModel.CardCollectionToStackHeightConverter}}" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <!-- Passed multicolor -->
+              <ItemsControl Grid.Column="5" VerticalAlignment="Top" Classes="CardStack" ItemsSource="{Binding MulticolorCardsSeen}">
+                <ItemsControl.Styles>
+                  <Style Selector=".CardStack > ContentPresenter" x:DataType="vm:CardDataViewModel">
+                    <Setter Property="Canvas.Top" Value="{Binding OffsetInStack}"/>
+                    <Setter Property="Canvas.Left" Value="0" />
+                    <Setter Property="Height" Value="{Binding Bounds.Height, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
+                    <Setter Property="ZIndex" Value="{Binding Index}" />
+                  </Style>
+                </ItemsControl.Styles>
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding MulticolorCardsSeen, Converter={x:Static vm:MainWindowViewModel.CardCollectionToStackHeightConverter}}" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <!-- Passed colorless -->
+              <ItemsControl Grid.Column="6" VerticalAlignment="Top" Classes="CardStack" ItemsSource="{Binding ColorlessCardsSeen}">
+                <ItemsControl.Styles>
+                  <Style Selector=".CardStack > ContentPresenter" x:DataType="vm:CardDataViewModel">
+                    <Setter Property="Canvas.Top" Value="{Binding OffsetInStack}"/>
+                    <Setter Property="Canvas.Left" Value="0" />
+                    <Setter Property="Height" Value="{Binding Bounds.Height, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
+                    <Setter Property="ZIndex" Value="{Binding Index}" />
+                  </Style>
+                </ItemsControl.Styles>
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding ColorlessCardsSeen, Converter={x:Static vm:MainWindowViewModel.CardCollectionToStackHeightConverter}}" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </Grid>
+          </Expander>
+        </Grid>
+      </ScrollViewer>
+    </Grid>
+</Window>
