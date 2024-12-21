@@ -1,12 +1,12 @@
 ﻿using Avalonia.Threading;
 using CardPile.App.Services;
-using CardPile.CardData;
 using CardPile.CardData.Parameters;
 using CardPile.CardData.Settings;
 using ReactiveUI;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using CardPile.CardInfo;
 
 namespace CardPile.App.Models;
 
@@ -15,15 +15,18 @@ internal class CardPileModel : ReactiveObject
     internal static async Task Init(Action<string> progressCallback, CancellationToken cancellationToken)
     {
         progressCallback("Loading Arena data...");
-        await Task.Run(CardInfo.Arena.Init, cancellationToken);
+        await Task.Run(Arena.Init, cancellationToken);
         
         progressCallback("Cleaning old card images...");
-        await Task.Run(CardDataModel.ClearOldCardImages, cancellationToken);
+        await Task.Run(Scryfall.ClearOldImages, cancellationToken);
 
         progressCallback("Cleaning old drafts...");
         await Task.Run(DraftModel.ClearOldDrafts, cancellationToken);
 
-        progressCallback("Initializaing card data sources...");
+        progressCallback("Initializing images...");
+        await Task.Run(Scryfall.Init, cancellationToken);
+        
+        progressCallback("Initializing card data sources...");
         await Task.Run(CardDataSourceBuilderCollectionModel.Init, cancellationToken);
     }
 
@@ -35,12 +38,11 @@ internal class CardPileModel : ReactiveObject
         cardDataSourceBuilderCollectionModel.ObservableForProperty(x => x.CurrentCardDataSourceBuilder)
                                             .Subscribe(x => SwitchCardDataSourceBuilder(x.Value));
 
-        cardDataSource = cardDataSourceBuilderCollectionModel.CurrentCardDataSourceBuilder.BuildDataSource();
+        var cardDataSource = cardDataSourceBuilderCollectionModel.CurrentCardDataSourceBuilder.BuildDataSource();
         SubscribeToAllBuilderSourceParameters(cardDataSourceBuilderCollectionModel.CurrentCardDataSourceBuilder);
         SubscribeToAllBuilderSourceSettings(cardDataSourceBuilderCollectionModel.CurrentCardDataSourceBuilder);
-
-        watcherModel = new WatcherModel();
-        draftModel = new DraftModel(watcherModel, cardDataSource);
+        
+        draftModel = new DraftModel(new WatcherModel(), cardDataSource);
         statisticsModel = new CardDataSourceStatisticsModel(cardDataSource);
     }
 
@@ -85,13 +87,13 @@ internal class CardPileModel : ReactiveObject
             {
                 var options = parameter as ICardDataSourceParameterOptionsService;
                 options.ObservableForProperty(x => x.Value)
-                       .Subscribe(x => BuildCardDataSource(builder));
+                       .Subscribe(_ => BuildCardDataSource(builder));
             }
             if(parameter.Type == ParameterType.Date)
             {
                 var date = parameter as ICardDataSourceParameterDateService;
                 date.ObservableForProperty(x => x.Value)
-                    .Subscribe(x => BuildCardDataSource(builder));
+                    .Subscribe(_ => BuildCardDataSource(builder));
             }
         }
     }
@@ -104,7 +106,7 @@ internal class CardPileModel : ReactiveObject
             {
                 var path = setting as ICardDataSourceSettingPathService;
                 path.ObservableForProperty(x => x.Value)
-                    .Subscribe (x => BuildCardDataSource(builder));
+                    .Subscribe (_ => BuildCardDataSource(builder));
             }
         }
     }
@@ -117,18 +119,16 @@ internal class CardPileModel : ReactiveObject
         buildCardDataSourceCancellationToken = new CancellationTokenSource();
         Task.Run(() => builder.BuildDataSourceAsync(buildCardDataSourceCancellationToken.Token))
                               .ContinueWith(x => Dispatcher.UIThread.Post(() => { draftModel.SetCardDataSource(x.Result); statisticsModel.SetCardDataSource(x.Result); }), TaskContinuationOptions.OnlyOnRanToCompletion)
-                              .ContinueWith((x) => Dispatcher.UIThread.Post(() => IsCardDataSourceBeingBuilt = false));
+                              .ContinueWith(_ => Dispatcher.UIThread.Post(() => IsCardDataSourceBeingBuilt = false));
 
         IsCardDataSourceBeingBuilt = true;
     }
 
-    private CardDataSourceBuilderCollectionModel cardDataSourceBuilderCollectionModel;
-    private WatcherModel watcherModel;
-    private ICardDataSource cardDataSource;
-    private DraftModel draftModel;
-    private CardDataSourceStatisticsModel statisticsModel;
-    private LogModel logModel;
+    private readonly CardDataSourceBuilderCollectionModel cardDataSourceBuilderCollectionModel;
+    private readonly DraftModel draftModel;
+    private readonly CardDataSourceStatisticsModel statisticsModel;
+    private readonly LogModel logModel;
 
-    private CancellationTokenSource? buildCardDataSourceCancellationToken = null;
-    private bool isCardDataSourceBeingBuilt = false;
+    private CancellationTokenSource? buildCardDataSourceCancellationToken;
+    private bool isCardDataSourceBeingBuilt;
 }

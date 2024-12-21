@@ -19,33 +19,33 @@ public static class ColorsUtil
         ];
     }
     
-    public static string ToEmoji(Color color)
+    public static string ToSymbols(Color color)
     {
         string result = "";
         if (color.HasFlag(Color.White))
         {
-            result += "\u26aa";
+            result += "{W}";
         }
         if (color.HasFlag(Color.Blue))
         {
-            result += "\ud83d\udd35";
+            result += "{U}";
         }
         if (color.HasFlag(Color.Black))
         {
-            result += "\u26ab";
+            result += "{B}";
         }
         if (color.HasFlag(Color.Red))
         {
-            result += "\ud83d\udd34";
+            result += "{R}";
         }
         if (color.HasFlag(Color.Green))
         {
-            result += "\ud83d\udfe2";
+            result += "{G}";
         }
 
         if (string.IsNullOrWhiteSpace(result))
         {
-            result = "\u26aa";
+            result = "{C}";
         }
     
         return result;

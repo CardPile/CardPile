@@ -45,7 +45,10 @@ public class CardDataSource : ICardDataSource
         var avgGihWr = new Statistic<float>("Avg GIH WR", (float)archetypeGihWrDistribution[Color.None].Mean, new PercentFormatter());
         Statistics = [avgGihWr];
 
-        foreach (Color pair in ColorsUtil.ColorPairs())
+        var sortedColorPairs = ColorsUtil.ColorPairs();
+        sortedColorPairs.Sort((a, b) => -Comparer<float?>.Default.Compare(archetypeWinData.GetWinPercentage((Color)(int)a), archetypeWinData.GetWinPercentage((Color)(int)b))); 
+        
+        foreach (Color pair in sortedColorPairs)
         {
             float? winRate = archetypeWinData.GetWinPercentage((Color)(int)pair);
             if(!winRate.HasValue)
@@ -53,7 +56,7 @@ public class CardDataSource : ICardDataSource
                 continue;
             }
 
-            var colorPairWinRateName = $"{ColorsUtil.ToEmoji(pair)} WR";
+            var colorPairWinRateName = $"{ColorsUtil.ToSymbols(pair)} WR";
             var colorPairWinRateStatistic = new Statistic<float>(colorPairWinRateName, winRate.Value, new PercentFormatter());
             Statistics.Add(colorPairWinRateStatistic);
         }

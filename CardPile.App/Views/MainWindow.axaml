@@ -3,6 +3,7 @@
         xmlns:vm="using:CardPile.App.ViewModels"
         xmlns:v="using:CardPile.App.Views"
         xmlns:services="using:CardPile.App.Services"
+        xmlns:ext="using:CardPile.App.Extensions"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:li="using:LoadingIndicators.Avalonia"
@@ -115,14 +116,7 @@
           <ItemsControl.ItemTemplate>
             <DataTemplate>
               <StackPanel Orientation="Horizontal">
-                <TextBlock VerticalAlignment="Center" Margin="10 2">
-                  <TextBlock.Text>
-                    <MultiBinding StringFormat="{}{0}: {1}">
-                      <Binding Path="Name" />
-                      <Binding Path="TextValue" />
-                    </MultiBinding>
-                  </TextBlock.Text>
-                </TextBlock>
+                <TextBlock ext:TextBlockExtensions.BindableInlines="{Binding, Converter={x:Static vm:CardDataSourceStatisticViewModel.StatisticToInlinesConverter}}" VerticalAlignment="Center" Margin="10 2" />
               </StackPanel>
             </DataTemplate>
           </ItemsControl.ItemTemplate>
