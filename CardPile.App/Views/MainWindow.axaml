@@ -116,7 +116,7 @@
           <ItemsControl.ItemTemplate>
             <DataTemplate>
               <StackPanel Orientation="Horizontal">
-                <TextBlock ext:TextBlockExtensions.BindableInlines="{Binding, Converter={x:Static vm:CardDataSourceStatisticViewModel.StatisticToInlinesConverter}}" VerticalAlignment="Center" Margin="10 2" />
+                <TextBlock Inlines="{Binding, Converter={x:Static vm:CardDataSourceStatisticViewModel.StatisticToInlinesConverter}}" VerticalAlignment="Center" Margin="10 2" />
               </StackPanel>
             </DataTemplate>
           </ItemsControl.ItemTemplate>

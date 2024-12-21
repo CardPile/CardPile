@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
+    <AvaloniaResource Remove="Extensions\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -58,5 +59,23 @@
     <Compile Update="Views\CardMetricsView.axaml.cs">
       <DependentUpon>CardMetricsView.axaml</DependentUpon>
     </Compile>
+    <Compile Remove="Extensions\TextBlockExtensions.cs" />
+    <Compile Remove="Extensions\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Remove="Extensions\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Extensions\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Remove="Extensions\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Extensions\**" />
   </ItemGroup>
 </Project>
