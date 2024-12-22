@@ -111,21 +111,21 @@ public static class Scryfall
                 }
 
                 await using var fs = File.OpenWrite(cachePath);
-                svg.Picture?.ToSvg(fs, SKColor.Empty, 1.0f, 1.0f);
+                svg.Picture?.ToSvg(fs, SKColors.Transparent, 1.0f, 1.0f);
             }
             
             using var memory = new MemoryStream();
             svg.Picture?.ToImage(
                 memory,
-                SKColor.Empty,
-                SKEncodedImageFormat.Jpeg,
+                SKColors.Transparent,
+                SKEncodedImageFormat.Png,
                 100,
                 1.0f,
                 1.0f,
                 SKColorType.Bgra8888,
                 SKAlphaType.Premul,
                 SKColorSpace.CreateSrgb());
-            memory.Position = 0;
+            memory.Seek(0, SeekOrigin.Begin);
             bitmap = new Bitmap(memory);
         }
         
