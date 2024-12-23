@@ -62,10 +62,13 @@
     </Compile>
     <Compile Remove="Extensions\TextBlockExtensions.cs" />
     <Compile Remove="Extensions\**" />
+    <Compile Remove="Views\CardView.axaml.cs" />
+    <Compile Remove="ViewModels\CardViewModel.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <AvaloniaXaml Remove="Extensions\**" />
+    <AvaloniaXaml Remove="Views\CardView.axaml" />
   </ItemGroup>
 
   <ItemGroup>

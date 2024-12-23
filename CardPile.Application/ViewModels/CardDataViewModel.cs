@@ -13,10 +13,11 @@ public class CardDataViewModel : CardViewModelBase
 {
     public const int CARD_HEADER_SIZE = 26;
 
-    internal CardDataViewModel(ICardDataService cardDataService, int index) : base(cardDataService)
+    internal CardDataViewModel(ICardDataService cardDataService, int index, bool highlight = false) : base(cardDataService)
     {
         Metrics = new CardMetricsViewModel([.. CardDataService.Metrics.Select(x => new CardMetricViewModel(x))]);
         Index = index;
+        Highlight = highlight;
     }
 
     internal string CardName
@@ -54,6 +55,8 @@ public class CardDataViewModel : CardViewModelBase
             return index * CARD_HEADER_SIZE;
         }
     }
+    
+    internal bool Highlight { get; init; }
 
     private int index;
 }

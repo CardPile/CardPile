@@ -51,6 +51,7 @@
             <Panel Height="240" Background="LightGray" IsVisible="{Binding CardImage^, Converter={x:Static ObjectConverters.IsNull}}">
               <PathIcon Height="75" Width="75" Data="{StaticResource card_placeholder}" />
             </Panel>
+            <Border Width="172" Height="240" BorderThickness="3" BorderBrush="Green" CornerRadius="10" IsVisible="{Binding Highlight}"/>
           </Panel>
         </Border>
       </StackPanel>

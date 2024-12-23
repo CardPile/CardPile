@@ -158,13 +158,24 @@
               <TextBlock FontSize="18" FontWeight="DemiBold">Missing</TextBlock>
             </Expander.Header>
             <DockPanel>
-              <ContentControl DockPanel.Dock="Left" Content="{Binding PreviouslyPickedCardFromPack}" />
+              <ContentControl DockPanel.Dock="Left" Content="{Binding PreviouslyPickedCardFromPack}">
+                <ContentControl.ContentTemplate>
+                  <DataTemplate DataType="{x:Type vm:CardDataViewModel}">
+                    <v:CardDataView ShowMetrics="false" ShowPopup="true" />
+                  </DataTemplate>
+                </ContentControl.ContentTemplate>
+              </ContentControl>
               <ItemsControl DockPanel.Dock="Right" ItemsSource="{Binding CardsMissingFromPack}">
                 <ItemsControl.ItemsPanel>
                   <ItemsPanelTemplate>
                     <WrapPanel Orientation="Horizontal" />
                   </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
               </ItemsControl>
             </DockPanel>
           </Expander>
@@ -179,6 +190,11 @@
                   <WrapPanel Orientation="Horizontal" />
                 </ItemsPanelTemplate>
               </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
             </ItemsControl>
           </Expander>
           <!-- Deck -->
