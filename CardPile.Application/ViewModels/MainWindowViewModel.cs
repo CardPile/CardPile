@@ -43,7 +43,7 @@ public class MainWindowViewModel : ViewModelBase
         cardsInPackService.CardsMissingFromPack.CollectionChanged += UpdateCardsMissingFromPack;
         cardsInPackService.CardsUpcomingAfterPack.CollectionChanged += UpdateCardsUpcomingAfterPack;
         cardsInPackService.CardsSeen.CollectionChanged += UpdateCardsSeen;
-        cardsInPackService.CardsInDeck.CollectionChanged += UpdateDeck;
+        cardsInPackService.Deck.AllCards.CollectionChanged += UpdateDeck;
         cardsInPackService.ObservableForProperty(x => x.PreviousPick)
                           .Subscribe(x => UpdatePreviouslyPickedCardFromPack(x.Value));
 

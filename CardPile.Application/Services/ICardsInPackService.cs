@@ -13,8 +13,8 @@ internal interface ICardsInPackService : IReactiveObject
 
     public ObservableCollection<ICardDataService> CardsSeen { get; }
 
-    public ObservableCollection<ICardDataService> CardsInDeck { get; }
-
+    public IDeckService Deck { get; }
+    
     public ICardDataService? PreviousPick { get; }
 
     public void ClearCardsSeenAndDeck();

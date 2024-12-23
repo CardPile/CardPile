@@ -79,7 +79,7 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
     private const string EVENT_TYPE_PARAMETER_NAME = "Event type";
     private const string USER_TYPE_PARAMETER_NAME = "User type";
     private const string COLOR_PARAMETER_NAME = "Color";
-    private const string DECK_TYPE_PARAMETER_NAME = "Deck type";
+    private const string DECK_TYPE_PARAMETER_NAME = "CardPile.Deck type";
     private const string RARITY_PARAMETER_NAME = "Rarity";
     private const string START_DATE_PARAMETER_NAME = "Start date";
     private const string END_DATE_PARAMETER_NAME = "End date";

@@ -8,6 +8,8 @@ using System;
 using System.IO;
 using Newtonsoft.Json;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using CardPile.Deck;
 
 namespace CardPile.Application.Models;
 
@@ -21,7 +23,8 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         cardsMissingInCurrentPack = [];
         cardsUpcomingAfterCurrentPack = [];
         cardsSeen = [];
-        cardsInDeck = [];
+        
+        deck = new DeckModel();
         
         PreviousPick = null;
 
@@ -54,21 +57,22 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         get => cardsSeen;
     }
 
-    public ObservableCollection<ICardDataService> CardsInDeck
+    public IDeckService Deck
     {
-        get => cardsInDeck;
+        get => deck;
+        private set => this.RaiseAndSetIfChanged(ref deck, value);
     }
 
     public ICardDataService? PreviousPick
     {
         get => previousPick;
-        set => this.RaiseAndSetIfChanged(ref previousPick, value);
+        private set => this.RaiseAndSetIfChanged(ref previousPick, value);
     }
 
     public void ClearCardsSeenAndDeck()
     {
         cardsSeen.Clear();
-        cardsInDeck.Clear();
+        Deck.Clear();
     }
 
     internal static void ClearOldDrafts()
@@ -92,7 +96,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
                 }
                 catch (Exception ex)
                 {
-                    logger.Error("Error removing card image {cardImageFilePath}. Exception: {exception}", filePath, ex);
+                    Logger.Error("Error removing card image {cardImageFilePath}. Exception: {exception}", filePath, ex);
                 }
             }
         }
@@ -128,20 +132,19 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         draftState.ProcessEvent(e);
 
         UpdateCardDataAfterChoice(cardDataSource);
-
-        var deck = draftState.GetCurrentDeck();
-        logger.Info($"Current deck [{string.Join(",", deck)}]");
+        
+        Logger.Info($"Current deck [{string.Join(",", draftState.GetCurrentDeck())}]");
 
         var missing = draftState.GetCurrentMissingCards();
         if (missing.Count > 0)
         {
-            logger.Info($"Missing cards [{string.Join(",", missing)}]");
+            Logger.Info($"Missing cards [{string.Join(",", missing)}]");
         }
 
         var upcoming = draftState.GetCurrentUpcomingCards();
         if (upcoming.Count > 0)
         {
-            logger.Info($"Upcoming cards [{string.Join(",", upcoming)}]");
+            Logger.Info($"Upcoming cards [{string.Join(",", upcoming)}]");
         }
     }
 
@@ -162,9 +165,8 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         }
 
         UpdateCardDataAfterPick(cardDataSource);
-
-        var deck = draftState.GetCurrentDeck();
-        logger.Info($"Current deck [{string.Join(",", deck)}]");
+        
+        Logger.Info($"Current deck [{string.Join(",", draftState.GetCurrentDeck())}]");
     }
 
     private void DraftLeaveHandler(object? sender, DraftLeaveEvent e)
@@ -178,7 +180,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         draftState.ProcessEvent(e);
     }
 
-    private void UpdateCardDataAfterChoice(ICardDataSource cardDataSource)
+    private void UpdateCardDataAfterChoice(ICardDataSource newCardDataSource)
     {
         cardsInCurrentPack.Clear();
         cardsMissingInCurrentPack.Clear();
@@ -188,47 +190,47 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
 
         foreach (var cardInPack in draftState.CurrentPack)
         {
-            var cardInPackData = cardDataSource.GetDataForCard(cardInPack, draftState);
+            var cardInPackData = newCardDataSource.GetDataForCard(cardInPack, draftState);
             if (cardInPackData != null)
             {
                 cardsInCurrentPack.Add(new CardDataModel(cardInPackData));
             }
             else
             {
-                logger.Info(string.Format($"Could not find card data for in pack card with MTGA id {cardInPack}"));
+                Logger.Info(string.Format($"Could not find card data for in pack card with MTGA id {cardInPack}"));
             }
         }
 
         foreach (var missingCard in draftState.GetCurrentMissingCards())
         {
-            var missingCardData = cardDataSource.GetDataForCard(missingCard, draftState);
+            var missingCardData = newCardDataSource.GetDataForCard(missingCard, draftState);
             if (missingCardData != null)
             {
                 cardsMissingInCurrentPack.Add(new CardDataModel(missingCardData));
             }
             else
             {
-                logger.Info(string.Format($"Could not find card data for missing card with MTGA id {missingCard}"));
+                Logger.Info(string.Format($"Could not find card data for missing card with MTGA id {missingCard}"));
             }
         }
 
         foreach (var upcomingCard in draftState.GetCurrentUpcomingCards())
         {
-            var upcomingCardData = cardDataSource.GetDataForCard(upcomingCard, draftState);
+            var upcomingCardData = newCardDataSource.GetDataForCard(upcomingCard, draftState);
             if (upcomingCardData != null)
             {
                 cardsUpcomingAfterCurrentPack.Add(new CardDataModel(upcomingCardData));
             }
             else
             {
-                logger.Info(string.Format($"Could not find card data for upcoming card with MTGA id {upcomingCard}"));
+                Logger.Info(string.Format($"Could not find card data for upcoming card with MTGA id {upcomingCard}"));
             }
         }
 
         var previouslyPickedCard = draftState.GetCurrentPackPreviousPick();
         if (previouslyPickedCard != null)
         {
-            var previouslyPickedCardData = cardDataSource.GetDataForCard(previouslyPickedCard.Value, draftState);
+            var previouslyPickedCardData = newCardDataSource.GetDataForCard(previouslyPickedCard.Value, draftState);
             if(previouslyPickedCardData != null)
             {
                 PreviousPick = new CardDataModel(previouslyPickedCardData);
@@ -236,30 +238,28 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         }
     }
 
-    private void UpdateCardDataAfterPick(ICardDataSource cardDataSource)
+    private void UpdateCardDataAfterPick(ICardDataSource newCardDataSource)
     {
-        cardsInDeck.Clear();
         cardsSeen.Clear();
+        Deck.Clear();
 
-        foreach (var cardInDeck in draftState.GetCurrentDeck())
-        {
-            var cardInDeckData = cardDataSource.GetDataForCard(cardInDeck, draftState);
-            if (cardInDeckData != null)
-            {
-                cardsInDeck.Add(new CardDataModel(cardInDeckData));
-            }
-        }
-
+        var cardList = draftState.GetCurrentDeck()
+                                 .Select(c => newCardDataSource.GetDataForCard(c, draftState))
+                                 .Where(x => x != null)
+                                 .Cast<ICardData>()
+                                 .ToList();
+        Deck.SetDeck(new DraftDeck(cardList));
+        
         foreach (var seenCard in draftState.GetSeenCards())
         {
-            var seendCardData = cardDataSource.GetDataForCard(seenCard, draftState);
-            if (seendCardData != null)
+            var seenCardData = newCardDataSource.GetDataForCard(seenCard, draftState);
+            if (seenCardData != null)
             {
-                cardsSeen.Add(new CardDataModel(seendCardData));
+                cardsSeen.Add(new CardDataModel(seenCardData));
             }
             else
             {
-                logger.Info(string.Format($"Could not find card data for seen card with MTGA id {seenCard}"));
+                Logger.Info(string.Format($"Could not find card data for seen card with MTGA id {seenCard}"));
             }
         }
     }
@@ -323,19 +323,19 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         return draftDirectory;
     }
 
-    private DraftState draftState;
+    private readonly DraftState draftState;
 
     private const int CacheValidDays = 7;
 
-    private readonly ObservableCollection<ICardDataService> cardsInCurrentPack = [];
-    private readonly ObservableCollection<ICardDataService> cardsMissingInCurrentPack = [];
-    private readonly ObservableCollection<ICardDataService> cardsUpcomingAfterCurrentPack = [];
-    private readonly ObservableCollection<ICardDataService> cardsSeen = [];
-    private readonly ObservableCollection<ICardDataService> cardsInDeck = [];
+    private readonly ObservableCollection<ICardDataService> cardsInCurrentPack;
+    private readonly ObservableCollection<ICardDataService> cardsMissingInCurrentPack;
+    private readonly ObservableCollection<ICardDataService> cardsUpcomingAfterCurrentPack;
+    private readonly ObservableCollection<ICardDataService> cardsSeen;
+    private IDeckService deck;
     private ICardDataService? previousPick;
 
     private readonly WatcherModel logModel;
     private ICardDataSource cardDataSource;
 
-    private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 }

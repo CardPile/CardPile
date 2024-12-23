@@ -1,4 +1,4 @@
-﻿using CardPile.CardData;
+﻿namespace CardPile.CardData;
 
 public interface ICardData
 {

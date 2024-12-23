@@ -8,7 +8,7 @@ using CardPile.CardInfo;
 
 namespace CardPile.Application.Models;
 
-internal class CardDataModel : ReactiveObject, ICardDataService
+public class CardDataModel : ReactiveObject, ICardDataService
 {
     public const int CARD_IMAGE_WIDTH = 172;
     
