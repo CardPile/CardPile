@@ -368,10 +368,7 @@ public class MainWindowViewModel : ViewModelBase
                     {
                         if (cardDataService.Colors.Count == 0)
                         {
-                            var newCardVm = new CardDataViewModel(cardDataService, ColorlessCardsSeen.Count)
-                            {
-                                ShowLabel = false
-                            };
+                            var newCardVm = new CardDataViewModel(cardDataService, ColorlessCardsSeen.Count);
                             UpdateCardMetricVisibility(newCardVm);
                             ColorlessCardsSeen.Add(newCardVm);
                         }
@@ -379,56 +376,38 @@ public class MainWindowViewModel : ViewModelBase
                         {
                             if(cardDataService.Colors.First() == Color.White)
                             {
-                                var newCardVm = new CardDataViewModel(cardDataService, WhiteCardsSeen.Count)
-                                {
-                                    ShowLabel = false
-                                };
+                                var newCardVm = new CardDataViewModel(cardDataService, WhiteCardsSeen.Count);
                                 UpdateCardMetricVisibility(newCardVm);
                                 WhiteCardsSeen.Add(newCardVm);
                             }
                             else if(cardDataService.Colors.First() == Color.Blue)
                             {
-                                var newCardVm = new CardDataViewModel(cardDataService, BlueCardsSeen.Count)
-                                {
-                                    ShowLabel = false
-                                };
+                                var newCardVm = new CardDataViewModel(cardDataService, BlueCardsSeen.Count);
                                 UpdateCardMetricVisibility(newCardVm);
                                 BlueCardsSeen.Add(newCardVm);
                             }
                             else if (cardDataService.Colors.First() == Color.Black)
                             {
-                                var newCardVm = new CardDataViewModel(cardDataService, BlackCardsSeen.Count)
-                                {
-                                    ShowLabel = false
-                                };
+                                var newCardVm = new CardDataViewModel(cardDataService, BlackCardsSeen.Count);
                                 UpdateCardMetricVisibility(newCardVm);
                                 BlackCardsSeen.Add(newCardVm);
                             }
                             else if (cardDataService.Colors.First() == Color.Red)
                             {
-                                var newCardVm = new CardDataViewModel(cardDataService, RedCardsSeen.Count)
-                                {
-                                    ShowLabel = false
-                                };
+                                var newCardVm = new CardDataViewModel(cardDataService, RedCardsSeen.Count);
                                 UpdateCardMetricVisibility(newCardVm);
                                 RedCardsSeen.Add(newCardVm);
                             }
                             else if (cardDataService.Colors.First() == Color.Green)
                             {
-                                var newCardVm = new CardDataViewModel(cardDataService, GreenCardsSeen.Count)
-                                {
-                                    ShowLabel = false
-                                };
+                                var newCardVm = new CardDataViewModel(cardDataService, GreenCardsSeen.Count);
                                 UpdateCardMetricVisibility(newCardVm);
                                 GreenCardsSeen.Add(newCardVm);
                             }
                         }
                         else
                         {
-                            var newCardVm = new CardDataViewModel(cardDataService, MulticolorCardsSeen.Count)
-                            {
-                                ShowLabel = false
-                            };
+                            var newCardVm = new CardDataViewModel(cardDataService, MulticolorCardsSeen.Count);
                             UpdateCardMetricVisibility(newCardVm);
                             MulticolorCardsSeen.Add(newCardVm);
                         }

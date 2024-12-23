@@ -222,7 +222,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
-                    <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" />
+                    <v:CardDataView DataContext="{Binding}" ShowLabel="false" ShowMetrics="false" ShowPopup="true" />
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
@@ -243,7 +243,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
-                    <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" />
+                    <v:CardDataView DataContext="{Binding}" ShowLabel="false" ShowMetrics="false" ShowPopup="true" />
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
@@ -264,7 +264,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
-                    <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" />
+                    <v:CardDataView DataContext="{Binding}" ShowLabel="false" ShowMetrics="false" ShowPopup="true" />
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
@@ -285,7 +285,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
-                    <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" />
+                    <v:CardDataView DataContext="{Binding}" ShowLabel="false" ShowMetrics="false" ShowPopup="true" />
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
@@ -306,7 +306,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
-                    <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" />
+                    <v:CardDataView DataContext="{Binding}" ShowLabel="false" ShowMetrics="false" ShowPopup="true" />
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
@@ -327,7 +327,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
-                    <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" />
+                    <v:CardDataView DataContext="{Binding}" ShowLabel="false" ShowMetrics="false" ShowPopup="true" />
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
@@ -348,7 +348,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
-                    <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" />
+                    <v:CardDataView DataContext="{Binding}" ShowLabel="false" ShowMetrics="false" ShowPopup="true" />
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
