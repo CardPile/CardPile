@@ -50,4 +50,14 @@ public static class ColorsUtil
     
         return result;
     }
+
+    public static Color CombineColors(List<Color> colors)
+    {
+        Color result = Color.None;
+        foreach (var color in colors)
+        {
+            result |= color;
+        }
+        return result;
+    }
 }
