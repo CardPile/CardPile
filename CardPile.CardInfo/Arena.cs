@@ -20,7 +20,7 @@ public class Arena
         }
         if (cardDatabaseFiles.Length > 1)
         {
-            logger.Warn("Found multiple Magic: The Gathering Arena card databases. Choosing the newest one.");
+            Logger.Warn("Found multiple Magic: The Gathering Arena card databases. Choosing the newest one.");
 
             var bestDatabaseFileInfo = new FileInfo(cardDatabaseFiles[0]);
             for (int i = 1; i < cardDatabaseFiles.Length; ++i)
@@ -46,42 +46,35 @@ public class Arena
 
     public static string? GetCardNameFromId(int cardId)
     {
-        if(cardIdToName.TryGetValue(cardId, out var name))
-        {
-            return name;
-        }
-        return null;
+        return CardDictionary.TryGetValue(cardId, out var data) ? data.Name : null;
     }
 
     public static (string?, string?) GetCardExpansionAndCollectorNumberFromId(int cardId)
     {
-        if (cardIdToExpansionAndCollectorNumber.TryGetValue(cardId, out var expansionAndCollectorNumber))
-        {
-            return expansionAndCollectorNumber;
-        }
-        return (null, null);
+        return CardDictionary.TryGetValue(cardId, out var data) ? (data.Expansion, data.CollectorNumber) : (null, null);
     }
 
+    public static int? GetCardManaValueFromId(int cardId)
+    {
+        return CardDictionary.TryGetValue(cardId, out var data) ? data.ManaValue : null;
+    }
+    
     public static List<Color>? GetCardColorsFromId(int cardId)
     {
-        if (cardIdToColors.TryGetValue(cardId, out var colors))
-        {
-            return colors;
-        }
-        return null;
+        return CardDictionary.TryGetValue(cardId, out var data) ? data.Colors : null;
     }
 
     private static string? GetArenaInstallDirectory()
     {
         if (OperatingSystem.IsWindows())
         {
-            const string SteamNeedle = "Magic: The Gathering Arena";
-            const string StandaloneNeedle = "MTG Arena";
+            const string steamNeedle = "Magic: The Gathering Arena";
+            const string standaloneNeedle = "MTG Arena";
 
             string? installedLocation = default;
             Version? installedVersion = default;
 
-            foreach (var (rootRegKey, searchLocation) in searchLocations)
+            foreach (var (rootRegKey, searchLocation) in SearchLocations)
             {
                 RegistryKey? regKey = rootRegKey.OpenSubKey(searchLocation);
                 if (regKey == null)
@@ -93,7 +86,7 @@ public class Arena
                 {
                     RegistryKey? rsk = regKey.OpenSubKey(subSearchLocation);
                     string? displayNameValue = rsk?.GetValue("DisplayName") as string;
-                    if (displayNameValue == SteamNeedle)
+                    if (displayNameValue == steamNeedle)
                     {
                         string? installLocationValue = rsk?.GetValue("InstallLocation") as string;
                         if (string.IsNullOrWhiteSpace(installLocationValue))
@@ -104,7 +97,7 @@ public class Arena
                         // Assume the Steam version is the newest one, so just return it
                         return installLocationValue;
                     }
-                    else if(displayNameValue == StandaloneNeedle)
+                    else if(displayNameValue == standaloneNeedle)
                     {
                         string? installLocationValue = rsk?.GetValue("InstallLocation") as string;
                         if (string.IsNullOrWhiteSpace(installLocationValue))
@@ -171,7 +164,7 @@ public class Arena
         connection.Open();
 
         var command = connection.CreateCommand();
-        command.CommandText = @"SELECT GrpId, ExpansionCode, CollectorNumber, Colors, enUS FROM Cards LEFT JOIN Localizations ON Cards.TitleId == Localizations.LocId WHERE Localizations.Formatted = 2";
+        command.CommandText = @"SELECT GrpId, ExpansionCode, CollectorNumber, Order_ManaCostDifficulty, Colors, enUS FROM Cards LEFT JOIN Localizations ON Cards.TitleId == Localizations.LocId WHERE Localizations.Formatted = 2";
         
         using var reader = command.ExecuteReader();
         while (reader.Read())
@@ -179,13 +172,18 @@ public class Arena
             var grpId = reader.GetInt32(0);
             var expansion = reader.GetString(1);
             var collectorNumber = reader.GetString(2);
-            var colors = reader.GetString(3);
-            var name = reader.GetString(4);
+            var orderManaCostDifficulty = !reader.IsDBNull(3) ? reader.GetInt32(3) : null as int?;
+            var colors = reader.GetString(4);
+            var name = reader.GetString(5);
 
-            cardIdToName.Add(grpId, name);
-            cardIdToExpansionAndCollectorNumber.Add(grpId, (expansion, collectorNumber));
-
-            cardIdToColors.Add(grpId, CreateColorList(grpId, colors));
+            CardDictionary.Add(grpId, new CardData
+            (
+                name,
+                expansion,
+                collectorNumber,
+                orderManaCostDifficulty,
+                CreateColorList(grpId, colors)
+            ));
         }
     }
 
@@ -205,12 +203,12 @@ public class Arena
                 }
                 else
                 {
-                    logger.Warn("Error mapping colors of card with id {grpId}. Colors are [{colors}]. Color that failed to map is [{colorToMap}].", grpId, colors, colorToMap);
+                    Logger.Warn("Error mapping colors of card with id {grpId}. Colors are [{colors}]. Color that failed to map is [{colorToMap}].", grpId, colors, colorToMap);
                 }
             }
             else
             {
-                logger.Warn("Cannot parse colors of card with id {grpId}. Colors are [{colors}]", grpId, colors);
+                Logger.Warn("Cannot parse colors of card with id {grpId}. Colors are [{colors}]", grpId, colors);
             }
         }
 
@@ -237,7 +235,7 @@ public class Arena
     }
 
     [SupportedOSPlatform("windows")]
-    private static readonly (RegistryKey, string)[] searchLocations =
+    private static readonly (RegistryKey, string)[] SearchLocations =
     [
         (Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
         (Registry.LocalMachine, @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall"),
@@ -245,9 +243,15 @@ public class Arena
         (Registry.CurrentUser, @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall")
     ];
 
-    private static Dictionary<int, string> cardIdToName = [];
-    private static Dictionary<int, (string, string)> cardIdToExpansionAndCollectorNumber = [];
-    private static Dictionary<int, List<Color>> cardIdToColors = [];
+    private class CardData(string name, string expansion, string collectorNumber, int? manaValue, List<Color> colors)
+    {
+        internal readonly string Name = name;
+        internal readonly string Expansion = expansion;
+        internal readonly string CollectorNumber = collectorNumber;
+        internal readonly int? ManaValue = manaValue; 
+        internal readonly List<Color> Colors = colors;
+    };
 
-    private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+    private static readonly Dictionary<int, CardData> CardDictionary = [];
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 }

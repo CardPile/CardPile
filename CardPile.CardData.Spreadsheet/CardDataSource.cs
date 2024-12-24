@@ -32,8 +32,9 @@ public class CardDataSource : ICardDataSource
         string? grade = null;
         cardGrades.TryGetValue(cardNameFromArena, out grade);
 
+        var manaValue = CardInfo.Arena.GetCardManaValueFromId(cardNumber);
         var colors = CardInfo.Arena.GetCardColorsFromId(cardNumber) ?? [];
-        return new CardData(cardNameFromArena, cardNumber, colors, url, grade);
+        return new CardData(cardNameFromArena, cardNumber, manaValue, colors, url, grade);
     }
 
     public List<ICardDataSourceStatistic> Statistics { get => []; }

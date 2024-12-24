@@ -1,66 +1,63 @@
 ﻿using CardPile.CardData.Formatting;
-using CardPile.CardData.Importance;
 using CardPile.CardData.Metrics;
 
 namespace CardPile.CardData.SeventeenLands;
 
 internal class CardData : ICardData
 {
-
-
-    internal CardData(string name, int arenaCardId, List<Color> colors) : this(name, arenaCardId, colors, null)
-    { }
-
-    internal CardData(string name, int arenaCardId, List<Color> colors, string? url) : this(name,
-                                                                                            arenaCardId,
-                                                                                            colors,
-                                                                                            url,
-                                                                                            SeenMetricDesc.NewMetric(),
-                                                                                            AverageLastSeenAtMetricDesc.NewMetric(),
-                                                                                            PickedMetricDesc.NewMetric(),
-                                                                                            AveragePickedAtMetricDesc.NewMetric(),
-                                                                                            NumberOfGamesPlayedMetricDesc.NewMetric(),
-                                                                                            PlayRateMetricDesc.NewMetric(),
-                                                                                            WinRateWhenMaindeckedMetricDesc.NewMetric(),
-                                                                                            NumberOfGamesInOpeningHandMetricDesc.NewMetric(),
-                                                                                            WinRateInOpeningHandMetricDesc.NewMetric(),
-                                                                                            NumberOfGamesDrawnTurn1OrLaterMetricDesc.NewMetric(),
-                                                                                            WinRateWhenDrawnTurn1OrLaterMetricDesc.NewMetric(),
-                                                                                            NumberOfGamesInHandMetricDesc.NewMetric(),
-                                                                                            WinRateInHandMetricDesc.NewMetric(),
-                                                                                            ColorsWinRateInHandMetricDesc.NewMetric(
-                                                                                                WUWinRateInHandMetricDesc.NewMetric(),
-                                                                                                WBWinRateInHandMetricDesc.NewMetric(),
-                                                                                                WRWinRateInHandMetricDesc.NewMetric(),
-                                                                                                WGWinRateInHandMetricDesc.NewMetric(),
-                                                                                                UBWinRateInHandMetricDesc.NewMetric(),
-                                                                                                URWinRateInHandMetricDesc.NewMetric(),
-                                                                                                UGWinRateInHandMetricDesc.NewMetric(),
-                                                                                                BRWinRateInHandMetricDesc.NewMetric(),
-                                                                                                BGWinRateInHandMetricDesc.NewMetric(),
-                                                                                                RGWinRateInHandMetricDesc.NewMetric()
-                                                                                            ),
-                                                                                            ColorsWinRateImprovementMetricDesc.NewMetric(
-                                                                                                WUWinRateImprovementMetricDesc.NewMetric(),
-                                                                                                WBWinRateImprovementMetricDesc.NewMetric(),
-                                                                                                WRWinRateImprovementMetricDesc.NewMetric(),
-                                                                                                WGWinRateImprovementMetricDesc.NewMetric(),
-                                                                                                UBWinRateImprovementMetricDesc.NewMetric(),
-                                                                                                URWinRateImprovementMetricDesc.NewMetric(),
-                                                                                                UGWinRateImprovementMetricDesc.NewMetric(),
-                                                                                                BRWinRateImprovementMetricDesc.NewMetric(),
-                                                                                                BGWinRateImprovementMetricDesc.NewMetric(),
-                                                                                                RGWinRateImprovementMetricDesc.NewMetric()
-                                                                                            ),
-                                                                                            NumberOfGamesNotSeenMetricDesc.NewMetric(),
-                                                                                            WinRateNotSeenMetricDesc.NewMetric(),
-                                                                                            WinRateImprovementWhenDrawnMetricDesc.NewMetric())
+    internal CardData(string name, int arenaCardId, int? manaValue, List<Color> colors, string? url = null) : this(
+        name,
+        arenaCardId,
+        manaValue, 
+        colors,
+        url,
+        SeenMetricDesc.NewMetric(),
+        AverageLastSeenAtMetricDesc.NewMetric(),
+        PickedMetricDesc.NewMetric(),
+        AveragePickedAtMetricDesc.NewMetric(),
+        NumberOfGamesPlayedMetricDesc.NewMetric(),
+        PlayRateMetricDesc.NewMetric(),
+        WinRateWhenMaindeckedMetricDesc.NewMetric(),
+        NumberOfGamesInOpeningHandMetricDesc.NewMetric(),
+        WinRateInOpeningHandMetricDesc.NewMetric(),
+        NumberOfGamesDrawnTurn1OrLaterMetricDesc.NewMetric(),
+        WinRateWhenDrawnTurn1OrLaterMetricDesc.NewMetric(),
+        NumberOfGamesInHandMetricDesc.NewMetric(),
+        WinRateInHandMetricDesc.NewMetric(),
+        ColorsWinRateInHandMetricDesc.NewMetric(
+            WUWinRateInHandMetricDesc.NewMetric(),
+            WBWinRateInHandMetricDesc.NewMetric(),
+            WRWinRateInHandMetricDesc.NewMetric(),
+            WGWinRateInHandMetricDesc.NewMetric(),
+            UBWinRateInHandMetricDesc.NewMetric(),
+            URWinRateInHandMetricDesc.NewMetric(),
+            UGWinRateInHandMetricDesc.NewMetric(),
+            BRWinRateInHandMetricDesc.NewMetric(),
+            BGWinRateInHandMetricDesc.NewMetric(),
+            RGWinRateInHandMetricDesc.NewMetric()
+        ),
+        ColorsWinRateImprovementMetricDesc.NewMetric(
+            WUWinRateImprovementMetricDesc.NewMetric(),
+            WBWinRateImprovementMetricDesc.NewMetric(),
+            WRWinRateImprovementMetricDesc.NewMetric(),
+            WGWinRateImprovementMetricDesc.NewMetric(),
+            UBWinRateImprovementMetricDesc.NewMetric(),
+            URWinRateImprovementMetricDesc.NewMetric(),
+            UGWinRateImprovementMetricDesc.NewMetric(),
+            BRWinRateImprovementMetricDesc.NewMetric(),
+            BGWinRateImprovementMetricDesc.NewMetric(),
+            RGWinRateImprovementMetricDesc.NewMetric()
+        ),
+        NumberOfGamesNotSeenMetricDesc.NewMetric(),
+        WinRateNotSeenMetricDesc.NewMetric(),
+        WinRateImprovementWhenDrawnMetricDesc.NewMetric())
     { }
 
     internal CardData
     (
         string name,
         int arenaCardId,
+        int? manaValue,
         List<Color> colors,
         string? url,
         ICardMetric seenMetric,
@@ -85,6 +82,7 @@ internal class CardData : ICardData
     {
         Name = name;
         ArenaCardId = arenaCardId;
+        ManaValue = manaValue;
         Colors = colors;
         Url = url;
         Metrics =
@@ -114,6 +112,8 @@ internal class CardData : ICardData
 
     public int ArenaCardId { get; init; }
 
+    public int? ManaValue { get; init; }
+    
     public List<Color> Colors { get; init; }
 
     public string? Url { get; set; }

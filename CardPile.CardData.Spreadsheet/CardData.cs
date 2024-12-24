@@ -1,17 +1,14 @@
 ﻿using CardPile.CardData.Metrics;
-using CardPile.Draft;
 
 namespace CardPile.CardData.Spreadsheet;
 
 public class CardData : ICardData
 {
-    internal CardData(string name, int arenaCardId, List<Color> colors, string? url) : this(name, arenaCardId, colors, url, null)
-    { }
-
-    internal CardData(string name, int arenaCardId, List<Color> colors, string? url, string? grade)
+    internal CardData(string name, int arenaCardId, int? manaValue, List<Color> colors, string? url, string? grade = null)
     {
         Name = name;
         ArenaCardId = arenaCardId;
+        ManaValue = manaValue;
         Colors = colors;
         Url = url;
         Metrics =
@@ -24,6 +21,8 @@ public class CardData : ICardData
 
     public int ArenaCardId { get; init; }
 
+    public int? ManaValue { get; init; }
+    
     public List<Color> Colors { get; init; }
 
     public string? Url { get; init; }

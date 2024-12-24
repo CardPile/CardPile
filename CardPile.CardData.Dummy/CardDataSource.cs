@@ -38,6 +38,7 @@ public class CardDataSource : ICardDataSource
             var metricE = CardDataSourceBuilder.MetricEDesc.NewMetricWithSort(metricB, metricA, metricC, metricD);
             return new CardData("Card A",
                                      cardNumber,
+                                     7,
                                      [Color.White],
                                      null,
                                      metricA,
@@ -55,6 +56,7 @@ public class CardDataSource : ICardDataSource
             var metricE = CardDataSourceBuilder.MetricEDesc.NewMetricWithSort(metricB, metricA, metricC, metricD);
             return new CardData("Card B",
                                      cardNumber,
+                                     33,
                                      [Color.Green],
                                      null,
                                      metricA,
@@ -72,6 +74,7 @@ public class CardDataSource : ICardDataSource
             var metricE = CardDataSourceBuilder.MetricEDesc.NewMetricWithSort(metricB, metricA, metricC, metricD);
             return new CardData("Card C",
                                      cardNumber,
+                                     1,
                                      [Color.Red],
                                      null,
                                      metricA,
@@ -93,8 +96,9 @@ public class CardDataSource : ICardDataSource
                     url = CardInfo.Scryfall.GetImageUrlFromExpansionAndCollectorNumber(expansion, collectorNumber);
                 }
 
+                var manaValue = CardInfo.Arena.GetCardManaValueFromId(cardNumber);
                 var colors = CardInfo.Arena.GetCardColorsFromId(cardNumber) ?? [];
-                return new CardData(cardNameFromArena, cardNumber, colors, url, null, null, null, null, null);
+                return new CardData(cardNameFromArena, cardNumber, manaValue, colors, url, null, null, null, null, null);
             }
 
             return null;

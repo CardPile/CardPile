@@ -67,6 +67,7 @@ public class CardDataSource : ICardDataSource
     public ICardData? GetDataForCard(int cardNumber, DraftState state)
     {
         RawCardData? rawCardData = archetypeCardData[Color.None].GetDataForCard(cardNumber);
+        var manaValue = CardInfo.Arena.GetCardManaValueFromId(cardNumber);
         if (rawCardData != null)
         {
             Dictionary<Color, float?> gameWinRateImprovement = [];
@@ -88,9 +89,10 @@ public class CardDataSource : ICardDataSource
 
                 gameWinRateImprovement[pair] = gihWr.Value - winRate.Value;
             }
-
+            
             return new CardData(rawCardData.Name,
                                 rawCardData.ArenaCardId,
+                                manaValue,
                                 rawCardData.Colors,
                                 rawCardData.Url,
                                 CardData.SeenMetricDesc.NewMetric(rawCardData.SeenCount),
@@ -144,9 +146,9 @@ public class CardDataSource : ICardDataSource
             {
                 url = CardInfo.Scryfall.GetImageUrlFromExpansionAndCollectorNumber(expansion, collectorNumber);
             }
-
+            
             var colors = CardInfo.Arena.GetCardColorsFromId(cardNumber) ?? [];
-            return new CardData(cardNameFromArena, cardNumber, colors, url);
+            return new CardData(cardNameFromArena, cardNumber, manaValue, colors, url);
         }
 
         return null;
