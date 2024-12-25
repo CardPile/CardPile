@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using CardPile.Application.Services;
 using CardPile.Deck;
 
@@ -9,18 +10,18 @@ public class DeckModel : IDeckService
 {
     public void SetDeck(DraftDeck deck)
     {
-        AllCards.Clear();
+        CardStacks.Clear();
         
-        foreach (var card in deck.Cards)
+        foreach (var stack in deck.CardStacks)
         {
-            AllCards.Add(new CardDataModel(card));
+            CardStacks.Add(stack.Select(card => new CardDataModel(card)).ToList<ICardDataService>());
         }
     }
 
     public void Clear()
     {
-        AllCards.Clear();
+        CardStacks.Clear();
     }
 
-    public ObservableCollection<CardDataModel> AllCards {  get; } = [];
+    public ObservableCollection<List<ICardDataService>> CardStacks { get; init; } = [];
 }

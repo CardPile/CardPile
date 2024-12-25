@@ -202,18 +202,40 @@
             <Expander.Header>
               <TextBlock FontSize="18" FontWeight="DemiBold">Current deck</TextBlock>
             </Expander.Header>
-            <ItemsControl ItemsSource="{Binding CardsInDeck}">
-              <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                  <WrapPanel Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-              </ItemsControl.ItemsPanel>
-              <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                  <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" />
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <ScrollViewer HorizontalScrollBarVisibility="Auto">
+              <ItemsControl ItemsSource="{Binding CardStacksInDeck}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <ItemsControl VerticalAlignment="Top" Classes="CardStack" ItemsSource="{Binding}">
+                      <ItemsControl.Styles>
+                        <Style Selector=".CardStack > ContentPresenter" x:DataType="vm:CardDataViewModel">
+                          <Setter Property="Canvas.Top" Value="{Binding OffsetInStack}"/>
+                          <Setter Property="Canvas.Left" Value="0" />
+                          <Setter Property="Width" Value="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
+                          <Setter Property="Height" Value="{Binding Bounds.Height, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
+                          <Setter Property="ZIndex" Value="{Binding Index}" />
+                        </Style>
+                      </ItemsControl.Styles>
+                      <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                          <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" MinWidth="182" Height="{Binding Converter={x:Static vm:MainWindowViewModel.CardCollectionToStackHeightConverter}}" />
+                        </ItemsPanelTemplate>
+                      </ItemsControl.ItemsPanel>
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                          <v:CardDataView DataContext="{Binding}" ShowLabel="false" ShowMetrics="false" ShowPopup="true" />
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl> 
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
           </Expander>
           <!-- Passed -->
           <Expander Grid.Row="4" VerticalAlignment="Top" Width="{Binding #ContentContainer.Bounds.Width}" Margin="0, 2">
@@ -227,6 +249,7 @@
                   <Style Selector=".CardStack > ContentPresenter" x:DataType="vm:CardDataViewModel">
                     <Setter Property="Canvas.Top" Value="{Binding OffsetInStack}"/>
                     <Setter Property="Canvas.Left" Value="0" />
+                    <Setter Property="Width" Value="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
                     <Setter Property="Height" Value="{Binding Bounds.Height, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
                     <Setter Property="ZIndex" Value="{Binding Index}" />
                   </Style>
@@ -248,6 +271,7 @@
                   <Style Selector=".CardStack > ContentPresenter" x:DataType="vm:CardDataViewModel">
                     <Setter Property="Canvas.Top" Value="{Binding OffsetInStack}"/>
                     <Setter Property="Canvas.Left" Value="0" />
+                    <Setter Property="Width" Value="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
                     <Setter Property="Height" Value="{Binding Bounds.Height, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
                     <Setter Property="ZIndex" Value="{Binding Index}" />
                   </Style>
@@ -263,12 +287,13 @@
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
-              <!-- Passed black -->            
+              <!-- Passed black -->           
               <ItemsControl Grid.Column="2" VerticalAlignment="Top" Classes="CardStack" ItemsSource="{Binding BlackCardsSeen}">
                 <ItemsControl.Styles>
                   <Style Selector=".CardStack > ContentPresenter" x:DataType="vm:CardDataViewModel">
                     <Setter Property="Canvas.Top" Value="{Binding OffsetInStack}"/>
                     <Setter Property="Canvas.Left" Value="0" />
+                    <Setter Property="Width" Value="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
                     <Setter Property="Height" Value="{Binding Bounds.Height, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
                     <Setter Property="ZIndex" Value="{Binding Index}" />
                   </Style>
@@ -290,6 +315,7 @@
                   <Style Selector=".CardStack > ContentPresenter" x:DataType="vm:CardDataViewModel">
                     <Setter Property="Canvas.Top" Value="{Binding OffsetInStack}"/>
                     <Setter Property="Canvas.Left" Value="0" />
+                    <Setter Property="Width" Value="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
                     <Setter Property="Height" Value="{Binding Bounds.Height, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
                     <Setter Property="ZIndex" Value="{Binding Index}" />
                   </Style>
@@ -311,6 +337,7 @@
                   <Style Selector=".CardStack > ContentPresenter" x:DataType="vm:CardDataViewModel">
                     <Setter Property="Canvas.Top" Value="{Binding OffsetInStack}"/>
                     <Setter Property="Canvas.Left" Value="0" />
+                    <Setter Property="Width" Value="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
                     <Setter Property="Height" Value="{Binding Bounds.Height, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
                     <Setter Property="ZIndex" Value="{Binding Index}" />
                   </Style>
@@ -332,6 +359,7 @@
                   <Style Selector=".CardStack > ContentPresenter" x:DataType="vm:CardDataViewModel">
                     <Setter Property="Canvas.Top" Value="{Binding OffsetInStack}"/>
                     <Setter Property="Canvas.Left" Value="0" />
+                    <Setter Property="Width" Value="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
                     <Setter Property="Height" Value="{Binding Bounds.Height, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
                     <Setter Property="ZIndex" Value="{Binding Index}" />
                   </Style>
@@ -353,6 +381,7 @@
                   <Style Selector=".CardStack > ContentPresenter" x:DataType="vm:CardDataViewModel">
                     <Setter Property="Canvas.Top" Value="{Binding OffsetInStack}"/>
                     <Setter Property="Canvas.Left" Value="0" />
+                    <Setter Property="Width" Value="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
                     <Setter Property="Height" Value="{Binding Bounds.Height, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
                     <Setter Property="ZIndex" Value="{Binding Index}" />
                   </Style>

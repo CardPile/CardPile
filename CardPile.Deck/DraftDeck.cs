@@ -27,12 +27,8 @@ public class DraftDeck
         {
             SortStackByColor(cardStack);
         }        
-        
-        Cards = cards;
     }
     
-    public List<ICardData> Cards { get; init; }
-
     public List<List<ICardData>> CardStacks { get; init; }
     
     private Dictionary<Color, int> CalculateColorCounts(List<ICardData> cards)
@@ -73,7 +69,7 @@ public class DraftDeck
         List<ICardData> sideboard = [];
         foreach (var card in cards)
         {
-            if (card.Colors.All(c => mainColors.Contains(c)))
+            if (card.Colors.All(mainColors.Contains))
             {
                 mainboard.Add(card);
             }

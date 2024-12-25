@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CardPile.Application.Services;
 
-internal interface ICardDataService : IReactiveObject
+public interface ICardDataService : IReactiveObject
 {
     public string Name { get; }
 
