@@ -164,7 +164,7 @@ public class Arena
         connection.Open();
 
         var command = connection.CreateCommand();
-        command.CommandText = @"SELECT GrpId, ExpansionCode, CollectorNumber, Order_ManaCostDifficulty, Colors, enUS FROM Cards LEFT JOIN Localizations ON Cards.TitleId == Localizations.LocId WHERE Localizations.Formatted = 2";
+        command.CommandText = @"SELECT GrpId, ExpansionCode, CollectorNumber, Order_CMCWithXLast, Colors, enUS FROM Cards LEFT JOIN Localizations ON Cards.TitleId == Localizations.LocId WHERE Localizations.Formatted = 2";
         
         using var reader = command.ExecuteReader();
         while (reader.Read())
@@ -172,7 +172,7 @@ public class Arena
             var grpId = reader.GetInt32(0);
             var expansion = reader.GetString(1);
             var collectorNumber = reader.GetString(2);
-            var orderManaCostDifficulty = !reader.IsDBNull(3) ? reader.GetInt32(3) : null as int?;
+            var manaValue = !reader.IsDBNull(3) ? reader.GetInt32(3) : null as int?;
             var colors = reader.GetString(4);
             var name = reader.GetString(5);
 
@@ -181,7 +181,7 @@ public class Arena
                 name,
                 expansion,
                 collectorNumber,
-                orderManaCostDifficulty,
+                manaValue,
                 CreateColorList(grpId, colors)
             ));
         }
