@@ -4,6 +4,7 @@ using NLog;
 using System.Runtime.Versioning;
 
 using CardPile.CardData;
+using Type = CardPile.CardData.Type;
 
 namespace CardPile.CardInfo;
 
@@ -164,7 +165,7 @@ public class Arena
         connection.Open();
 
         var command = connection.CreateCommand();
-        command.CommandText = @"SELECT GrpId, ExpansionCode, CollectorNumber, Order_CMCWithXLast, Colors, enUS FROM Cards LEFT JOIN Localizations ON Cards.TitleId == Localizations.LocId WHERE Localizations.Formatted = 2";
+        command.CommandText = @"SELECT GrpId, ExpansionCode, CollectorNumber, Types, Order_CMCWithXLast, Colors, enUS FROM Cards LEFT JOIN Localizations ON Cards.TitleId == Localizations.LocId WHERE Localizations.Formatted = 2";
         
         using var reader = command.ExecuteReader();
         while (reader.Read())
@@ -172,21 +173,51 @@ public class Arena
             var grpId = reader.GetInt32(0);
             var expansion = reader.GetString(1);
             var collectorNumber = reader.GetString(2);
-            var manaValue = !reader.IsDBNull(3) ? reader.GetInt32(3) : null as int?;
-            var colors = reader.GetString(4);
-            var name = reader.GetString(5);
+            var types = reader.GetString(3);
+            var manaValue = !reader.IsDBNull(4) ? reader.GetInt32(3) : null as int?;
+            var colors = reader.GetString(5);
+            var name = reader.GetString(6);
 
             CardDictionary.Add(grpId, new CardData
             (
                 name,
                 expansion,
                 collectorNumber,
+                CreateTypeList(types),
                 manaValue,
                 CreateColorList(grpId, colors)
             ));
         }
     }
 
+    private static Type CreateTypeList(string types)
+    {
+        var typeLookup = new Dictionary<string, Type>
+        {
+            {"1", Type.Artifact},
+            {"2", Type.Creature},
+            {"3", Type.Enchantment},
+            {"4", Type.Instant},
+            {"5", Type.Land},
+            {"8", Type.Planeswalker},
+            {"10", Type.Sorcery},
+            {"11", Type.Kindred},
+            {"13", Type.Dungeon},
+            {"14", Type.Battle},
+        };
+
+        var type = Type.None;
+        foreach (var part in types.Split(','))
+        {
+            if (typeLookup.TryGetValue(part, out var partType))
+            {
+                type |= partType;
+            }
+        }
+
+        return type;
+    }
+    
     private static List<Color> CreateColorList(int grpId, string colors)
     {
         var parts = colors.Split(",").Select(x => x.Trim());
@@ -243,11 +274,12 @@ public class Arena
         (Registry.CurrentUser, @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall")
     ];
 
-    private class CardData(string name, string expansion, string collectorNumber, int? manaValue, List<Color> colors)
+    private class CardData(string name, string expansion, string collectorNumber, Type type, int? manaValue, List<Color> colors)
     {
         internal readonly string Name = name;
         internal readonly string Expansion = expansion;
         internal readonly string CollectorNumber = collectorNumber;
+        internal readonly Type Type = type;
         internal readonly int? ManaValue = manaValue; 
         internal readonly List<Color> Colors = colors;
     };

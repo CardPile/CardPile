@@ -54,7 +54,7 @@ internal class WatcherModel : ReactiveObject, IWatcherService
             {
                 throw new InvalidOperationException("LocalAppData is null. Cannot resolve path to Player.log");
             }
-            localAppData = localAppData.Replace("Roaming", "LocalLow");  // There is a beter way to do it, but this is simpler
+            localAppData = localAppData.Replace("Roaming", "LocalLow");  // There is a better way to do it, but this is simpler
             return Path.Combine(localAppData, "Wizards Of The Coast", "MTGA", "Player.log");
         }
     }
