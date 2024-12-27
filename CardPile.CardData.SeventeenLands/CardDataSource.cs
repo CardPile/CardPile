@@ -67,6 +67,7 @@ public class CardDataSource : ICardDataSource
     public ICardData? GetDataForCard(int cardNumber, DraftState state)
     {
         RawCardData? rawCardData = archetypeCardData[Color.None].GetDataForCard(cardNumber);
+        var type = CardInfo.Arena.GetCardTypeFromId(cardNumber);
         var manaValue = CardInfo.Arena.GetCardManaValueFromId(cardNumber);
         if (rawCardData != null)
         {
@@ -92,6 +93,7 @@ public class CardDataSource : ICardDataSource
             
             return new CardData(rawCardData.Name,
                                 rawCardData.ArenaCardId,
+                                type,
                                 manaValue,
                                 rawCardData.Colors,
                                 rawCardData.Url,
@@ -148,7 +150,7 @@ public class CardDataSource : ICardDataSource
             }
             
             var colors = CardInfo.Arena.GetCardColorsFromId(cardNumber) ?? [];
-            return new CardData(cardNameFromArena, cardNumber, manaValue, colors, url);
+            return new CardData(cardNameFromArena, cardNumber, type, manaValue, colors, url);
         }
 
         return null;

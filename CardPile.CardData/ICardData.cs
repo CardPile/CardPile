@@ -6,6 +6,8 @@ public interface ICardData
 
     public int ArenaCardId { get; }
 
+    public Type Type { get; }
+    
     public int? ManaValue { get; }
     
     public List<Color> Colors { get; }

@@ -55,6 +55,11 @@ public class Arena
         return CardDictionary.TryGetValue(cardId, out var data) ? (data.Expansion, data.CollectorNumber) : (null, null);
     }
 
+    public static Type GetCardTypeFromId(int cardId)
+    {
+        return CardDictionary.TryGetValue(cardId, out var data) ? data.Type : Type.None;
+    }
+    
     public static int? GetCardManaValueFromId(int cardId)
     {
         return CardDictionary.TryGetValue(cardId, out var data) ? data.ManaValue : null;

@@ -38,6 +38,7 @@ public class CardDataSource : ICardDataSource
             var metricE = CardDataSourceBuilder.MetricEDesc.NewMetricWithSort(metricB, metricA, metricC, metricD);
             return new CardData("Card A",
                                      cardNumber,
+                                     Type.Artifact,
                                      7,
                                      [Color.White],
                                      null,
@@ -56,6 +57,7 @@ public class CardDataSource : ICardDataSource
             var metricE = CardDataSourceBuilder.MetricEDesc.NewMetricWithSort(metricB, metricA, metricC, metricD);
             return new CardData("Card B",
                                      cardNumber,
+                                     Type.Creature,
                                      33,
                                      [Color.Green],
                                      null,
@@ -74,6 +76,7 @@ public class CardDataSource : ICardDataSource
             var metricE = CardDataSourceBuilder.MetricEDesc.NewMetricWithSort(metricB, metricA, metricC, metricD);
             return new CardData("Card C",
                                      cardNumber,
+                                     Type.Dungeon,
                                      1,
                                      [Color.Red],
                                      null,
@@ -96,9 +99,10 @@ public class CardDataSource : ICardDataSource
                     url = CardInfo.Scryfall.GetImageUrlFromExpansionAndCollectorNumber(expansion, collectorNumber);
                 }
 
+                var type = CardInfo.Arena.GetCardTypeFromId(cardNumber);
                 var manaValue = CardInfo.Arena.GetCardManaValueFromId(cardNumber);
                 var colors = CardInfo.Arena.GetCardColorsFromId(cardNumber) ?? [];
-                return new CardData(cardNameFromArena, cardNumber, manaValue, colors, url, null, null, null, null, null);
+                return new CardData(cardNameFromArena, cardNumber, type, manaValue, colors, url, null, null, null, null, null);
             }
 
             return null;

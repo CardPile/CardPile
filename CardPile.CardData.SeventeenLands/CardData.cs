@@ -5,9 +5,10 @@ namespace CardPile.CardData.SeventeenLands;
 
 internal class CardData : ICardData
 {
-    internal CardData(string name, int arenaCardId, int? manaValue, List<Color> colors, string? url = null) : this(
+    internal CardData(string name, int arenaCardId, Type type, int? manaValue, List<Color> colors, string? url = null) : this(
         name,
         arenaCardId,
+        type,
         manaValue, 
         colors,
         url,
@@ -57,6 +58,7 @@ internal class CardData : ICardData
     (
         string name,
         int arenaCardId,
+        Type type,
         int? manaValue,
         List<Color> colors,
         string? url,
@@ -82,6 +84,7 @@ internal class CardData : ICardData
     {
         Name = name;
         ArenaCardId = arenaCardId;
+        Type = type;
         ManaValue = manaValue;
         Colors = colors;
         Url = url;
@@ -112,6 +115,8 @@ internal class CardData : ICardData
 
     public int ArenaCardId { get; init; }
 
+    public Type Type { get; init; }
+    
     public int? ManaValue { get; init; }
     
     public List<Color> Colors { get; init; }
