@@ -40,7 +40,7 @@ public class CardDataSource : ICardDataSource
                                      cardNumber,
                                      Type.Artifact,
                                      7,
-                                     [Color.White],
+                                     Color.White,
                                      null,
                                      metricA,
                                      metricB,
@@ -59,7 +59,7 @@ public class CardDataSource : ICardDataSource
                                      cardNumber,
                                      Type.Creature,
                                      33,
-                                     [Color.Green],
+                                     Color.Green,
                                      null,
                                      metricA,
                                      metricB,
@@ -78,7 +78,7 @@ public class CardDataSource : ICardDataSource
                                      cardNumber,
                                      Type.Dungeon,
                                      1,
-                                     [Color.Red],
+                                     Color.Red,
                                      null,
                                      metricA,
                                      metricB,
@@ -101,7 +101,7 @@ public class CardDataSource : ICardDataSource
 
                 var type = CardInfo.Arena.GetCardTypeFromId(cardNumber);
                 var manaValue = CardInfo.Arena.GetCardManaValueFromId(cardNumber);
-                var colors = CardInfo.Arena.GetCardColorsFromId(cardNumber) ?? [];
+                var colors = CardInfo.Arena.GetCardColorsFromId(cardNumber);
                 return new CardData(cardNameFromArena, cardNumber, type, manaValue, colors, url, null, null, null, null, null);
             }
 

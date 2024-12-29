@@ -2,35 +2,35 @@
 
 internal class Utils
 {
-    internal static List<Color> ParseColors(string? colors)
+    internal static Color ParseColors(string? colors)
     {
         if (colors == null)
         {
-            return [];
+            return Color.None;
         }
 
-        var result = new List<Color>();
+        var result = Color.None;
         foreach (var color in colors)
         {
             if (color == 'W')
             {
-                result.Add(Color.White);
+                result |= Color.White;
             }
             else if (color == 'U')
             {
-                result.Add(Color.Blue);
+                result |= Color.Blue;
             }
             else if (color == 'B')
             {
-                result.Add(Color.Black);
+                result |= Color.Black;
             }
             else if (color == 'R')
             {
-                result.Add(Color.Red);
+                result |= Color.Red;
             }
             else if (color == 'G')
             {
-                result.Add(Color.Green);
+                result |= Color.Green;
             }
         }
 

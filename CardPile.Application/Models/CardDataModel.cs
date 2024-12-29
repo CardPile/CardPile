@@ -27,7 +27,7 @@ public class CardDataModel : ReactiveObject, ICardDataService
         get => cardData.ArenaCardId;
     }
 
-    public List<Color> Colors
+    public Color Colors
     {
         get => cardData.Colors;
     }

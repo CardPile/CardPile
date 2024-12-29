@@ -20,4 +20,23 @@ public enum Color : int
     BR   = Color.Black | Color.Red,
     BG   = Color.Black | Color.Green,
     RG   = Color.Red   | Color.Green,    
+    
+    WUB = Color.White | Color.Blue | Color.Black,
+    WUR = Color.White | Color.Blue | Color.Red,
+    WUG = Color.White | Color.Blue | Color.Green,
+    WBR = Color.White | Color.Black | Color.Red,
+    WBG = Color.White | Color.Black | Color.Green,
+    WRG = Color.White | Color.Red | Color.Green,
+    UBR = Color.Blue | Color.Black | Color.Red,
+    UBG = Color.Blue | Color.Black | Color.Green,
+    URG = Color.Blue | Color.Red | Color.Green,
+    BRG = Color.Black | Color.Red | Color.Green,
+    
+    WUBR = Color.White | Color.Blue | Color.Black | Color.Red,
+    WUBG = Color.White | Color.Blue | Color.Black | Color.Green,
+    WURG = Color.White | Color.Blue | Color.Red | Color.Green,
+    WBRG = Color.White | Color.Black | Color.Red | Color.Green,
+    UBRG = Color.Blue | Color.Black | Color.Red | Color.Green,
+    
+    WUBRG = Color.White | Color.Blue | Color.Black | Color.Red | Color.Green,
 }

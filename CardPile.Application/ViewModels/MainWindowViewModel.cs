@@ -370,29 +370,29 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     if (item is ICardDataService cardDataService)
                     {
-                        if (cardDataService.Colors.Count == 0)
+                        if (cardDataService.Colors.Count() == 0)
                         {
                             ColorlessCardsSeen.Add(UpdateCardMetricVisibility(new CardDataViewModel(cardDataService, ColorlessCardsSeen.Count)));
                         }
-                        else if (cardDataService.Colors.Count == 1)
+                        else if (cardDataService.Colors.Count() == 1)
                         {
-                            if(cardDataService.Colors.First() == Color.White)
+                            if(cardDataService.Colors == Color.White)
                             {
                                 WhiteCardsSeen.Add(UpdateCardMetricVisibility(new CardDataViewModel(cardDataService, WhiteCardsSeen.Count)));
                             }
-                            else if(cardDataService.Colors.First() == Color.Blue)
+                            else if(cardDataService.Colors == Color.Blue)
                             {
                                 BlueCardsSeen.Add(UpdateCardMetricVisibility(new CardDataViewModel(cardDataService, BlueCardsSeen.Count)));
                             }
-                            else if (cardDataService.Colors.First() == Color.Black)
+                            else if (cardDataService.Colors == Color.Black)
                             {
                                 BlackCardsSeen.Add(UpdateCardMetricVisibility(new CardDataViewModel(cardDataService, BlackCardsSeen.Count)));
                             }
-                            else if (cardDataService.Colors.First() == Color.Red)
+                            else if (cardDataService.Colors == Color.Red)
                             {
                                 RedCardsSeen.Add(UpdateCardMetricVisibility(new CardDataViewModel(cardDataService, RedCardsSeen.Count)));
                             }
-                            else if (cardDataService.Colors.First() == Color.Green)
+                            else if (cardDataService.Colors == Color.Green)
                             {
                                 GreenCardsSeen.Add(UpdateCardMetricVisibility(new CardDataViewModel(cardDataService, GreenCardsSeen.Count)));
                             }
@@ -418,29 +418,29 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     if (item is ICardDataService cardDataService)
                     {
-                        if (cardDataService.Colors.Count == 0)
+                        if (cardDataService.Colors.Count() == 0)
                         {
                             ColorlessCardsSeen.Remove(ColorlessCardsSeen.Where(x => x.CardDataService == item));
                         }
-                        else if (cardDataService.Colors.Count == 1)
+                        else if (cardDataService.Colors.Count() == 1)
                         {
-                            if (cardDataService.Colors.First() == Color.White)
+                            if (cardDataService.Colors == Color.White)
                             {
                                 WhiteCardsSeen.Remove(WhiteCardsSeen.Where(x => x.CardDataService == item));
                             }
-                            else if (cardDataService.Colors.First() == Color.Blue)
+                            else if (cardDataService.Colors == Color.Blue)
                             {
                                 BlueCardsSeen.Remove(BlueCardsSeen.Where(x => x.CardDataService == item));
                             }
-                            else if (cardDataService.Colors.First() == Color.Black)
+                            else if (cardDataService.Colors == Color.Black)
                             {
                                 BlackCardsSeen.Remove(BlackCardsSeen.Where(x => x.CardDataService == item));
                             }
-                            else if (cardDataService.Colors.First() == Color.Red)
+                            else if (cardDataService.Colors == Color.Red)
                             {
                                 RedCardsSeen.Remove(RedCardsSeen.Where(x => x.CardDataService == item));
                             }
-                            else if (cardDataService.Colors.First() == Color.Green)
+                            else if (cardDataService.Colors == Color.Green)
                             {
                                 GreenCardsSeen.Remove(GreenCardsSeen.Where(x => x.CardDataService == item));
                             }

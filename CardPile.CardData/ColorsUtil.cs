@@ -2,6 +2,18 @@ namespace CardPile.CardData;
 
 public static class ColorsUtil
 {
+    public static List<Color> ColorSingles()
+    {
+        return
+        [
+            Color.White,
+            Color.Blue,
+            Color.Black,
+            Color.Red,
+            Color.Green,
+        ];
+    }
+    
     public static List<Color> ColorPairs()
     {
         return
@@ -17,6 +29,57 @@ public static class ColorsUtil
             Color.BG,
             Color.RG
         ];
+    }
+
+    public static List<Color> ColorTriples()
+    {
+        return
+        [
+            Color.WUB,
+            Color.WUR,
+            Color.WUG,
+            Color.WBR,
+            Color.WBG,
+            Color.WRG,
+            Color.UBR,
+            Color.UBG,
+            Color.URG,
+            Color.BRG
+        ];
+    }
+
+    public static List<Color> ColorQuadruples()
+    {
+        return
+        [
+            Color.WUBR,
+            Color.WUBG,
+            Color.WURG,
+            Color.WBRG,
+            Color.UBRG,
+        ];
+    }
+
+    public static List<Color> ColorQuintuples()
+    {
+        return
+        [
+            Color.WUBRG,
+        ];
+    }
+
+    public static List<Color> Colors(int count)
+    {
+        return count switch
+        {
+            0 => [Color.None],
+            1 => ColorSingles(),
+            2 => ColorPairs(),
+            3 => ColorTriples(),
+            4 => ColorQuadruples(),
+            5 => ColorQuintuples(),
+            _ => []
+        };
     }
     
     public static string ToSymbols(Color color)
@@ -51,13 +114,30 @@ public static class ColorsUtil
         return result;
     }
 
-    public static Color CombineColors(List<Color> colors)
+    public static int Count(this Color color)
     {
-        Color result = Color.None;
-        foreach (var color in colors)
+        var result = 0;
+        if ((color & Color.White) != Color.None)
         {
-            result |= color;
+            ++result;
         }
+        if ((color & Color.Blue) != Color.None)
+        {
+            ++result;
+        }
+        if ((color & Color.Black) != Color.None)
+        {
+            ++result;
+        }
+        if ((color & Color.Red) != Color.None)
+        {
+            ++result;
+        }
+        if ((color & Color.Green) != Color.None)
+        {
+            ++result;
+        }
+
         return result;
     }
 }

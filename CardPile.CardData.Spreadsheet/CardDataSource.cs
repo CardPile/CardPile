@@ -34,7 +34,7 @@ public class CardDataSource : ICardDataSource
 
         var type = CardInfo.Arena.GetCardTypeFromId(cardNumber);
         var manaValue = CardInfo.Arena.GetCardManaValueFromId(cardNumber);
-        var colors = CardInfo.Arena.GetCardColorsFromId(cardNumber) ?? [];
+        var colors = CardInfo.Arena.GetCardColorsFromId(cardNumber);
         return new CardData(cardNameFromArena, cardNumber, type, manaValue, colors, url, grade);
     }
 

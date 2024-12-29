@@ -8,7 +8,7 @@ internal class RawCardData
     (
         string name,
         int mtga_id,
-        List<Color> colors,
+        Color colors,
         string? url,
         int? seenCount,
         float? avgSeen,
@@ -81,7 +81,7 @@ internal class RawCardData
 
     internal int ArenaCardId { get; init; }
 
-    internal List<Color> Colors { get; init; }
+    internal Color Colors { get; init; }
 
     internal string? Url { get; set; }
 

@@ -4,7 +4,7 @@ internal class WinDataSource
 {
     internal WinDataSource(List<RawWinData> winData)
     {
-        archetypeWinData = winData.Where(x => !x.IsSummary.GetValueOrDefault(true)).ToDictionary(x => CombineColors(x.Colors), x => x);
+        archetypeWinData = winData.Where(x => !x.IsSummary.GetValueOrDefault(true)).ToDictionary(x => x.Colors, x => x);
     }
 
     internal float? GetWinPercentage(Color color)
@@ -14,23 +14,12 @@ internal class WinDataSource
             return null;
         }
 
-        if(!winData.Wins.HasValue || !winData.Games.HasValue)
+        if (!winData.Wins.HasValue || !winData.Games.HasValue)
         {
             return null;
         }
 
         return (float)Math.Round((double)winData.Wins / (double)winData.Games, 3);
-    }
-
-    private Color CombineColors(List<Color> colors)
-    {
-        Color result = Color.None;
-        foreach (var color in colors)
-        {
-            result |= color;
-        }
-
-        return result;
     }
 
     private Dictionary<Color, RawWinData> archetypeWinData = [];

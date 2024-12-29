@@ -1,4 +1,7 @@
-﻿using CardPile.CardData;
+﻿using Avalonia.Media;
+using CardPile.CardData;
+using Color = CardPile.CardData.Color;
+using Type = CardPile.CardData.Type;
 
 namespace CardPile.Deck;
 
@@ -6,15 +9,17 @@ public class DraftDeck
 {
     public DraftDeck(List<ICardData> cards)
     {
-        var colorCount = CalculateColorCounts(cards);
-        var mainColors = CalculateMainColors(colorCount);
-        var (mainCards, sideboardCards) = SplitCards(cards, mainColors);
+        const int MAIN_COLOR_COUNT = 2;
+        
+        var cardGroups = GroupCards(cards, MAIN_COLOR_COUNT);
+        var mainColorAndCards = cardGroups.MaxBy(x => x.Value.Count);
+        var sideboardCards = SplitSideboard(cards, mainColorAndCards.Key);
 
-        if (mainCards.Count > 0)
+        if (mainColorAndCards.Value.Count > 0)
         {
             // Split main cards by mana value, then sort each stack by color
             // Sort the sideboard cards by mana value for the last stack
-            CardStacks = SplitCardsByManaValue(mainCards);
+            CardStacks = SplitCardsByManaValue(mainColorAndCards.Value);
             CardStacks.Add(sideboardCards);
         }
         else
@@ -31,55 +36,36 @@ public class DraftDeck
     
     public List<List<ICardData>> CardStacks { get; init; }
     
-    private Dictionary<Color, int> CalculateColorCounts(List<ICardData> cards)
+    private Dictionary<Color, List<ICardData>> GroupCards(List<ICardData> cards, int numberOfColorsToConsider)
     {
-        Dictionary<Color, int> colorCounts = new() {
-            { Color.White, 0},
-            { Color.Blue, 0},
-            { Color.Black, 0},
-            { Color.Red, 0},
-            { Color.Green, 0},
-        };
-        
-        foreach (var color in cards.SelectMany(card => card.Colors))
+        var colorCombinationCounts = ColorsUtil.Colors(numberOfColorsToConsider)
+                                                                    .ToDictionary(x => x,
+                                                                                  _ => new List<ICardData>());
+        foreach (var colorCombination in colorCombinationCounts.Keys)
         {
-            colorCounts[color] += 1;
-        }
-
-        return colorCounts;
-    }
-
-    private List<Color> CalculateMainColors(Dictionary<Color, int> colorCounts)
-    {
-        List<Color> mainColors = [];
-        foreach (var (color, count) in colorCounts)
-        {
-            if (count > 3)
+            foreach (var card in cards)
             {
-                mainColors.Add(color);
+                if ((colorCombination & card.Colors) == card.Colors)
+                {
+                    colorCombinationCounts[colorCombination].Add(card);
+                }
             }
         }
-        
-        return mainColors;
+        return colorCombinationCounts;
     }
-
-    private (List<ICardData>, List<ICardData>) SplitCards(List<ICardData> cards, List<Color> mainColors)
+    
+    private List<ICardData> SplitSideboard(List<ICardData> cards, Color mainColors)
     {
-        List<ICardData> mainboard = [];
         List<ICardData> sideboard = [];
         foreach (var card in cards)
         {
-            if (card.Colors.All(mainColors.Contains))
-            {
-                mainboard.Add(card);
-            }
-            else
+            if ((card.Colors & mainColors) != card.Colors)
             {
                 sideboard.Add(card);
             }
         }
 
-        return (mainboard, sideboard);
+        return sideboard;
     }
 
     private List<List<ICardData>> SplitCardsByManaValue(List<ICardData> cards)
@@ -91,14 +77,36 @@ public class DraftDeck
             cardsByManaValue.TryAdd(manaValue, []);
             cardsByManaValue[manaValue].Add(card);
         }
+        
+        var cardsSortedByManaValue = cardsByManaValue.ToList();
+        cardsSortedByManaValue.Sort((x, y) => x.Key - y.Key);
+        var result = cardsSortedByManaValue.Select(x => x.Value).ToList();
 
-        var result = cardsByManaValue.ToList();
-        result.Sort((x, y) => x.Key - y.Key);
-        return result.Select(x => x.Value).ToList();
+        if (cardsSortedByManaValue.Count <= 0 || cardsSortedByManaValue.First().Key != 0)
+        {
+            return result;
+        }
+        
+        var lands = result[0].Where(card => (card.Type & Type.Land) == Type.Land).ToList();
+        var zeroManaWithoutLands = result[0].Except(lands).ToList();
+        if (zeroManaWithoutLands.Count > 0)
+        {
+            result[0] = zeroManaWithoutLands;
+        }
+        else
+        {
+            result.RemoveAt(0);
+        }
+        if (lands.Count > 0)
+        {
+            result.Add(lands);                
+        }
+
+        return  result;
     }
 
     private void SortStackByColor(List<ICardData> cardStack)
     {
-        cardStack.Sort((x, y) => ColorsUtil.CombineColors(x.Colors) - ColorsUtil.CombineColors(y.Colors));
+        cardStack.Sort((x, y) => x.Colors - y.Colors);
     }
 }

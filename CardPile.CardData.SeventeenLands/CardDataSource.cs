@@ -149,7 +149,7 @@ public class CardDataSource : ICardDataSource
                 url = CardInfo.Scryfall.GetImageUrlFromExpansionAndCollectorNumber(expansion, collectorNumber);
             }
             
-            var colors = CardInfo.Arena.GetCardColorsFromId(cardNumber) ?? [];
+            var colors = CardInfo.Arena.GetCardColorsFromId(cardNumber);
             return new CardData(cardNameFromArena, cardNumber, type, manaValue, colors, url);
         }
 

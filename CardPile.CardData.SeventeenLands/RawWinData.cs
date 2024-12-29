@@ -11,7 +11,7 @@ internal class RawWinData
         string? shortColorName,
         int? wins,
         int? games,
-        List<Color> colors
+        Color colors
     )
     {
         IsSummary = isSummary;
@@ -43,5 +43,5 @@ internal class RawWinData
 
     internal int? Games { get; init; }
 
-    internal List<Color> Colors { get; init; }
+    internal Color Colors { get; init; }
 }

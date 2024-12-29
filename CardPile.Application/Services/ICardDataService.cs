@@ -12,7 +12,7 @@ public interface ICardDataService : IReactiveObject
 
     public int ArenaCardId { get; }
 
-    public List<Color> Colors { get; }
+    public Color Colors { get; }
 
     public string? Url { get; }
 

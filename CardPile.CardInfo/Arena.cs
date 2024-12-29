@@ -65,9 +65,9 @@ public class Arena
         return CardDictionary.TryGetValue(cardId, out var data) ? data.ManaValue : null;
     }
     
-    public static List<Color>? GetCardColorsFromId(int cardId)
+    public static Color GetCardColorsFromId(int cardId)
     {
-        return CardDictionary.TryGetValue(cardId, out var data) ? data.Colors : null;
+        return CardDictionary.TryGetValue(cardId, out var data) ? data.Colors : Color.None;
     }
 
     private static string? GetArenaInstallDirectory()
@@ -179,7 +179,7 @@ public class Arena
             var expansion = reader.GetString(1);
             var collectorNumber = reader.GetString(2);
             var types = reader.GetString(3);
-            var manaValue = !reader.IsDBNull(4) ? reader.GetInt32(3) : null as int?;
+            var manaValue = !reader.IsDBNull(4) ? reader.GetInt32(4) : null as int?;
             var colors = reader.GetString(5);
             var name = reader.GetString(6);
 
@@ -190,7 +190,7 @@ public class Arena
                 collectorNumber,
                 CreateTypeList(types),
                 manaValue,
-                CreateColorList(grpId, colors)
+                ParseColor(grpId, colors)
             ));
         }
     }
@@ -223,11 +223,11 @@ public class Arena
         return type;
     }
     
-    private static List<Color> CreateColorList(int grpId, string colors)
+    private static Color ParseColor(int grpId, string colors)
     {
         var parts = colors.Split(",").Select(x => x.Trim());
 
-        var result = new List<Color>();
+        var result = Color.None;
         foreach (var part in parts)
         {
             if(int.TryParse(part, out var colorToMap))
@@ -235,7 +235,7 @@ public class Arena
                 var color = MapValueToColor(colorToMap);
                 if (color.HasValue)
                 {
-                    result.Add(color.Value);
+                    result |= color.Value;
                 }
                 else
                 {
@@ -279,14 +279,14 @@ public class Arena
         (Registry.CurrentUser, @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall")
     ];
 
-    private class CardData(string name, string expansion, string collectorNumber, Type type, int? manaValue, List<Color> colors)
+    private class CardData(string name, string expansion, string collectorNumber, Type type, int? manaValue, Color colors)
     {
         internal readonly string Name = name;
         internal readonly string Expansion = expansion;
         internal readonly string CollectorNumber = collectorNumber;
         internal readonly Type Type = type;
         internal readonly int? ManaValue = manaValue; 
-        internal readonly List<Color> Colors = colors;
+        internal readonly Color Colors = colors;
     };
 
     private static readonly Dictionary<int, CardData> CardDictionary = [];

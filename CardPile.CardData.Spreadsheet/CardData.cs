@@ -4,7 +4,7 @@ namespace CardPile.CardData.Spreadsheet;
 
 public class CardData : ICardData
 {
-    internal CardData(string name, int arenaCardId, Type type, int? manaValue, List<Color> colors, string? url, string? grade = null)
+    internal CardData(string name, int arenaCardId, Type type, int? manaValue, Color colors, string? url, string? grade = null)
     {
         Name = name;
         ArenaCardId = arenaCardId;
@@ -26,7 +26,7 @@ public class CardData : ICardData
     
     public int? ManaValue { get; init; }
     
-    public List<Color> Colors { get; init; }
+    public Color Colors { get; init; }
 
     public string? Url { get; init; }
 
