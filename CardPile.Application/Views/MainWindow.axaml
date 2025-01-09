@@ -150,6 +150,11 @@
                   <WrapPanel Orientation="Horizontal" />
                 </ItemsPanelTemplate>
               </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <v:CardDataView DataContext="{Binding}" CanBeDeactiveted="true" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
             </ItemsControl>
           </Expander>
           <!-- Missing -->

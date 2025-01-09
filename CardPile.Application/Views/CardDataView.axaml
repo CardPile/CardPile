@@ -35,7 +35,7 @@
                 <StackPanel Grid.Column="0" Grid.Row="1" Spacing="5" Margin="5 0">
                   <Border CornerRadius="10" ClipToBounds="True">
                     <Panel>
-                      <Image Width="172" Height="240" Source="{Binding CardImage^}"/>
+                      <Image Width="172" Height="240" Source="{Binding CardImage^}" />
                       <Panel Height="240" Background="LightGray" IsVisible="{Binding CardImage^, Converter={x:Static ObjectConverters.IsNull}}">
                         <PathIcon Height="75" Width="75" Data="{StaticResource card_placeholder}" />
                       </Panel>
@@ -47,8 +47,9 @@
                 </Border>
               </Grid>
             </ToolTip.Tip>
-            <Image Width="172" Height="240" Source="{Binding CardImage^}"/>
-            <Panel Height="240" Background="LightGray" IsVisible="{Binding CardImage^, Converter={x:Static ObjectConverters.IsNull}}">
+            <Rectangle Width="172" Height="240" Fill="LightGray" Opacity="0.7" ZIndex="1" PointerReleased="HandlePointerReleased" IsVisible="{Binding !#Root.Active}"/>
+            <Image Width="172" Height="240" Source="{Binding CardImage^}" ZIndex="0" PointerReleased="HandlePointerReleased" />
+            <Panel Height="240" Background="LightGray" IsVisible="{Binding CardImage^, Converter={x:Static ObjectConverters.IsNull}}" ZIndex="0" >
               <PathIcon Height="75" Width="75" Data="{StaticResource card_placeholder}" />
             </Panel>
             <Border Width="172" Height="240" BorderThickness="3" BorderBrush="Green" CornerRadius="10" IsVisible="{Binding Highlight}"/>
