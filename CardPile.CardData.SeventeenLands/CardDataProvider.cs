@@ -126,11 +126,6 @@ public class SeventeenLandsCardDataSourceProvider
         }
     }
 
-    internal static List<string> SetList = [];
-    internal static List<string> EventTypeList = [];
-    internal static List<string> UserTypeList = [];
-    internal static List<string> ColorList = [];
-
     internal static List<string> GetDeckTypeList()
     {
         return
@@ -182,6 +177,12 @@ public class SeventeenLandsCardDataSourceProvider
         ];
     }
 
+    internal static List<string> SetList = [];
+    internal static List<string> EventTypeList = [];
+    internal static List<string> UserTypeList = [];
+    internal static List<string> ColorList = [];
+    internal static Dictionary<string, DateTime> StartDates = [];
+
     internal static void LoadFilters()
     {
         Stream? stream = null;
@@ -208,6 +209,7 @@ public class SeventeenLandsCardDataSourceProvider
 
         UserTypeList = filters!.Groups.Select(x => x == null ? ALL_USERS_USER_TYPE : System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(x)).ToList();
         ColorList = filters!.Colors.Select(x => x ?? ALL_COLORS_COLOR_TYPE).ToList();
+        StartDates = filters!.StartDates;
     }
 
     private class SeventeenLandFilters
@@ -223,6 +225,9 @@ public class SeventeenLandsCardDataSourceProvider
 
         [JsonProperty("groups")]
         internal List<string?> Groups = [];
+
+        [JsonProperty("start_dates")]
+        internal Dictionary<string, DateTime> StartDates = [];
     };
 
     private static string BuildCardDataCacheFilename(string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
