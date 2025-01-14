@@ -60,6 +60,8 @@ public class CompositeMetric : ICardMetric
 
     public ImportanceLevel Importance { get => ImportanceLevel.Regular; }
 
+    public IList<ICardRank> Ranks { get => []; }
+
     internal List<ICardMetric?> Values { get; init; }
 
     internal ICardMetric? SortValue { get; set; }

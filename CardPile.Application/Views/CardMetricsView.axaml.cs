@@ -11,6 +11,12 @@ public partial class CardMetricsView : UserControl
         (o, v) => o.HighlightImportance = v
     );
 
+    public static readonly DirectProperty<CardMetricsView, bool> ShowRanksProperty = AvaloniaProperty.RegisterDirect<CardMetricsView, bool>(
+            nameof(ShowRanks),
+            o => o.ShowRanks,
+            (o, v) => o.ShowRanks = v
+        );
+
     public CardMetricsView()
     {
         InitializeComponent();
@@ -22,5 +28,12 @@ public partial class CardMetricsView : UserControl
         set => SetAndRaise(HighlightImportanceProperty, ref highlightImportance, value);
     }
 
-    private bool highlightImportance;
+    public bool ShowRanks
+    {
+        get => showRanks;
+        set => SetAndRaise(ShowRanksProperty, ref showRanks, value);
+    }
+
+    private bool highlightImportance = false;
+    private bool showRanks = false;
 }

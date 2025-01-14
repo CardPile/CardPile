@@ -19,6 +19,9 @@ internal class CardDataSourceBuilderModel : ReactiveObject, ICardDataSourceBuild
         settings = builder.Settings.Select(p => p.Type switch
             { 
                 SettingType.Path => new CardDataSourceSettingPathModel((p as ICardDataSourceSettingPath)!),
+                SettingType.Number => new CardDataSourceSettingNumberModel((p as ICardDataSourceSettingNumber)!),
+                SettingType.Option => new CardDataSourceSettingOptionModel((p as ICardDataSourceSettingOption)!),
+                SettingType.MultipleOptions => new CardDataSourceSettingMultipleOptionsModel((p as ICardDataSourceSettingMultipleOptions)!),
                 _ => new CardDataSourceSettingModel(p)
             }).ToList<ICardDataSourceSettingService>();
 

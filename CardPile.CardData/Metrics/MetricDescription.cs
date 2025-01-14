@@ -21,16 +21,16 @@ public class MetricDescription<T> : ICardMetricDescription where T : struct
 
     public IComparer<ICardMetric> Comparer { get => new CompositeCardMetricComparer(); }
 
-    public Metric<T> NewMetric<E>(E? value)
+    public Metric<T> NewMetric<E>(E? value, List<ICardRank> ranks)
     {
-        return NewMetric<E>(value, (T) => ImportanceLevel.Regular);
+        return NewMetric<E>(value, (T) => ImportanceLevel.Regular, ranks);
     }
 
-    public Metric<T> NewMetric<E>(E? value, Func<T, ImportanceLevel> importanceCalculator)
+    public Metric<T> NewMetric<E>(E? value, Func<T, ImportanceLevel> importanceCalculator, List<ICardRank> ranks)
     {
         if (value == null)
         {
-            return new Metric<T>(this, null, ImportanceLevel.Regular);
+            return new Metric<T>(this, null, ImportanceLevel.Regular, ranks);
         }
 
         if (value is not T baseValue)
@@ -38,12 +38,12 @@ public class MetricDescription<T> : ICardMetricDescription where T : struct
             throw new ArgumentException("The metric value type must match the metric description type");
         }
 
-        return new Metric<T>(this, baseValue, importanceCalculator(baseValue));
+        return new Metric<T>(this, baseValue, importanceCalculator(baseValue), ranks);
     }
 
     public Metric<T> NewMetric()
     {
-        return new Metric<T>(this, null, ImportanceLevel.Regular);
+        return new Metric<T>(this, null, ImportanceLevel.Regular, []);
     }
 
     internal IFormatter<T>? Formatter { get; init; }

@@ -11,4 +11,6 @@ public interface ICardMetric
     public string TextValue { get; }
 
     public ImportanceLevel Importance { get; }
+
+    public IList<ICardRank> Ranks { get; }
 };

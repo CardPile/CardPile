@@ -108,6 +108,27 @@ internal class CardPileModel : ReactiveObject
                 path.ObservableForProperty(x => x.Value)
                     .Subscribe (_ => BuildCardDataSource(builder));
             }
+            else if(setting.Type == SettingType.Number)
+            {
+                var number = setting as ICardDataSourceSettingNumberService;
+                number.ObservableForProperty(x => x.Value)
+                      .Subscribe(_ => BuildCardDataSource(builder));
+            }
+            else if (setting.Type == SettingType.Option)
+            {
+                var option = setting as ICardDataSourceSettingOptionService;
+                option.ObservableForProperty(x => x.Value)
+                      .Subscribe(_ => BuildCardDataSource(builder));
+            }
+            else if (setting.Type == SettingType.MultipleOptions)
+            {
+                var options = setting as ICardDataSourceSettingMultipleOptionsService;
+                foreach(var option in options!.Options)
+                {
+                    option.ObservableForProperty(x => x.Value)
+                          .Subscribe(_ => BuildCardDataSource(builder));
+                }
+            }
         }
     }
 

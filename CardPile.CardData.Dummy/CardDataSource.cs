@@ -1,5 +1,6 @@
 ﻿using CardPile.CardData.Formatting;
 using CardPile.CardData.Metrics;
+using CardPile.CardData.Ranking;
 using CardPile.Draft;
 
 namespace CardPile.CardData.Dummy;
@@ -31,9 +32,9 @@ public class CardDataSource : ICardDataSource
 
         if (cardNumber == firstCardNumber)
         {
-            var metricA = CardDataSourceBuilder.MetricADesc.NewMetric<float>(75.1f);
-            var metricB = CardDataSourceBuilder.MetricBDesc.NewMetric<int>(4);
-            var metricC = CardDataSourceBuilder.MetricCDesc.NewMetric<float>(0.16f);
+            var metricA = CardDataSourceBuilder.MetricADesc.NewMetric<float>(75.1f, [new Rank("R1", 0, Importance.ImportanceLevel.Critical), new Rank("R2", 26, Importance.ImportanceLevel.Regular)]);
+            var metricB = CardDataSourceBuilder.MetricBDesc.NewMetric<int>(4, []);
+            var metricC = CardDataSourceBuilder.MetricCDesc.NewMetric<float>(0.16f, [new Rank("R3", 11, Importance.ImportanceLevel.High)]);
             var metricD = CardDataSourceBuilder.MetricDDesc.NewMetric("SB A+");
             var metricE = CardDataSourceBuilder.MetricEDesc.NewMetricWithSort(metricB, metricA, metricC, metricD);
             return new CardData("Card A",
@@ -50,9 +51,9 @@ public class CardDataSource : ICardDataSource
         }
         else if(cardNumber == secondCardNumber)
         {
-            var metricA = CardDataSourceBuilder.MetricADesc.NewMetric<float>(73.1f);
-            var metricB = CardDataSourceBuilder.MetricBDesc.NewMetric<int>(5);
-            var metricC = CardDataSourceBuilder.MetricCDesc.NewMetric<float>(0.14f);
+            var metricA = CardDataSourceBuilder.MetricADesc.NewMetric<float>(73.1f, [new Rank("R1", 100, Importance.ImportanceLevel.Critical), new Rank("R2", 1, Importance.ImportanceLevel.Regular)]);
+            var metricB = CardDataSourceBuilder.MetricBDesc.NewMetric<int>(5, []);
+            var metricC = CardDataSourceBuilder.MetricCDesc.NewMetric<float>(0.14f, [new Rank("R3", 11, Importance.ImportanceLevel.Critical), new Rank("R3", 11, Importance.ImportanceLevel.Regular)]);
             var metricD = CardDataSourceBuilder.MetricDDesc.NewMetric("SYN D+");
             var metricE = CardDataSourceBuilder.MetricEDesc.NewMetricWithSort(metricB, metricA, metricC, metricD);
             return new CardData("Card B",
@@ -69,9 +70,9 @@ public class CardDataSource : ICardDataSource
         }
         else if (cardNumber == thirdCardNumber)
         {
-            var metricA = CardDataSourceBuilder.MetricADesc.NewMetric<float>(79.1f);
-            var metricB = CardDataSourceBuilder.MetricBDesc.NewMetric<int>(6);
-            var metricC = CardDataSourceBuilder.MetricCDesc.NewMetric<float>(0.10f);
+            var metricA = CardDataSourceBuilder.MetricADesc.NewMetric<float>(79.1f, []);
+            var metricB = CardDataSourceBuilder.MetricBDesc.NewMetric<int>(6, [new Rank("R3", 11, Importance.ImportanceLevel.Critical), new Rank("R3", 11, Importance.ImportanceLevel.Regular)]);
+            var metricC = CardDataSourceBuilder.MetricCDesc.NewMetric<float>(0.10f, []);
             var metricD = CardDataSourceBuilder.MetricDDesc.NewMetric("BA C+");
             var metricE = CardDataSourceBuilder.MetricEDesc.NewMetricWithSort(metricB, metricA, metricC, metricD);
             return new CardData("Card C",

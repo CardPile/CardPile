@@ -43,7 +43,7 @@
                   </Border>
                 </StackPanel>
                 <Border Grid.Column="1" Grid.Row="1" CornerRadius="10" ClipToBounds="True" Background="Gray">
-                  <v:CardMetricsView DataContext="{Binding Metrics}" HighlightImportance="False" IsVisible="{Binding AnyMetricVisible}"/>
+                  <v:CardMetricsView DataContext="{Binding Metrics}" HighlightImportance="False" ShowRanks="False" IsVisible="{Binding AnyMetricVisible}"/>
                 </Border>
               </Grid>
             </ToolTip.Tip>
@@ -57,7 +57,7 @@
         </Border>
       </StackPanel>
       <Border Grid.Column="1" Grid.Row="1" CornerRadius="10" ClipToBounds="True" Background="Gray">
-        <v:CardMetricsView DataContext="{Binding Metrics}" HighlightImportance="{Binding !#Root.ShowPopup}">
+        <v:CardMetricsView DataContext="{Binding Metrics}" HighlightImportance="{Binding !#Root.ShowPopup}" ShowRanks="{Binding !#Root.ShowPopup}">
           <v:CardMetricsView.IsVisible>
             <MultiBinding Converter="{x:Static BoolConverters.And}">
               <MultiBinding.Bindings>

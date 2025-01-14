@@ -36,4 +36,16 @@ internal class Utils
 
         return result;
     }
+
+    internal static Rarity ParseRarity(string? rarity)
+    {
+        return rarity switch
+        {
+            "common" => Rarity.Common,
+            "uncommon" => Rarity.Uncommon,
+            "rare" => Rarity.Rare,
+            "mythic" => Rarity.Mythic,
+            _ => Rarity.Common,
+        };
+    }
 }

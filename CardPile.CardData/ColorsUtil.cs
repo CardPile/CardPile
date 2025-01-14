@@ -81,7 +81,7 @@ public static class ColorsUtil
             _ => []
         };
     }
-    
+
     public static string ToSymbols(Color color)
     {
         string result = "";
@@ -111,6 +111,38 @@ public static class ColorsUtil
             result = "{C}";
         }
     
+        return result;
+    }
+
+    public static string ToWUBRG(Color color)
+    {
+        string result = "";
+        if (color.HasFlag(Color.White))
+        {
+            result += "W";
+        }
+        if (color.HasFlag(Color.Blue))
+        {
+            result += "U";
+        }
+        if (color.HasFlag(Color.Black))
+        {
+            result += "B";
+        }
+        if (color.HasFlag(Color.Red))
+        {
+            result += "R";
+        }
+        if (color.HasFlag(Color.Green))
+        {
+            result += "G";
+        }
+
+        if (string.IsNullOrWhiteSpace(result))
+        {
+            result += "C";
+        }
+
         return result;
     }
 

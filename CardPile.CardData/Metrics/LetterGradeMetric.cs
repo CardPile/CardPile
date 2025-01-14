@@ -19,5 +19,7 @@ public class LetterGradeMetric : ICardMetric
 
     public ImportanceLevel Importance { get; init; }
 
+    public IList<ICardRank> Ranks { get => []; }
+
     public string Value { get; init; }
 }

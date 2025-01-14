@@ -1,9 +1,7 @@
 ﻿using CsvHelper;
 using System.Globalization;
-using Microsoft.Extensions.Configuration;
-using NLog;
-using Newtonsoft.Json;
 using CardPile.CardData.Settings;
+using CardPile.CardData.SeventeenLands;
 
 namespace CardPile.CardData.Spreadsheet;
 
@@ -58,32 +56,11 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
 
     private async Task SaveConfiguration()
     {
-        var config = new ConfigurationBuilder().AddJsonFile(CONFIG_FILENAME, true).Build();
-        config[CONFIG_LOCATION_KEY] = SpreadSheetFilenameSetting.Value;
-        string json = JsonConvert.SerializeObject(config.AsEnumerable().ToDictionary(x => x.Key, x => x.Value));
-        await File.WriteAllTextAsync(CONFIG_FILENAME, json);
+        Configuration.Instance.Location = SpreadSheetFilenameSetting.Value;
+
+        await Configuration.Instance.Save();
     }
 
-    private static string GetSpreadsheetFileName()
-    {
-        var config = new ConfigurationBuilder().AddJsonFile(CONFIG_FILENAME, true).Build();
-        var spreadsheetFilenameFromConfig = config[CONFIG_LOCATION_KEY];
-        if(string.IsNullOrEmpty(spreadsheetFilenameFromConfig))
-        {
-            return Path.Combine(Environment.ProcessPath != null ? Path.GetDirectoryName(Environment.ProcessPath) ?? "." : ".", "Grades.csv");
-        }
-        else
-        {
-            return spreadsheetFilenameFromConfig;
-        }
-    }
-
-    private static readonly string CONFIG_FILENAME = Path.Combine(Environment.ProcessPath != null ? Path.GetDirectoryName(Environment.ProcessPath) ?? "." : ".", "spreadsheet.config.json");
-
-    private static readonly string CONFIG_LOCATION_KEY = "location";
-
-    private SettingPath SpreadSheetFilenameSetting = new SettingPath("Grade file", GetSpreadsheetFileName());
-
-    private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+    private SettingPath SpreadSheetFilenameSetting = new SettingPath("Grade file", Configuration.Instance.Location);
 }
 

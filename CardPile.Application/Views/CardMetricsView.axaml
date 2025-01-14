@@ -19,22 +19,45 @@
   <ItemsControl ItemsSource="{Binding Metrics}" >
     <ItemsControl.ItemTemplate>
       <DataTemplate>
-        <UniformGrid Margin="5 0" Rows="1" IsVisible="{Binding Visible}">
-          <TextBlock Text="{Binding Metric.Description.Name}" Margin="5 2">
-            <TextBlock.Styles>
-              <Style Selector="v|CardMetricsView#Root[HighlightImportance=true] TextBlock">
-                <Setter Property="Foreground" Value="{Binding Metric.Importance, Converter={x:Static vm:CardMetricsViewModel.ImportanceConverter}}" />
-              </Style>
-            </TextBlock.Styles>
-          </TextBlock>
-          <TextBlock Text="{Binding Metric.TextValue}" Margin="5 2" HorizontalAlignment="Right">
-            <TextBlock.Styles>
-              <Style Selector="v|CardMetricsView#Root[HighlightImportance=true] TextBlock">
-                <Setter Property="Foreground" Value="{Binding Metric.Importance, Converter={x:Static vm:CardMetricsViewModel.ImportanceConverter}}" />
-              </Style>  
-            </TextBlock.Styles>
-          </TextBlock>
-        </UniformGrid>
+        <Grid RowDefinitions="Auto,*" ColumnDefinitions="2*,8*" IsVisible="{Binding Visible}">
+          <UniformGrid Grid.Row ="0" Grid.ColumnSpan="2" Margin="5 0" Rows="1">
+            <TextBlock Text="{Binding Metric.Description.Name}" Margin="5 2">
+              <TextBlock.Styles>
+                <Style Selector="v|CardMetricsView#Root[HighlightImportance=true] TextBlock">
+                  <Setter Property="Foreground" Value="{Binding Metric.Importance, Converter={x:Static vm:CardMetricsViewModel.ImportanceConverter}}" />
+                </Style>
+              </TextBlock.Styles>
+            </TextBlock>
+            <TextBlock Text="{Binding Metric.TextValue}" Margin="5 2" HorizontalAlignment="Right">
+              <TextBlock.Styles>
+                <Style Selector="v|CardMetricsView#Root[HighlightImportance=true] TextBlock">
+                  <Setter Property="Foreground" Value="{Binding Metric.Importance, Converter={x:Static vm:CardMetricsViewModel.ImportanceConverter}}" />
+                </Style>
+              </TextBlock.Styles>
+            </TextBlock>
+          </UniformGrid>
+          <ItemsControl Grid.Row ="1" Grid.Column="1" ItemsSource="{Binding Metric.Ranks}" IsVisible="{Binding #Root.ShowRanks}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Margin="5 2">
+                  <TextBlock.Text>
+                    <MultiBinding StringFormat="#{0} in {1}">
+                      <MultiBinding.Bindings>
+                        <Binding Path="TextValue"/>
+                        <Binding Path="Name"/>
+                      </MultiBinding.Bindings>
+                    </MultiBinding>
+                  </TextBlock.Text>
+                  <TextBlock.Styles>
+                    <Style Selector="v|CardMetricsView#Root[HighlightImportance=true] TextBlock">
+                      <Setter Property="Foreground" Value="{Binding Importance, Converter={x:Static vm:CardMetricsViewModel.ImportanceConverter}}" />
+                    </Style>
+                  </TextBlock.Styles>
+                </TextBlock>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </Grid>
       </DataTemplate>
     </ItemsControl.ItemTemplate>
   </ItemsControl>

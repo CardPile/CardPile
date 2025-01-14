@@ -31,6 +31,32 @@
                     <Button Grid.Column="2" Margin="5" Content="Browse..." Command="{Binding #SettingsWindow.((vm:CardDataSourceSettingsDialogViewModel)DataContext).BrowseFileCommand}" CommandParameter="{Binding}"/>
                   </Grid>
                 </DataTemplate>
+                <DataTemplate DataType="{x:Type services:ICardDataSourceSettingNumberService}">
+                  <StackPanel Orientation="Horizontal">
+                    <Label Margin="5" VerticalAlignment="Center" Content="{Binding Name}"/>
+                    <NumericUpDown ButtonSpinnerLocation="Right" Value="{Binding TemporaryValue, Mode=TwoWay}" Minimum="{Binding MinAllowedValue}" Maximum="{Binding MaxAllowedValue}" Increment="1" />
+                  </StackPanel>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type services:ICardDataSourceSettingMultipleOptionsService}">
+                  <StackPanel Orientation="Horizontal">
+                    <Label Margin="5" VerticalAlignment="Center" Content="{Binding Name}"/>
+                    <ItemsControl ItemsSource="{Binding Options}">
+                      <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                          <WrapPanel/>
+                        </ItemsPanelTemplate>
+                      </ItemsControl.ItemsPanel>
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                          <StackPanel Orientation="Vertical">
+                            <Label Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center" Content="{Binding Name}"/>
+                            <CheckBox HorizontalAlignment="Center" IsChecked="{Binding TemporaryValue, Mode=TwoWay}" />
+                          </StackPanel>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl> 
+                  </StackPanel>
+                </DataTemplate>
               </ContentControl.DataTemplates>
             </ContentControl>
           </DataTemplate>
