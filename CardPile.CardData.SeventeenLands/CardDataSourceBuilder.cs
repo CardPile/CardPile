@@ -51,12 +51,14 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
             setParameter,
             eventTypeParameter,
             userTypeParameter,
-            // solorParameter,  // TODO: Client side filtering
+            // colorParameter,  // TODO: Client side filtering
             deckTypeParameter,
             // rarityParameter,  // TODO: Client side filtering
             startDateParameter,
             endDateParameter,
         ];
+
+        setParameter.PropertyChanged += OnSetParameterPropertyChanged;
     }
 
     public string Name => "17Lands";
@@ -122,6 +124,20 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
         Configuration.Instance.MaxRankToShow = maxDisplayedRankSetting.Value;
 
         await Configuration.Instance.Save();
+    }
+
+    private void OnSetParameterPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (setParameter.Value == SeventeenLandsCardDataSourceProvider.SetList.First())
+        {
+            startDateParameter.Value = DateTime.Now.AddDays(-StartDataOffsetDays);
+            endDateParameter.Value = DateTime.Now;
+        }
+        else
+        {
+            startDateParameter.Value = SeventeenLandsCardDataSourceProvider.StartDates.First(x => x.Key == setParameter.Value).Value;
+            endDateParameter.Value = DateTime.Now;
+        }
     }
 
     private List<Color> GetRankColors()
