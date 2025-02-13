@@ -21,7 +21,7 @@ jobs:
       - name: Build Release
         run: dotnet build -c Release
       - name: Zip Release
-        run: Compress-Archive -Path CardPile.App/bin/Release/net8.0/* Windows.zip
+        run: Compress-Archive -Path CardPile.Application/bin/Release/net8.0/* Windows.zip
       - name: Create Release
         uses: softprops/action-gh-release@v2
         env:
@@ -43,7 +43,7 @@ jobs:
       - name: Build Release
         run: dotnet build -c Release
       - name: Zip Release
-        run: zip macOS.zip CardPile.App/bin/Release/net8.0/* -r
+        run: zip macOS.zip CardPile.Application/bin/Release/net8.0/* -r
       - name: Create Release
         uses: softprops/action-gh-release@v2
         env:
