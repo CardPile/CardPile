@@ -12,10 +12,10 @@ public partial class CardMetricsView : UserControl
     );
 
     public static readonly DirectProperty<CardMetricsView, bool> ShowRanksProperty = AvaloniaProperty.RegisterDirect<CardMetricsView, bool>(
-            nameof(ShowRanks),
-            o => o.ShowRanks,
-            (o, v) => o.ShowRanks = v
-        );
+        nameof(ShowRanks),
+        o => o.ShowRanks,
+        (o, v) => o.ShowRanks = v
+    );
 
     public CardMetricsView()
     {
