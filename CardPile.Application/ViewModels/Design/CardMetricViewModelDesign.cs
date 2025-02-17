@@ -6,7 +6,7 @@ namespace CardPile.Application.ViewModels.Design;
 
 public class CardMetricViewModelDesign
 {
-    internal class CardMetricDescriptionDesign : ICardMetricDescription
+    private class CardMetricDescriptionDesign : ICardMetricDescription
     {
         public string Name => "Name";
 
@@ -17,7 +17,7 @@ public class CardMetricViewModelDesign
         public IComparer<ICardMetric> Comparer => null;
     }
 
-    internal class CardRankDesign : ICardRank
+    private class CardRankDesign : ICardRank
     {
         public string Name => "Rank";
 
@@ -28,7 +28,7 @@ public class CardMetricViewModelDesign
         public ImportanceLevel Importance => ImportanceLevel.High;
     }
 
-    internal class CardMetricDesign : ICardMetric
+    private class CardMetricDesign : ICardMetric
     {
         public ICardMetricDescription Description => new CardMetricDescriptionDesign();
 
@@ -41,20 +41,7 @@ public class CardMetricViewModelDesign
         public IList<ICardRank> Ranks => [new CardRankDesign()];
     }
 
-    public CardMetricViewModelDesign()
-    {
-        cardMetric = new CardMetricDesign();
-    }
+    internal ICardMetric Metric { get; } = new CardMetricDesign();
 
-    internal ICardMetric Metric
-    {
-        get => cardMetric;
-    }
-
-    internal bool Visible
-    {
-        get => true;
-    }
-
-    private ICardMetric cardMetric;
+    internal bool Visible { get; } = true;
 }
