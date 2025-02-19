@@ -403,5 +403,8 @@ FodyWeavers.xsd
 # IDEA
 .idea/*
 
+# Native server
+UnitySpy.Native/server
+
 # Test data
 Test data/*

@@ -120,6 +120,7 @@
             lock (this)
             {
                 byte[] moduleNameInAscii = Encoding.ASCII.GetBytes(moduleName);
+                
                 Request request = new Request(GetModuleRequestType, this.processId, IntPtr.Zero, moduleNameInAscii.Length);
                 try
                 {
@@ -134,14 +135,14 @@
 
                     // Receive the base address
                     this.socket.Receive(this.internalBuffer, 8, SocketFlags.None);
-                    IntPtr baseAddress = (IntPtr)this.internalBuffer.ToUInt64();
+                    IntPtr baseAddress = (IntPtr)this.internalBuffer.ToInt64();
 
                     // Receive the size
-                    this.socket.Receive(this.internalBuffer, 8, SocketFlags.None);
-                    uint size = this.internalBuffer.ToUInt32();
+                    this.socket.Receive(this.internalBuffer, 4, SocketFlags.None);
+                    int size = this.internalBuffer.ToInt32();
 
                     string path = this.GetString();
-                    return new ModuleInfo(moduleName, baseAddress, size, path);
+                    return new ModuleInfo(moduleName, baseAddress, (uint)size, path);
                 }
                 catch (ArgumentNullException ane)
                 {
@@ -181,6 +182,7 @@
                 length -= bytesRec;
             }
             while (length > 0);
+            
             return buffer.ToAsciiString();
         }
 

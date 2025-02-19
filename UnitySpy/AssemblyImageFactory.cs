@@ -7,7 +7,8 @@
     using UnitySpy.Offsets;
     using UnitySpy.ProcessFacade;
     using UnitySpy.Util;
-
+    using ELFSharp.MachO;
+    
     /// <summary>
     /// A factory that creates <see cref="IAssemblyImage"/> instances that provides access into a Unity application's
     /// managed memory.
@@ -19,7 +20,7 @@
         {
             if (process == null)
             {
-                throw new ArgumentNullException("process parameter cannot be null");
+                throw new ArgumentNullException(nameof(process), "The process parameter cannot be null");
             }
 
             var monoModule = process.GetMonoModule();
@@ -42,33 +43,63 @@
             IntPtr domain;
             if (process.Is64Bits)
             {
-                int ripPlusOffsetOffset;
-                int ripValueOffset;
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 {
-                    // Offsets taken by decompiling the 64 bits version of libmonobdwgc-2.0.dylib
-                    //
-                    // push rbp
-                    // mov rbp,rsp
-                    // mov rax, [rip + 0x4250ba]
-                    // pop rbp
-                    // ret
-                    //
-                    // These five lines in Hex translate to
-                    // 55
-                    // 4889E5
-                    // 488B05 BA5042 00
-                    // 5D
-                    // C3
-                    //
-                    // So wee need to offset the first seven bytes to get to the relative offset we need to add to rip
-                    // rootDomainFunctionAddress + 7
-                    //
-                    // rip has the current value of the rootDoaminAddress plus the 4 bytes of the first two instructions
-                    // plus the 7 bytes of the rip + offset instruction (mov rax, [rip + 0x4250ba]).
-                    // then we need to add this offsets to get the domain starting address
-                    ripPlusOffsetOffset = 7;
-                    ripValueOffset = 11;
+                    if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
+                    {
+                        // Offsets taken by decompiling the 64 bits version of libmonobdwgc-2.0.dylib
+                        //
+                        // adrp	x8, 500 ; 0x30e000
+                        // ldr	x0, [x8, #0xf40]
+                        // ret
+                        //
+                        // The ARM64 spec allows us to recover the page offset from adrp (500 above)
+                        // Also the offset used in ldr (#0xf40 above)
+                        // 
+                        // This allows us to calculate the location of root domain
+                        IntPtr rootDomainFunctionAddressPage = rootDomainFunctionAddress & ~0xFFF;
+                        
+                        int adrpCommand = process.ReadInt32(rootDomainFunctionAddress);
+                        IntPtr immhi = (adrpCommand & 0xFFFFE0) >> 5;
+                        IntPtr immlo = (adrpCommand & 0x60000000) >> 29;
+                        IntPtr pageOffset = (immhi << 2) | immlo;
+                        pageOffset = (pageOffset & 0xFFFFF) | ((pageOffset & 0x100000) != 0 ? (IntPtr)0xFFF00000 : 0x0);
+                        pageOffset = (pageOffset << 12);
+                            
+                        int ldrCommand = process.ReadInt32(rootDomainFunctionAddress + 4);
+                        IntPtr imm = (ldrCommand & 0x3FFC00) >> 10;
+                        IntPtr offset = (imm << 3);
+                        
+                        domain = process.ReadPtr(rootDomainFunctionAddressPage + pageOffset + offset);
+                    }
+                    else
+                    {
+                        // Offsets taken by decompiling the 64 bits version of libmonobdwgc-2.0.dylib
+                        //
+                        // push rbp
+                        // mov rbp,rsp
+                        // mov rax, [rip + 0x4250ba]
+                        // pop rbp
+                        // ret
+                        //
+                        // These five lines in Hex translate to
+                        // 55
+                        // 4889E5
+                        // 488B05 BA5042 00
+                        // 5D
+                        // C3
+                        //
+                        // So wee need to offset the first seven bytes to get to the relative offset we need to add to rip
+                        // rootDomainFunctionAddress + 7
+                        //
+                        // rip has the current value of the rootDoaminAddress plus the 4 bytes of the first two instructions
+                        // plus the 7 bytes of the rip + offset instruction (mov rax, [rip + 0x4250ba]).
+                        // then we need to add this offsets to get the domain starting address
+                        int ripPlusOffsetOffset = 7;
+                        int ripValueOffset = 11;  
+                        int offset = process.ReadInt32(rootDomainFunctionAddress + ripPlusOffsetOffset) + ripValueOffset;
+                        domain = process.ReadPtr(rootDomainFunctionAddress + offset);
+                    }
                 }
                 else
                 {
@@ -86,13 +117,11 @@
                     //
                     // rip has the current value of the rootDoaminAddress plus the 7 bytes of the first instruction (mov rax, [rip + 0x46ad39])
                     // then we need to add this offsets to get the domain starting address
-                    ripPlusOffsetOffset = 3;
-                    ripValueOffset = 7;
+                    int ripPlusOffsetOffset = 3;
+                    int ripValueOffset = 7;
+                    int offset = process.ReadInt32(rootDomainFunctionAddress + ripPlusOffsetOffset) + ripValueOffset;
+                    domain = process.ReadPtr(rootDomainFunctionAddress + offset);                    
                 }
-
-                var offset = process.ReadInt32(rootDomainFunctionAddress + ripPlusOffsetOffset) + ripValueOffset;
-                //// pointer to struct of type _MonoDomain
-                domain = process.ReadPtr(rootDomainFunctionAddress + offset);
             }
             else
             {
@@ -100,6 +129,7 @@
                 //// pointer to struct of type _MonoDomain
                 domain = process.ReadPtr(domainAddress);
             }
+            
             //// pointer to array of structs of type _MonoAssembly
             var assemblyArrayAddress = process.ReadPtr(domain + process.MonoLibraryOffsets.ReferencedAssemblies);
             for (var assemblyAddress = assemblyArrayAddress;
@@ -158,41 +188,25 @@
         {
             var rootDomainFunctionAddress = IntPtr.Zero;
 
-            byte[] moduleFromPath = File.ReadAllBytes(monoModuleInfo.Path);
-
-            int numberOfCommands = moduleFromPath.ToInt32(MachOFormatOffsets.NumberOfCommands);
-            int offsetToNextCommand = MachOFormatOffsets.LoadCommands;
-            for (int i = 0; i < numberOfCommands; i++)
+            if (MachOReader.TryLoad(monoModuleInfo.Path, out var macho) == MachOResult.FatMachO)
             {
-                // Check if load command is LC_SYMTAB
-                if (moduleFromPath.ToInt32(offsetToNextCommand) == 2)
-                {
-                    int symbolTableOffset = moduleFromPath.ToInt32(offsetToNextCommand + MachOFormatOffsets.SymbolTableOffset);
-                    int numberOfSymbols = moduleFromPath.ToInt32(offsetToNextCommand + MachOFormatOffsets.NumberOfSymbols);
-                    int stringTableOffset = moduleFromPath.ToInt32(offsetToNextCommand + MachOFormatOffsets.StringTableOffset);
-
-                    for (int j = 0; j < numberOfSymbols; j++)
-                    {
-                        int symbolNameOffset = moduleFromPath.ToInt32(symbolTableOffset + (j * MachOFormatOffsets.SizeOfNListItem));
-                        var symbolName = moduleFromPath.ToAsciiString(stringTableOffset + symbolNameOffset);
-
-                        if (symbolName == "_mono_get_root_domain")
-                        {
-                            rootDomainFunctionAddress = monoModuleInfo.BaseAddress
-                                + moduleFromPath.ToInt32(symbolTableOffset + (j * MachOFormatOffsets.SizeOfNListItem)
-                                                            + MachOFormatOffsets.NListValue);
-                            break;
-                        }
-                    }
-
-                    break;
-                }
-                else
-                {
-                    offsetToNextCommand += moduleFromPath.ToInt32(offsetToNextCommand + MachOFormatOffsets.CommandSize);
-                }
+                var results = MachOReader.LoadFat(new FileStream(monoModuleInfo.Path, FileMode.Open), true);
+                var desiredMachineType = RuntimeInformation.ProcessArchitecture == Architecture.Arm64 ? Machine.Arm64 : Machine.X86_64; 
+                macho = results.First(x => x.Machine == desiredMachineType);
             }
 
+            foreach (var symbolTable in macho.GetCommandsOfType<SymbolTable>())
+            {
+                foreach (var symbol in symbolTable.Symbols)
+                {
+                    if (symbol.Name == "_mono_get_root_domain")
+                    {
+                        rootDomainFunctionAddress = monoModuleInfo.BaseAddress + (IntPtr)symbol.Value;
+                        break;
+                    }
+                }
+            }
+            
             if (rootDomainFunctionAddress == IntPtr.Zero)
             {
                 throw new InvalidOperationException("Failed to find mono_get_root_domain function.");
