@@ -21,7 +21,7 @@ public class CompositeMetricDescription : ICardMetricDescription
 
     public bool IsDefaultMetric { get; init; }
 
-    public IComparer<ICardMetric> Comparer { get => new CardMetricComparer(); }
+    public IComparer<ICardMetric> Comparer { get => new CompositeCardMetricComparer(); }
 
     public ICardMetric NewMetric(params ICardMetric?[] values)
     {
@@ -37,7 +37,7 @@ public class CompositeMetricDescription : ICardMetricDescription
 
     internal List<ICardMetricDescription?> Descriptions { get; init; }
 
-    private class CardMetricComparer : IComparer<ICardMetric>
+    private class CompositeCardMetricComparer : IComparer<ICardMetric>
     {
         public int Compare(ICardMetric? x, ICardMetric? y)
         {

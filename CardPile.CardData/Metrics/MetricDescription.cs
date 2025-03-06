@@ -19,7 +19,7 @@ public class MetricDescription<T> : ICardMetricDescription where T : struct
 
     public bool IsDefaultMetric { get; init; }
 
-    public IComparer<ICardMetric> Comparer { get => new CompositeCardMetricComparer(); }
+    public IComparer<ICardMetric> Comparer { get => new MetricComparer<T>(); }
 
     public Metric<T> NewMetric<E>(E? value, List<ICardRank> ranks)
     {
@@ -47,54 +47,6 @@ public class MetricDescription<T> : ICardMetricDescription where T : struct
     }
 
     internal IFormatter<T>? Formatter { get; init; }
-
-    private class CompositeCardMetricComparer : IComparer<ICardMetric>
-    {
-        public int Compare(ICardMetric? x, ICardMetric? y)
-        {
-            if (x == null && y == null)
-            {
-                return 0;
-            }
-
-            if (x == null)
-            {
-                return -1;
-            }
-
-            if (y == null)
-            {
-                return 1;
-            }
-
-            if (x is not Metric<T> xMetric)
-            {
-                throw new ArgumentException("First comparer parameter is not a CardMetric<T>");
-            }
-
-            if (y is not Metric<T> yMetric)
-            {
-                throw new ArgumentException("Second comparer parameter is not a CardMetric<T>");
-            }
-
-            if (!xMetric.Value.HasValue && !yMetric.Value.HasValue)
-            {
-                return 0;
-            }
-
-            if (!xMetric.Value.HasValue)
-            {
-                return -1;
-            }
-
-            if (!yMetric.Value.HasValue)
-            {
-                return 1;
-            }
-
-            return Comparer<T>.Default.Compare(xMetric.Value.Value, yMetric.Value.Value);
-        }
-    };
 }
 
 
