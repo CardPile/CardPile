@@ -81,14 +81,14 @@ public class CardDataSource : ICardDataSource
                     continue;
                 }
 
-                float? gihWr = archetypeCardData[pair].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate;
-                if(!gihWr.HasValue)
+                float? gpWr = archetypeCardData[pair].GetDataForCard(rawCardData.ArenaCardId)?.WinRate;
+                if(!gpWr.HasValue)
                 {
                     gameWinRateImprovement[pair] = null;
                     continue;
                 }
 
-                gameWinRateImprovement[pair] = gihWr.Value - winRate.Value;
+                gameWinRateImprovement[pair] = gpWr.Value - winRate.Value;
             }
 
             ICardMetric[] colorsWinRateInHandMetrics = PrepareForCompositeMetric
