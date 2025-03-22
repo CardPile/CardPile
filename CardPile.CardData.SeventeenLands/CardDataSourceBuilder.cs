@@ -175,7 +175,7 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
     private const string START_DATE_PARAMETER_NAME = "Start date";
     private const string END_DATE_PARAMETER_NAME = "End date";
 
-    private const int StartDataOffsetDays = 21;
+    private const int StartDataOffsetDays = 14;
 
     private readonly ParameterOptions setParameter;
     private readonly ParameterOptions eventTypeParameter;
