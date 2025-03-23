@@ -52,15 +52,7 @@
       </ItemsControl.IsVisible>
       <ItemsControl.ItemTemplate>
         <DataTemplate>
-          <TextBlock Margin="5 2">
-            <TextBlock.Text>
-              <MultiBinding StringFormat="#{0} in {1}">
-                <MultiBinding.Bindings>
-                  <Binding Path="TextValue"/>
-                  <Binding Path="Name"/>
-                </MultiBinding.Bindings>
-              </MultiBinding>
-            </TextBlock.Text>
+          <TextBlock Margin="5 2" Inlines="{Binding, Converter={x:Static vm:CardMetricViewModel.RankTextToInlinesConverter}}">
             <TextBlock.Styles>
               <Style Selector="v|CardMetricView#CardMetricViewRoot[HighlightImportance=true] TextBlock">
                 <Setter Property="Foreground" Value="{Binding Importance, Converter={x:Static vm:CardMetricsViewModel.ImportanceConverter}}" />

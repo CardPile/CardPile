@@ -40,16 +40,16 @@ internal class RawCardDataSource : IEnumerable<KeyValuePair<int, RawCardData>>
             CalculateCardRanks(cardData, x => info.NullChecker(x),                                                         info.Comparison, (c, r) => rankAdder(c, r, "whole set"));
             CalculateCardRanks(cardData, x => info.NullChecker(x) && x.Rarity == Rarity.Common,                            info.Comparison, (c, r) => rankAdder(c, r, "commons"));
             CalculateCardRanks(cardData, x => info.NullChecker(x) && x.Rarity == Rarity.Uncommon,                          info.Comparison, (c, r) => rankAdder(c, r, "uncommons"));
-            CalculateCardRanks(cardData, x => info.NullChecker(x) && x.Rarity == Rarity.Rare || x.Rarity == Rarity.Mythic, info.Comparison, (c, r) => rankAdder(c, r, "rares+"));
+            CalculateCardRanks(cardData, x => info.NullChecker(x) && x.Rarity == Rarity.Rare || x.Rarity == Rarity.Mythic, info.Comparison, (c, r) => rankAdder(c, r, "rares/mythics"));
 
             foreach (var colorCombination in rankColors)
             {
-                var colorCombinationLabel = ColorsUtil.ToWUBRG(colorCombination);
+                var colorCombinationLabel = ColorsUtil.ToSymbols(colorCombination);
 
                 CalculateCardRanks(cardData, x => info.NullChecker(x) && (x.Colors & colorCombination) == x.Colors,                                                         info.Comparison, (c, r) => colorCombinationRankAdder(c, r, colorCombinationLabel));
                 CalculateCardRanks(cardData, x => info.NullChecker(x) && (x.Colors & colorCombination) == x.Colors && x.Rarity == Rarity.Common,                            info.Comparison, (c, r) => colorCombinationRankAdder(c, r, colorCombinationLabel, "commons"));
                 CalculateCardRanks(cardData, x => info.NullChecker(x) && (x.Colors & colorCombination) == x.Colors && x.Rarity == Rarity.Uncommon,                          info.Comparison, (c, r) => colorCombinationRankAdder(c, r, colorCombinationLabel, "uncommons"));
-                CalculateCardRanks(cardData, x => info.NullChecker(x) && (x.Colors & colorCombination) == x.Colors && x.Rarity == Rarity.Rare || x.Rarity == Rarity.Mythic, info.Comparison, (c, r) => colorCombinationRankAdder(c, r, colorCombinationLabel, "rares+"));
+                CalculateCardRanks(cardData, x => info.NullChecker(x) && (x.Colors & colorCombination) == x.Colors && x.Rarity == Rarity.Rare || x.Rarity == Rarity.Mythic, info.Comparison, (c, r) => colorCombinationRankAdder(c, r, colorCombinationLabel, "rares/mythics"));
             }
         }
 

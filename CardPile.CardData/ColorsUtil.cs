@@ -13,7 +13,7 @@ public static class ColorsUtil
             Color.Green,
         ];
     }
-    
+
     public static List<Color> ColorPairs()
     {
         return
@@ -110,7 +110,7 @@ public static class ColorsUtil
         {
             result = "{C}";
         }
-    
+
         return result;
     }
 
