@@ -34,14 +34,16 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
         colorParameter = new(COLOR_PARAMETER_NAME, SeventeenLandsCardDataSourceProvider.ColorList);
         deckTypeParameter = new(DECK_TYPE_PARAMETER_NAME, SeventeenLandsCardDataSourceProvider.GetDeckTypeList());
         rarityParameter = new(RARITY_PARAMETER_NAME, SeventeenLandsCardDataSourceProvider.GetRarityList());
-        startDateParameter = new(START_DATE_PARAMETER_NAME, DateTime.Now.AddDays(-StartDataOffsetDays));
+        startDateParameter = new(START_DATE_PARAMETER_NAME, DateTime.Now.AddDays(-Configuration.Instance.CurrentSetStartDateOffsetInDays));
         endDateParameter = new(END_DATE_PARAMETER_NAME, DateTime.Now);
 
+        currentSetStartDateOffsetInDaysSetting = new("Current set start date offset (days)", Configuration.Instance.CurrentSetStartDateOffsetInDays, 0);
         rankColorsSetting = new("Rank color combinations", RankColorsToOptions(Configuration.Instance.RankColorsToShow));
         maxDisplayedRankSetting = new("Max rank to show", Configuration.Instance.MaxRankToShow, 0);
 
         Settings =
         [
+            currentSetStartDateOffsetInDaysSetting,
             rankColorsSetting,
             maxDisplayedRankSetting
         ];
@@ -122,6 +124,7 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
 
         Configuration.Instance.RankColorsToShow = rankColorsToShow;
         Configuration.Instance.MaxRankToShow = maxDisplayedRankSetting.Value;
+        Configuration.Instance.CurrentSetStartDateOffsetInDays = currentSetStartDateOffsetInDaysSetting.Value;
 
         await Configuration.Instance.Save();
     }
@@ -130,7 +133,7 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
     {
         if (setParameter.Value == SeventeenLandsCardDataSourceProvider.SetList.First())
         {
-            startDateParameter.Value = DateTime.Now.AddDays(-StartDataOffsetDays);
+            startDateParameter.Value = DateTime.Now.AddDays(-Configuration.Instance.CurrentSetStartDateOffsetInDays);
             endDateParameter.Value = DateTime.Now;
         }
         else
@@ -175,8 +178,6 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
     private const string START_DATE_PARAMETER_NAME = "Start date";
     private const string END_DATE_PARAMETER_NAME = "End date";
 
-    private const int StartDataOffsetDays = 14;
-
     private readonly ParameterOptions setParameter;
     private readonly ParameterOptions eventTypeParameter;
     private readonly ParameterOptions userTypeParameter;
@@ -186,6 +187,7 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
     private readonly ParameterDate startDateParameter;
     private readonly ParameterDate endDateParameter;
 
+    private readonly SettingNumber currentSetStartDateOffsetInDaysSetting;
     private readonly SettingMultipleOptions rankColorsSetting;
     private readonly SettingNumber maxDisplayedRankSetting;
 }

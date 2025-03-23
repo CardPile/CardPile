@@ -15,6 +15,9 @@ internal class Configuration
     [JsonProperty("max_rank_to_show")]
     public int MaxRankToShow { get; set; } = DEFAULT_MAX_RANK_TO_SHOW;
 
+    [JsonProperty("current_set_start_date_offset_in_days")]
+    public int CurrentSetStartDateOffsetInDays { get; set; } = DEFAULT_CURRENT_SET_START_DATE_OFFSET_IN_DAYS;
+
     public async Task Save()
     {
         string json = JsonConvert.SerializeObject(this);
@@ -37,4 +40,6 @@ internal class Configuration
     private static Lazy<Configuration> instance = new Lazy<Configuration>(() => Load());
 
     private const int DEFAULT_MAX_RANK_TO_SHOW = 20;
+
+    private const int DEFAULT_CURRENT_SET_START_DATE_OFFSET_IN_DAYS = 14;
 }
