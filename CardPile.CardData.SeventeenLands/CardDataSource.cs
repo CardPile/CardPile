@@ -173,7 +173,7 @@ public class CardDataSource : ICardDataSource
 
     private const float CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD = 0.03f;
     private const float CARD_WR_IMPROVEMENT_HIGH_THRESHOLD = 0.01f;
-    private const float CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD = -0.1f;
+    private const float CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD = -0.01f;
 
     private float Mean(RawCardDataSource source, Func<RawCardData, float?> selector)
     {

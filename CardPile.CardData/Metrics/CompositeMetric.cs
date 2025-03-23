@@ -43,15 +43,14 @@ public class CompositeMetric : ICardMetric
                     continue;
                 }
 
-                string importanceIndicator = "\u26aa";
-                if (metric.Importance == ImportanceLevel.Critical)
+                string importanceIndicator = metric.Importance switch
                 {
-                    importanceIndicator = "\ud83d\udd34";
-                }
-                else if (metric.Importance == ImportanceLevel.High)
-                {
-                    importanceIndicator = "\ud83d\udfe1";
-                }
+                    ImportanceLevel.Low => $"{{ImportanceLevel.{ImportanceLevel.Low}}}",
+                    ImportanceLevel.Regular => $"{{ImportanceLevel.{ImportanceLevel.Regular}}}",
+                    ImportanceLevel.High => $"{{ImportanceLevel.{ImportanceLevel.High}}}",
+                    ImportanceLevel.Critical => $"{{ImportanceLevel.{ImportanceLevel.Critical}}}",
+                    _ => $"{{ImportanceLevel.{ImportanceLevel.Regular}}}",
+                };
                 builder.AppendFormat("{0}{1}\t{2}\n", importanceIndicator, metric.Description.Name, metric.TextValue);
             }
             return builder.ToString();

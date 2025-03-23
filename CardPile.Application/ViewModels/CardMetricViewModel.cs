@@ -1,11 +1,14 @@
-﻿using CardPile.CardData;
+﻿using Avalonia.Controls.Documents;
+using Avalonia.Data.Converters;
+using CardPile.CardData;
 using ReactiveUI;
-using System.Data;
 
 namespace CardPile.Application.ViewModels;
 
 internal class CardMetricViewModel : ViewModelBase
 {
+    public static FuncValueConverter<string, InlineCollection> MetricTextToInlinesConverter { get; } = new FuncValueConverter<string, InlineCollection>(text => ConverterUtils.TextToInlines(text));
+
     internal CardMetricViewModel(ICardMetric cardMetric)
     {
         this.cardMetric = cardMetric;
