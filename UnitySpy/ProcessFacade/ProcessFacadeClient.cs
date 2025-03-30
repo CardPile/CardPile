@@ -192,12 +192,10 @@
             Console.WriteLine("Connecting to server...");
 
             // Establish the remote endpoint for the socket.
-            IPHostEntry localhost = Dns.GetHostEntry(Dns.GetHostName());
-            IPAddress ipAddress = localhost.AddressList[0];
-            IPEndPoint serverEndPoint = new IPEndPoint(ipAddress, Port);
+            IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Loopback, Port);
 
             // Create a TCP/IP  socket.
-            this.socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            this.socket = new Socket(IPAddress.Loopback.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             this.socket.Connect(serverEndPoint);
         }
 

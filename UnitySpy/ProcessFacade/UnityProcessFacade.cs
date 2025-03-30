@@ -1,4 +1,6 @@
-﻿namespace UnitySpy.ProcessFacade
+﻿using System.Runtime.InteropServices;
+
+namespace UnitySpy.ProcessFacade
 {
     using System;
     using System.Collections.Generic;
@@ -21,7 +23,11 @@
 
             if (monoLibraryOffsets != null)
             {
-                this.process.Is64Bits = monoLibraryOffsets.Is64Bits;
+                this.process.Is64Bits = (monoLibraryOffsets.Arch != Architecture.X86) &&
+                                        (monoLibraryOffsets.Arch != Architecture.Arm) &&
+                                        (monoLibraryOffsets.Arch != Architecture.Wasm) &&
+                                        (monoLibraryOffsets.Arch != Architecture.S390x) &&
+                                        (monoLibraryOffsets.Arch != Architecture.Armv6);
             }
         }
 

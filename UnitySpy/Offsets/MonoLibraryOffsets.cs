@@ -3,7 +3,6 @@ namespace UnitySpy.Offsets
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Runtime.InteropServices;
 
@@ -12,7 +11,7 @@ namespace UnitySpy.Offsets
         public static readonly MonoLibraryOffsets Unity2018_4_10_x86_PE_Offsets = new MonoLibraryOffsets
         {
             UnityVersions = new List<UnityVersion> { UnityVersion.Version2018_4_10 },
-            Is64Bits = false,
+            Arch = Architecture.X86,
             Format = BinaryFormat.PE,
             MonoLibrary = "mono-2.0-bdwgc.dll",
 
@@ -49,7 +48,7 @@ namespace UnitySpy.Offsets
         public static readonly MonoLibraryOffsets Unity2019_4_2020_3_x64_PE_Offsets = new MonoLibraryOffsets
         {
             UnityVersions = new List<UnityVersion> { UnityVersion.Version2019_4_5, UnityVersion.Version2020_3_13 },
-            Is64Bits = true,
+            Arch = Architecture.X64,
             Format = BinaryFormat.PE,
             MonoLibrary = "mono-2.0-bdwgc.dll",
 
@@ -86,7 +85,7 @@ namespace UnitySpy.Offsets
         public static readonly MonoLibraryOffsets Unity2021_3_2022_3_x64_PE_Offsets = new MonoLibraryOffsets
         {
             UnityVersions = new List<UnityVersion>() { UnityVersion.Version2021_3_14, UnityVersion.Version2022_3_42 },
-            Is64Bits = true,
+            Arch = Architecture.X64,
             Format = BinaryFormat.PE,
             MonoLibrary = "mono-2.0-bdwgc.dll",
 
@@ -145,10 +144,94 @@ namespace UnitySpy.Offsets
             VTable = 0x48,
         };
 
+        public static readonly MonoLibraryOffsets Unity2022_3_Arm64_MachO_Offsets = new MonoLibraryOffsets
+        {
+            UnityVersions = new List<UnityVersion>() { UnityVersion.Version2022_3_42 },
+            Arch = Architecture.Arm64,
+            Format = BinaryFormat.MachO,
+            MonoLibrary = "libmonobdwgc-2.0.dylib",
+
+            // field 'image' (Type MonoImage*) _MonoAssembly (metadata-internals.h)
+            // One way to verify this offset is to note that image will have 'name',
+            // 'filename', 'assembly_image' and 'module_name' at a relative beginning
+            // of the struct. So any string read in roughly the right are should confirm
+            // this offset.
+            AssemblyImage = 0x60,
+
+            // field 'domain_assemblies' (Type GSList*) in _MonoDomain (domain-internals.h)
+            // One way of finding it is to locate the `friendly_name` field. This field
+            // will be two pointer sizes before
+            ReferencedAssemblies = 0xb0,
+
+            // field 'class_cache' (Type MonoInternalHashTable) in _MonoImage
+            // One way to find this to note that first field in MonoInternalHashTable is
+            // 'hash_func' which will be set to 'g_direct_hash' function.
+            // Then one can find its address the same way as with '_mono_get_root_domain'
+            // but by searching for '_monoeg_g_direct_hash' - see GetRootDomainFunction*
+            // functions in AssemblyImageFactory class
+            ImageClassCache = 0x4d0, 
+            
+            // field 'size' (Type gint) in _MonoInternalHashTable
+            HashTableSize = 0x18,
+            
+            // field 'table' (Type gpointer*) in _MonoInternalHashTable
+            HashTableTable = 0x20,
+
+            // sizeof(_MonoClassField) from class-internals.h
+            TypeDefinitionFieldSize = 0x20,  // 3 ptr + int + padding
+
+            // _MonoClass
+            // Most of these can be found by either:
+            // - Calculating the offset from the beginning of the class
+            // - Calculating the offset from the end of the class
+            // - Finding the class name and namespace location and calculationg offsets form there
+            // starting from size_inited, valuetype, enumtype
+            TypeDefinitionBitFields = 0x20,
+            // class_kind
+            TypeDefinitionClassKind = 0x1b, 
+            // parent
+            TypeDefinitionParent = 0x28,
+            // nested_in
+            TypeDefinitionNestedIn = 0x30,
+            // name
+            TypeDefinitionName = 0x40,
+            // name_space
+            TypeDefinitionNamespace = 0x48,
+            // vtable_size
+            TypeDefinitionVTableSize = 0x54,
+            // sizes (Static Fields / Array Element Count / Generic Param Types)
+            TypeDefinitionSize = 0x88,
+            // fields
+            TypeDefinitionFields = 0x90,
+            // _byval_arg
+            TypeDefinitionByValArg = 0xB0,
+            // runtime_info
+            TypeDefinitionRuntimeInfo = 0xC8,
+
+            // MonoClassDef
+            // field_count
+            TypeDefinitionFieldCount = 0xf8,
+            // next_class_cache
+            TypeDefinitionNextClassCache = 0xa8 + 0x34 + 0x10 + 0x18 + 0x4 - 0x8,
+
+            // field 'generic_class' of type MonoGenericClass* in MonoClassGenericInst
+            TypeDefinitionMonoGenericClass = 0x94 + 0x34 + 0x18 + 0x10 - 0x8,
+            
+            // field 'generic_container' of type MonoGenericContainer* in _MonoClassGtd
+            TypeDefinitionGenericContainer = 0x110 - 0x8,
+            
+            TypeDefinitionRuntimeInfoDomainVTables = 0x8,  // 2 byte 'max_domain' + alignment to pointer size
+
+            // MonoVTable.vtable
+            // 5 ptr + 8 byte (max_interface_id -> gc_bits) + 8 bytes (4 + 4 padding) + 2 ptr
+            // 0x28 + 0x8 + 0x8 + 0x10
+            VTable = 0x48,
+        };
+        
         public static readonly MonoLibraryOffsets Unity2019_4_2020_3_x64_MachO_Offsets = new MonoLibraryOffsets
         {
             UnityVersions = new List<UnityVersion> { UnityVersion.Version2019_4_5 },
-            Is64Bits = true,
+            Arch = Architecture.X64,
             Format = BinaryFormat.MachO,
             MonoLibrary = "libmonobdwgc-2.0.dylib",
 
@@ -188,11 +271,12 @@ namespace UnitySpy.Offsets
             Unity2019_4_2020_3_x64_PE_Offsets,
             Unity2019_4_2020_3_x64_MachO_Offsets,
             Unity2021_3_2022_3_x64_PE_Offsets,
+            Unity2022_3_Arm64_MachO_Offsets,
         };
 
         public List<UnityVersion> UnityVersions { get; private set; }
 
-        public bool Is64Bits { get; private set; }
+        public Architecture Arch { get; private set; }
 
         public BinaryFormat Format { get; private set; }
 
@@ -254,7 +338,7 @@ namespace UnitySpy.Offsets
         {
             if (gameExecutableFilePath == null)
             {
-                throw new ArgumentNullException("gameExecutableFilePath parameter cannot be null");
+                throw new ArgumentNullException(nameof(gameExecutableFilePath), "Argument gameExecutableFilePath parameter cannot be null");
             }
 
             string unityVersion;
@@ -290,52 +374,40 @@ namespace UnitySpy.Offsets
                 switch (machineType)
                 {
                     case 0x8664: // IMAGE_FILE_MACHINE_AMD64
-                        return GetOffsets(unityVersion, true, BinaryFormat.PE, force);
+                        return GetOffsets(unityVersion, Architecture.X64, BinaryFormat.PE, force);
                     case 0x14c: // IMAGE_FILE_MACHINE_I386
-                        return GetOffsets(unityVersion, false, BinaryFormat.PE, force);
+                        return GetOffsets(unityVersion, Architecture.X86, BinaryFormat.PE, force);
                 }
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                string quotedGameExecutableFilePath = $"\"{gameExecutableFilePath}\"";
-                
                 FileInfo gameExecutableFile = new FileInfo(gameExecutableFilePath);
                 string infoPlist = File.ReadAllText(gameExecutableFile.Directory.Parent.FullName + "/Info.plist");
                 string unityVersionField = "Unity Player version ";
                 int indexOfUnityVersionField = infoPlist.IndexOf(unityVersionField);
                 unityVersion = infoPlist.Substring(indexOfUnityVersionField + unityVersionField.Length).Split(' ')[0];
-
-                // Start the child process.
-                Process p = new Process();
-
-                // Redirect the output stream of the child process.
-                p.StartInfo.UseShellExecute = false;
-                p.StartInfo.RedirectStandardOutput = true;
-                p.StartInfo.FileName = "file";
-                p.StartInfo.Arguments = quotedGameExecutableFilePath;
-                p.Start();
-
-                // Do not wait for the child process to exit before
-                // reading to the end of its redirected stream.
-                // p.WaitForExit();
-                // Read the output stream first and then wait.
-                string output = p.StandardOutput.ReadToEnd();
-                p.WaitForExit();
-                return GetOffsets(unityVersion, output.Contains("Mach-O 64-bit executable x86_64\n"), BinaryFormat.MachO, force);
+                
+                Architecture cpuArch = RuntimeInformation.ProcessArchitecture;
+                if (cpuArch != Architecture.Arm64 && cpuArch != Architecture.X64)
+                {
+                    throw new PlatformNotSupportedException("Unsupported CPU architecture.");
+                }
+                
+                return GetOffsets(unityVersion, cpuArch, BinaryFormat.MachO, force);
             }
 
             throw new NotSupportedException("Platform not supported");
         }
 
-        public static MonoLibraryOffsets GetOffsets(string unityVersion, bool is64Bits, BinaryFormat format, bool force = true)
+        public static MonoLibraryOffsets GetOffsets(string unityVersion, Architecture arch, BinaryFormat format, bool force = true)
         {
-            return GetOffsets(UnityVersion.Parse(unityVersion), is64Bits, format, force);
+            return GetOffsets(UnityVersion.Parse(unityVersion), arch, format, force);
         }
 
-        private static MonoLibraryOffsets GetOffsets(UnityVersion unityVersion, bool is64Bits, BinaryFormat format, bool force = true)
+        private static MonoLibraryOffsets GetOffsets(UnityVersion unityVersion, Architecture arch, BinaryFormat format, bool force = true)
         {
             MonoLibraryOffsets monoLibraryOffsets = SupportedVersions.Find(
-                   offsets => offsets.Is64Bits == is64Bits &&
+                   offsets => offsets.Arch == arch &&
                               offsets.Format == format &&
                               offsets.UnityVersions.Contains(unityVersion));
 
@@ -343,13 +415,12 @@ namespace UnitySpy.Offsets
 
             if (monoLibraryOffsets == null)
             {
-                string mode = is64Bits ? "in 64 bits mode" : "in 32 bits mode";
                 string unsupportedMsg = $"The unity version the process is running " +
-                                        $"({unityVersion} {mode}) is not supported.";
+                                        $"({unityVersion} {arch}) is not supported.";
                 if (force)
                 {
                     List<MonoLibraryOffsets> matchingArchitectureSupportedVersion = SupportedVersions.FindAll(v =>
-                        v.Is64Bits == is64Bits && v.Format == format);
+                        v.Arch == arch && v.Format == format);
 
                     if (matchingArchitectureSupportedVersion.Count > 0)
                     {

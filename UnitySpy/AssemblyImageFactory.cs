@@ -45,7 +45,7 @@
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 {
-                    if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
+                    if (RuntimeInformation.ProcessArchitecture == System.Runtime.InteropServices.Architecture.Arm64)
                     {
                         // Offsets taken by decompiling the 64 bits version of libmonobdwgc-2.0.dylib
                         //
