@@ -35,14 +35,19 @@ public class DraftPickMatcher : ILogMatcher
         var draftId = requestData?.DraftId?.Value;
         var packNumber = requestData?.Pack?.Value;
         var pickNumber = requestData?.Pick?.Value;
-        var cardPicked = requestData?.GrpId?.Value;
+        var cardsPicked = requestData?.GrpIds;
 
-        if (draftId == null || packNumber == null || pickNumber == null || cardPicked == null ) 
+        if (draftId == null || packNumber == null || pickNumber == null || cardsPicked == null) 
         { 
             return null; 
         }
 
-        return new DraftPickEvent(new Guid(draftId), (int)packNumber, (int)pickNumber, (int)cardPicked);
+        if(cardsPicked!.Count != 1)
+        {
+            return null;
+        }
+
+        return new DraftPickEvent(new Guid(draftId), (int)packNumber, (int)pickNumber, (int)cardsPicked.First);
     }
 
     private static DraftPickEvent? ParseQuickDraftEventInfo(string line, string needle)
@@ -70,7 +75,7 @@ public class DraftPickMatcher : ILogMatcher
         return new DraftPickEvent(draftId, (int)packNumber + 1, (int)pickNumber + 1, cardPicked);
     }
 
-    private static readonly string PREMIERE_DRAFT_PICK_PREFIX_NEEDLE = "[UnityCrossThreadLogger]==> Event_PlayerDraftMakePick";
+    private static readonly string PREMIERE_DRAFT_PICK_PREFIX_NEEDLE = "[UnityCrossThreadLogger]==> EventPlayerDraftMakePick";
     private static readonly string PREMIERE_DRAFT_PICK_DRAFT_ID_NEEDLE = "DraftId";
     private static readonly string QUICK_DRAFT_PICK_PREFIX_NEEDLE = "[UnityCrossThreadLogger]==> BotDraft_DraftPick";
 }

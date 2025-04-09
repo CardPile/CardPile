@@ -148,7 +148,7 @@ namespace CardPile.Draft
             }
 
             var previousPickIndex = pickIndex - PACK_LOOK_BACK;
-            if(previousPickIndex < 0 )
+            if(previousPickIndex < 0)
             {
                 return [];
             }
