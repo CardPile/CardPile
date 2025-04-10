@@ -95,7 +95,19 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
         var bgCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, userTypeParameter.Value, SeventeenLandsCardDataSourceProvider.BG_COLORS_DECK_TYPE, startDateParameter.Value, endDateParameter.Value), rankColors, maxDisplayedRankSetting.Value);
         var rgCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, userTypeParameter.Value, SeventeenLandsCardDataSourceProvider.RG_COLORS_DECK_TYPE, startDateParameter.Value, endDateParameter.Value), rankColors, maxDisplayedRankSetting.Value);
 
-        var winData = new WinDataSource(await SeventeenLandsCardDataSourceProvider.LoadWinDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, startDateParameter.Value, endDateParameter.Value, true));
+        var wubCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, userTypeParameter.Value, SeventeenLandsCardDataSourceProvider.WUB_COLORS_DECK_TYPE, startDateParameter.Value, endDateParameter.Value), rankColors, maxDisplayedRankSetting.Value);
+        var wurCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, userTypeParameter.Value, SeventeenLandsCardDataSourceProvider.WUR_COLORS_DECK_TYPE, startDateParameter.Value, endDateParameter.Value), rankColors, maxDisplayedRankSetting.Value);
+        var wugCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, userTypeParameter.Value, SeventeenLandsCardDataSourceProvider.WUG_COLORS_DECK_TYPE, startDateParameter.Value, endDateParameter.Value), rankColors, maxDisplayedRankSetting.Value);
+        var wbrCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, userTypeParameter.Value, SeventeenLandsCardDataSourceProvider.WBR_COLORS_DECK_TYPE, startDateParameter.Value, endDateParameter.Value), rankColors, maxDisplayedRankSetting.Value);
+        var wbgCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, userTypeParameter.Value, SeventeenLandsCardDataSourceProvider.WBG_COLORS_DECK_TYPE, startDateParameter.Value, endDateParameter.Value), rankColors, maxDisplayedRankSetting.Value);
+        var wrgCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, userTypeParameter.Value, SeventeenLandsCardDataSourceProvider.WRG_COLORS_DECK_TYPE, startDateParameter.Value, endDateParameter.Value), rankColors, maxDisplayedRankSetting.Value);
+        var ubrCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, userTypeParameter.Value, SeventeenLandsCardDataSourceProvider.UBR_COLORS_DECK_TYPE, startDateParameter.Value, endDateParameter.Value), rankColors, maxDisplayedRankSetting.Value);
+        var ubgCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, userTypeParameter.Value, SeventeenLandsCardDataSourceProvider.UBG_COLORS_DECK_TYPE, startDateParameter.Value, endDateParameter.Value), rankColors, maxDisplayedRankSetting.Value);
+        var urgCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, userTypeParameter.Value, SeventeenLandsCardDataSourceProvider.URG_COLORS_DECK_TYPE, startDateParameter.Value, endDateParameter.Value), rankColors, maxDisplayedRankSetting.Value);
+        var brgCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, userTypeParameter.Value, SeventeenLandsCardDataSourceProvider.BRG_COLORS_DECK_TYPE, startDateParameter.Value, endDateParameter.Value), rankColors, maxDisplayedRankSetting.Value);
+
+        float PARTICIPATION_CUTOFF_PERCENTAGE = 1.0f;
+        var winData = new WinDataSource(await SeventeenLandsCardDataSourceProvider.LoadWinDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, startDateParameter.Value, endDateParameter.Value, true), PARTICIPATION_CUTOFF_PERCENTAGE);
 
         return new CardDataSource(cardDataSource,
                                   wuCardDataSource,
@@ -108,6 +120,16 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
                                   brCardDataSource,
                                   bgCardDataSource,
                                   rgCardDataSource,
+                                  wubCardDataSource,
+                                  wurCardDataSource,
+                                  wugCardDataSource,
+                                  wbrCardDataSource,
+                                  wbgCardDataSource,
+                                  wrgCardDataSource,
+                                  ubrCardDataSource,
+                                  ubgCardDataSource,
+                                  urgCardDataSource,
+                                  brgCardDataSource,
                                   winData);
     }
 

@@ -14,7 +14,7 @@ public class CardMetricViewModelDesign
 
         public bool IsDefaultMetric => false;
 
-        public IComparer<ICardMetric> Comparer => null;
+        public IComparer<ICardMetric> Comparer => new CardMetricComparerDesign();
     }
 
     private class CardRankDesign : ICardRank
@@ -40,6 +40,14 @@ public class CardMetricViewModelDesign
 
         public IList<ICardRank> Ranks => [new CardRankDesign()];
     }
+
+    private class CardMetricComparerDesign : IComparer<ICardMetric>
+    {
+        public int Compare(ICardMetric? x, ICardMetric? y)
+        {
+            return 0;
+        }
+    };
 
     internal ICardMetric Metric { get; } = new CardMetricDesign();
 

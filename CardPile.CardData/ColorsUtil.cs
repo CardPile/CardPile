@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+
 namespace CardPile.CardData;
 
 public static class ColorsUtil
@@ -80,6 +83,16 @@ public static class ColorsUtil
             5 => ColorQuintuples(),
             _ => []
         };
+    }
+
+    public static List<Color> Colors(params int[] counts)
+    {
+        List<Color> result = [];
+        foreach (int count in counts)
+        {
+            result.AddRange(Colors(count));
+        }
+        return result;
     }
 
     public static string ToSymbols(Color color)

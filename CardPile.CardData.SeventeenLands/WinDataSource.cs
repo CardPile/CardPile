@@ -2,9 +2,10 @@
 
 internal class WinDataSource
 {
-    internal WinDataSource(List<RawWinData> winData)
+    internal WinDataSource(List<RawWinData> winData, float percentageCutoff)
     {
-        archetypeWinData = winData.Where(x => !x.IsSummary.GetValueOrDefault(true)).ToDictionary(x => x.Colors, x => x);
+        var totalGameCount = winData.First(x => x.IsSummary.GetValueOrDefault(true) && NameToColorCount(x.ColorName) == int.MaxValue).Games;
+        archetypeWinData = winData.Where(x => !x.IsSummary.GetValueOrDefault(true) && 100.0f * x.Games > percentageCutoff * totalGameCount).ToDictionary(x => x.Colors, x => x);
     }
 
     internal float? GetWinPercentage(Color color)
@@ -20,6 +21,20 @@ internal class WinDataSource
         }
 
         return (float)Math.Round((double)winData.Wins / (double)winData.Games, 3);
+    }
+
+    private int? NameToColorCount(string? name)
+    {
+        return name switch
+        {
+            "Mono-color" => 1,
+            "Two-color" => 2,
+            "Three-color" => 3,
+            "Four-color" => 4,
+            "Five-color" => 5,
+            "All Decks" => int.MaxValue,
+            _ => null
+        };
     }
 
     private Dictionary<Color, RawWinData> archetypeWinData = [];

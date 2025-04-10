@@ -9,7 +9,7 @@ internal class CardData : ICardData
         name,
         arenaCardId,
         type,
-        manaValue, 
+        manaValue,
         colors,
         url,
         SeenMetricDesc.NewMetric(),
@@ -25,7 +25,7 @@ internal class CardData : ICardData
         WinRateWhenDrawnTurn1OrLaterMetricDesc.NewMetric(),
         NumberOfGamesInHandMetricDesc.NewMetric(),
         WinRateInHandMetricDesc.NewMetric(),
-        ColorsWinRateInHandMetricDesc.NewMetric(
+        ColorPairsWinRateInHandMetricDesc.NewMetric(
             WUWinRateInHandMetricDesc.NewMetric(),
             WBWinRateInHandMetricDesc.NewMetric(),
             WRWinRateInHandMetricDesc.NewMetric(),
@@ -37,7 +37,7 @@ internal class CardData : ICardData
             BGWinRateInHandMetricDesc.NewMetric(),
             RGWinRateInHandMetricDesc.NewMetric()
         ),
-        ColorsWinRateImprovementMetricDesc.NewMetric(
+        ColorPairsWinRateImprovementMetricDesc.NewMetric(
             WUWinRateImprovementMetricDesc.NewMetric(),
             WBWinRateImprovementMetricDesc.NewMetric(),
             WRWinRateImprovementMetricDesc.NewMetric(),
@@ -48,6 +48,30 @@ internal class CardData : ICardData
             BRWinRateImprovementMetricDesc.NewMetric(),
             BGWinRateImprovementMetricDesc.NewMetric(),
             RGWinRateImprovementMetricDesc.NewMetric()
+        ),
+        ColorTriplesWinRateInHandMetricDesc.NewMetric(
+            WUBWinRateInHandMetricDesc.NewMetric(),
+            WURWinRateInHandMetricDesc.NewMetric(),
+            WUGWinRateInHandMetricDesc.NewMetric(),
+            WBRWinRateInHandMetricDesc.NewMetric(),
+            WBGWinRateInHandMetricDesc.NewMetric(),
+            WRGWinRateInHandMetricDesc.NewMetric(),
+            UBRWinRateInHandMetricDesc.NewMetric(),
+            UBGWinRateInHandMetricDesc.NewMetric(),
+            URGWinRateInHandMetricDesc.NewMetric(),
+            BRGWinRateInHandMetricDesc.NewMetric()
+        ),
+        ColorTriplesWinRateImprovementMetricDesc.NewMetric(
+            WUBWinRateImprovementMetricDesc.NewMetric(),
+            WURWinRateImprovementMetricDesc.NewMetric(),
+            WUGWinRateImprovementMetricDesc.NewMetric(),
+            WBRWinRateImprovementMetricDesc.NewMetric(),
+            WBGWinRateImprovementMetricDesc.NewMetric(),
+            WRGWinRateImprovementMetricDesc.NewMetric(),
+            UBRWinRateImprovementMetricDesc.NewMetric(),
+            UBGWinRateImprovementMetricDesc.NewMetric(),
+            URGWinRateImprovementMetricDesc.NewMetric(),
+            BRGWinRateImprovementMetricDesc.NewMetric()
         ),
         NumberOfGamesNotSeenMetricDesc.NewMetric(),
         WinRateNotSeenMetricDesc.NewMetric(),
@@ -75,8 +99,10 @@ internal class CardData : ICardData
         ICardMetric winRateWhenDrawnTurn1OrLaterMetric,
         ICardMetric numberOfGamesInHandMetric,
         ICardMetric winRateInHandMetric,
-        ICardMetric colorsWinRateInHandMetric,
-        ICardMetric colorsWinRateImprovementMetric,
+        ICardMetric colorPairsWinRateInHandMetric,
+        ICardMetric colorPairsWinRateImprovementMetric,
+        ICardMetric colorTriplesWinRateInHandMetric,
+        ICardMetric colorTriplesWinRateImprovementMetric,
         ICardMetric numberOfGamesNotSeenMetric,
         ICardMetric winRateNotSeenMetric,
         ICardMetric winRateImprovementWhenDrawnMetric
@@ -103,8 +129,10 @@ internal class CardData : ICardData
             winRateWhenDrawnTurn1OrLaterMetric,
             numberOfGamesInHandMetric,
             winRateInHandMetric,
-            colorsWinRateInHandMetric,
-            colorsWinRateImprovementMetric,
+            colorPairsWinRateInHandMetric,
+            colorPairsWinRateImprovementMetric,
+            colorTriplesWinRateInHandMetric,
+            colorTriplesWinRateImprovementMetric,
             numberOfGamesNotSeenMetric,
             winRateNotSeenMetric,
             winRateImprovementWhenDrawnMetric,
@@ -144,8 +172,10 @@ internal class CardData : ICardData
                 WinRateWhenDrawnTurn1OrLaterMetricDesc,
                 NumberOfGamesInHandMetricDesc,
                 WinRateInHandMetricDesc,
-                ColorsWinRateInHandMetricDesc,
-                ColorsWinRateImprovementMetricDesc,
+                ColorPairsWinRateInHandMetricDesc,
+                ColorPairsWinRateImprovementMetricDesc,
+                ColorTriplesWinRateInHandMetricDesc,
+                ColorTriplesWinRateImprovementMetricDesc,
                 NumberOfGamesNotSeenMetricDesc,
                 WinRateNotSeenMetricDesc,
                 WinRateImprovementWhenDrawnMetricDesc,
@@ -180,17 +210,17 @@ internal class CardData : ICardData
     internal static readonly MetricDescription<float> BRWinRateInHandMetricDesc = new MetricDescription<float>("{B}{R}", true, false, new PercentFormatter());
     internal static readonly MetricDescription<float> BGWinRateInHandMetricDesc = new MetricDescription<float>("{B}{G}", true, false, new PercentFormatter());
     internal static readonly MetricDescription<float> RGWinRateInHandMetricDesc = new MetricDescription<float>("{R}{G}", true, false, new PercentFormatter());
-    internal static readonly CompositeMetricDescription ColorsWinRateInHandMetricDesc = new CompositeMetricDescription("GIH WR (2C)", true, false,
-                                                                                                                       WUWinRateInHandMetricDesc,
-                                                                                                                       WBWinRateInHandMetricDesc,
-                                                                                                                       WRWinRateInHandMetricDesc,
-                                                                                                                       WGWinRateInHandMetricDesc,
-                                                                                                                       UBWinRateInHandMetricDesc,
-                                                                                                                       URWinRateInHandMetricDesc,
-                                                                                                                       UGWinRateInHandMetricDesc,
-                                                                                                                       BRWinRateInHandMetricDesc,
-                                                                                                                       BGWinRateInHandMetricDesc,
-                                                                                                                       RGWinRateInHandMetricDesc);
+    internal static readonly CompositeMetricDescription ColorPairsWinRateInHandMetricDesc = new CompositeMetricDescription("GIH WR (2C)", true, false,
+                                                                                                                           WUWinRateInHandMetricDesc,
+                                                                                                                           WBWinRateInHandMetricDesc,
+                                                                                                                           WRWinRateInHandMetricDesc,
+                                                                                                                           WGWinRateInHandMetricDesc,
+                                                                                                                           UBWinRateInHandMetricDesc,
+                                                                                                                           URWinRateInHandMetricDesc,
+                                                                                                                           UGWinRateInHandMetricDesc,
+                                                                                                                           BRWinRateInHandMetricDesc,
+                                                                                                                           BGWinRateInHandMetricDesc,
+                                                                                                                           RGWinRateInHandMetricDesc);
 
     internal static readonly MetricDescription<float> WUWinRateImprovementMetricDesc = new MetricDescription<float>("{W}{U}", true, false, new PercentFormatter(true));
     internal static readonly MetricDescription<float> WBWinRateImprovementMetricDesc = new MetricDescription<float>("{W}{B}", true, false, new PercentFormatter(true));
@@ -202,15 +232,60 @@ internal class CardData : ICardData
     internal static readonly MetricDescription<float> BRWinRateImprovementMetricDesc = new MetricDescription<float>("{B}{R}", true, false, new PercentFormatter(true));
     internal static readonly MetricDescription<float> BGWinRateImprovementMetricDesc = new MetricDescription<float>("{B}{G}", true, false, new PercentFormatter(true));
     internal static readonly MetricDescription<float> RGWinRateImprovementMetricDesc = new MetricDescription<float>("{R}{G}", true, false, new PercentFormatter(true));
-    internal static readonly CompositeMetricDescription ColorsWinRateImprovementMetricDesc = new CompositeMetricDescription("WR Delta (2C)", true, false,
-                                                                                                                            WUWinRateImprovementMetricDesc,
-                                                                                                                            WBWinRateImprovementMetricDesc,
-                                                                                                                            WRWinRateImprovementMetricDesc,
-                                                                                                                            WGWinRateImprovementMetricDesc,
-                                                                                                                            UBWinRateImprovementMetricDesc,
-                                                                                                                            URWinRateImprovementMetricDesc,
-                                                                                                                            UGWinRateImprovementMetricDesc,
-                                                                                                                            BRWinRateImprovementMetricDesc,
-                                                                                                                            BGWinRateImprovementMetricDesc,
-                                                                                                                            RGWinRateImprovementMetricDesc);
+    internal static readonly CompositeMetricDescription ColorPairsWinRateImprovementMetricDesc = new CompositeMetricDescription("WR Delta (2C)", true, false,
+                                                                                                                                WUWinRateImprovementMetricDesc,
+                                                                                                                                WBWinRateImprovementMetricDesc,
+                                                                                                                                WRWinRateImprovementMetricDesc,
+                                                                                                                                WGWinRateImprovementMetricDesc,
+                                                                                                                                UBWinRateImprovementMetricDesc,
+                                                                                                                                URWinRateImprovementMetricDesc,
+                                                                                                                                UGWinRateImprovementMetricDesc,
+                                                                                                                                BRWinRateImprovementMetricDesc,
+                                                                                                                                BGWinRateImprovementMetricDesc,
+                                                                                                                                RGWinRateImprovementMetricDesc);
+
+    internal static readonly MetricDescription<float> WUBWinRateInHandMetricDesc = new MetricDescription<float>("{W}{U}{B}", true, false, new PercentFormatter());
+    internal static readonly MetricDescription<float> WURWinRateInHandMetricDesc = new MetricDescription<float>("{W}{U}{R}", true, false, new PercentFormatter());
+    internal static readonly MetricDescription<float> WUGWinRateInHandMetricDesc = new MetricDescription<float>("{W}{U}{G}", true, false, new PercentFormatter());
+    internal static readonly MetricDescription<float> WBRWinRateInHandMetricDesc = new MetricDescription<float>("{W}{B}{R}", true, false, new PercentFormatter());
+    internal static readonly MetricDescription<float> WBGWinRateInHandMetricDesc = new MetricDescription<float>("{W}{B}{G}", true, false, new PercentFormatter());
+    internal static readonly MetricDescription<float> WRGWinRateInHandMetricDesc = new MetricDescription<float>("{W}{R}{G}", true, false, new PercentFormatter());
+    internal static readonly MetricDescription<float> UBRWinRateInHandMetricDesc = new MetricDescription<float>("{U}{B}{R}", true, false, new PercentFormatter());
+    internal static readonly MetricDescription<float> UBGWinRateInHandMetricDesc = new MetricDescription<float>("{U}{B}{G}", true, false, new PercentFormatter());
+    internal static readonly MetricDescription<float> URGWinRateInHandMetricDesc = new MetricDescription<float>("{U}{R}{G}", true, false, new PercentFormatter());
+    internal static readonly MetricDescription<float> BRGWinRateInHandMetricDesc = new MetricDescription<float>("{B}{R}{G}", true, false, new PercentFormatter());
+    internal static readonly CompositeMetricDescription ColorTriplesWinRateInHandMetricDesc = new CompositeMetricDescription("GIH WR (3C)", true, false,
+                                                                                                                             WUBWinRateInHandMetricDesc,
+                                                                                                                             WURWinRateInHandMetricDesc,
+                                                                                                                             WUGWinRateInHandMetricDesc,
+                                                                                                                             WBRWinRateInHandMetricDesc,
+                                                                                                                             WBGWinRateInHandMetricDesc,
+                                                                                                                             WRGWinRateInHandMetricDesc,
+                                                                                                                             UBRWinRateInHandMetricDesc,
+                                                                                                                             UBGWinRateInHandMetricDesc,
+                                                                                                                             URGWinRateInHandMetricDesc,
+                                                                                                                             BRGWinRateInHandMetricDesc);
+
+    internal static readonly MetricDescription<float> WUBWinRateImprovementMetricDesc = new MetricDescription<float>("{W}{U}{B}", true, false, new PercentFormatter(true));
+    internal static readonly MetricDescription<float> WURWinRateImprovementMetricDesc = new MetricDescription<float>("{W}{U}{R}", true, false, new PercentFormatter(true));
+    internal static readonly MetricDescription<float> WUGWinRateImprovementMetricDesc = new MetricDescription<float>("{W}{U}{G}", true, false, new PercentFormatter(true));
+    internal static readonly MetricDescription<float> WBRWinRateImprovementMetricDesc = new MetricDescription<float>("{W}{B}{R}", true, false, new PercentFormatter(true));
+    internal static readonly MetricDescription<float> WBGWinRateImprovementMetricDesc = new MetricDescription<float>("{W}{B}{G}", true, false, new PercentFormatter(true));
+    internal static readonly MetricDescription<float> WRGWinRateImprovementMetricDesc = new MetricDescription<float>("{W}{R}{G}", true, false, new PercentFormatter(true));
+    internal static readonly MetricDescription<float> UBRWinRateImprovementMetricDesc = new MetricDescription<float>("{U}{B}{R}", true, false, new PercentFormatter(true));
+    internal static readonly MetricDescription<float> UBGWinRateImprovementMetricDesc = new MetricDescription<float>("{U}{B}{G}", true, false, new PercentFormatter(true));
+    internal static readonly MetricDescription<float> URGWinRateImprovementMetricDesc = new MetricDescription<float>("{U}{R}{G}", true, false, new PercentFormatter(true));
+    internal static readonly MetricDescription<float> BRGWinRateImprovementMetricDesc = new MetricDescription<float>("{B}{R}{G}", true, false, new PercentFormatter(true));
+    internal static readonly CompositeMetricDescription ColorTriplesWinRateImprovementMetricDesc = new CompositeMetricDescription("WR Delta (3C)", true, false,
+                                                                                                                                  WUBWinRateImprovementMetricDesc,
+                                                                                                                                  WURWinRateImprovementMetricDesc,
+                                                                                                                                  WUGWinRateImprovementMetricDesc,
+                                                                                                                                  WBRWinRateImprovementMetricDesc,
+                                                                                                                                  WBGWinRateImprovementMetricDesc,
+                                                                                                                                  WRGWinRateImprovementMetricDesc,
+                                                                                                                                  UBRWinRateImprovementMetricDesc,
+                                                                                                                                  UBGWinRateImprovementMetricDesc,
+                                                                                                                                  URGWinRateImprovementMetricDesc,
+                                                                                                                                  BRGWinRateImprovementMetricDesc);
+
 }

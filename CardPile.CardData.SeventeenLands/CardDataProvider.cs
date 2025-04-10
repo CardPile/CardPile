@@ -24,6 +24,17 @@ public class SeventeenLandsCardDataSourceProvider
     internal const string BG_COLORS_DECK_TYPE = "BG";
     internal const string RG_COLORS_DECK_TYPE = "RG";
 
+    internal const string WUB_COLORS_DECK_TYPE = "WUB";
+    internal const string WUR_COLORS_DECK_TYPE = "WUR";
+    internal const string WUG_COLORS_DECK_TYPE = "WUG";
+    internal const string WBR_COLORS_DECK_TYPE = "WBR";
+    internal const string WBG_COLORS_DECK_TYPE = "WBG";
+    internal const string WRG_COLORS_DECK_TYPE = "WRG";
+    internal const string UBR_COLORS_DECK_TYPE = "UBR";
+    internal const string UBG_COLORS_DECK_TYPE = "UBG";
+    internal const string URG_COLORS_DECK_TYPE = "URG";
+    internal const string BRG_COLORS_DECK_TYPE = "BRG";
+
     internal static List<RawCardData> LoadCardData(string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
     {
         return Task.Run(() => LoadCardDataAsync(CancellationToken.None, set, eventType, userType, deckType, startDate, endDate)).Result;

@@ -19,6 +19,16 @@ public class CardDataSource : ICardDataSource
                             RawCardDataSource brCardData,
                             RawCardDataSource bgCardData,
                             RawCardDataSource rgCardData,
+                            RawCardDataSource wubCardData,
+                            RawCardDataSource wurCardData,
+                            RawCardDataSource wugCardData,
+                            RawCardDataSource wbrCardData,
+                            RawCardDataSource wbgCardData,
+                            RawCardDataSource wrgCardData,
+                            RawCardDataSource ubrCardData,
+                            RawCardDataSource ubgCardData,
+                            RawCardDataSource urgCardData,
+                            RawCardDataSource brgCardData,
                             WinDataSource winData)
     {
         archetypeCardData[Color.None] = cardData;
@@ -32,6 +42,16 @@ public class CardDataSource : ICardDataSource
         archetypeCardData[Color.BR] = brCardData;
         archetypeCardData[Color.BG] = bgCardData;
         archetypeCardData[Color.RG] = rgCardData;
+        archetypeCardData[Color.WUB] = wubCardData;
+        archetypeCardData[Color.WUR] = wurCardData;
+        archetypeCardData[Color.WUG] = wugCardData;
+        archetypeCardData[Color.WBR] = wbrCardData;
+        archetypeCardData[Color.WBG] = wbgCardData;
+        archetypeCardData[Color.WRG] = wrgCardData;
+        archetypeCardData[Color.UBR] = ubrCardData;
+        archetypeCardData[Color.UBG] = ubgCardData;
+        archetypeCardData[Color.URG] = urgCardData;
+        archetypeCardData[Color.BRG] = brgCardData;
 
         archetypeWinData = winData;
 
@@ -45,10 +65,11 @@ public class CardDataSource : ICardDataSource
         var avgGihWr = new Statistic<float>("Avg GIH WR", (float)archetypeGihWrDistribution[Color.None].Mean, new PercentFormatter());
         Statistics = [avgGihWr];
 
-        var sortedColorPairs = ColorsUtil.ColorPairs();
-        sortedColorPairs.Sort((a, b) => -Comparer<float?>.Default.Compare(archetypeWinData.GetWinPercentage((Color)(int)a), archetypeWinData.GetWinPercentage((Color)(int)b))); 
+        int[] colorsCombinationsToQuery = [2, 3];
+        var sortedColorCombinations = ColorsUtil.Colors(colorsCombinationsToQuery);
+        sortedColorCombinations.Sort((a, b) => -Comparer<float?>.Default.Compare(archetypeWinData.GetWinPercentage((Color)(int)a), archetypeWinData.GetWinPercentage((Color)(int)b))); 
         
-        foreach (Color pair in sortedColorPairs)
+        foreach (Color pair in sortedColorCombinations)
         {
             float? winRate = archetypeWinData.GetWinPercentage((Color)(int)pair);
             if(!winRate.HasValue)
@@ -71,27 +92,47 @@ public class CardDataSource : ICardDataSource
         var manaValue = CardInfo.Arena.GetCardManaValueFromId(cardNumber);
         if (rawCardData != null)
         {
-            Dictionary<Color, float?> gameWinRateImprovement = [];
+            Dictionary<Color, float?> pairGameWinRateImprovement = [];
             foreach (Color pair in ColorsUtil.ColorPairs())
             {
                 float? winRate = archetypeWinData.GetWinPercentage((Color)(int)pair);
                 if (!winRate.HasValue)
                 {
-                    gameWinRateImprovement[pair] = null;
+                    pairGameWinRateImprovement[pair] = null;
                     continue;
                 }
 
                 float? gpWr = archetypeCardData[pair].GetDataForCard(rawCardData.ArenaCardId)?.WinRate;
                 if(!gpWr.HasValue)
                 {
-                    gameWinRateImprovement[pair] = null;
+                    pairGameWinRateImprovement[pair] = null;
                     continue;
                 }
 
-                gameWinRateImprovement[pair] = gpWr.Value - winRate.Value;
+                pairGameWinRateImprovement[pair] = gpWr.Value - winRate.Value;
             }
 
-            ICardMetric[] colorsWinRateInHandMetrics = PrepareForCompositeMetric
+            Dictionary<Color, float?> tripleGameWinRateImprovement = [];
+            foreach (Color pair in ColorsUtil.ColorTriples())
+            {
+                float? winRate = archetypeWinData.GetWinPercentage((Color)(int)pair);
+                if (!winRate.HasValue)
+                {
+                    tripleGameWinRateImprovement[pair] = null;
+                    continue;
+                }
+
+                float? gpWr = archetypeCardData[pair].GetDataForCard(rawCardData.ArenaCardId)?.WinRate;
+                if (!gpWr.HasValue)
+                {
+                    tripleGameWinRateImprovement[pair] = null;
+                    continue;
+                }
+
+                tripleGameWinRateImprovement[pair] = gpWr.Value - winRate.Value;
+            }
+
+            ICardMetric[] colorPairsWinRateInHandMetrics = PrepareForCompositeMetric
             (
                 new MetricComparer<float>(),
                 CardData.WUWinRateInHandMetricDesc.NewMetric(archetypeCardData[Color.WU].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (value) => value - (float)archetypeGihWrDistribution[Color.WU].Mean), archetypeCardData[Color.WU].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRateRanks ?? []),
@@ -105,19 +146,47 @@ public class CardDataSource : ICardDataSource
                 CardData.BGWinRateInHandMetricDesc.NewMetric(archetypeCardData[Color.BG].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (value) => value - (float)archetypeGihWrDistribution[Color.BG].Mean), archetypeCardData[Color.BG].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRateRanks ?? []),
                 CardData.RGWinRateInHandMetricDesc.NewMetric(archetypeCardData[Color.RG].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (value) => value - (float)archetypeGihWrDistribution[Color.RG].Mean), archetypeCardData[Color.RG].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRateRanks ?? [])
             );
-            ICardMetric[] colorsWinRateImprovementMetrics = PrepareForCompositeMetric
+            ICardMetric[] colorPairsWinRateImprovementMetrics = PrepareForCompositeMetric
             (
                 new MetricComparer<float>(),
-                CardData.WUWinRateImprovementMetricDesc.NewMetric(gameWinRateImprovement[Color.WU], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
-                CardData.WBWinRateImprovementMetricDesc.NewMetric(gameWinRateImprovement[Color.WB], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
-                CardData.WRWinRateImprovementMetricDesc.NewMetric(gameWinRateImprovement[Color.WR], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
-                CardData.WGWinRateImprovementMetricDesc.NewMetric(gameWinRateImprovement[Color.WG], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
-                CardData.UBWinRateImprovementMetricDesc.NewMetric(gameWinRateImprovement[Color.UB], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
-                CardData.URWinRateImprovementMetricDesc.NewMetric(gameWinRateImprovement[Color.UR], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
-                CardData.UGWinRateImprovementMetricDesc.NewMetric(gameWinRateImprovement[Color.UG], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
-                CardData.BRWinRateImprovementMetricDesc.NewMetric(gameWinRateImprovement[Color.BR], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
-                CardData.BGWinRateImprovementMetricDesc.NewMetric(gameWinRateImprovement[Color.BG], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
-                CardData.RGWinRateImprovementMetricDesc.NewMetric(gameWinRateImprovement[Color.RG], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), [])
+                CardData.WUWinRateImprovementMetricDesc.NewMetric(pairGameWinRateImprovement[Color.WU], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
+                CardData.WBWinRateImprovementMetricDesc.NewMetric(pairGameWinRateImprovement[Color.WB], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
+                CardData.WRWinRateImprovementMetricDesc.NewMetric(pairGameWinRateImprovement[Color.WR], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
+                CardData.WGWinRateImprovementMetricDesc.NewMetric(pairGameWinRateImprovement[Color.WG], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
+                CardData.UBWinRateImprovementMetricDesc.NewMetric(pairGameWinRateImprovement[Color.UB], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
+                CardData.URWinRateImprovementMetricDesc.NewMetric(pairGameWinRateImprovement[Color.UR], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
+                CardData.UGWinRateImprovementMetricDesc.NewMetric(pairGameWinRateImprovement[Color.UG], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
+                CardData.BRWinRateImprovementMetricDesc.NewMetric(pairGameWinRateImprovement[Color.BR], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
+                CardData.BGWinRateImprovementMetricDesc.NewMetric(pairGameWinRateImprovement[Color.BG], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
+                CardData.RGWinRateImprovementMetricDesc.NewMetric(pairGameWinRateImprovement[Color.RG], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), [])
+            );
+            ICardMetric[] colorTriplesWinRateInHandMetrics = PrepareForCompositeMetric
+            (
+                new MetricComparer<float>(),
+                CardData.WUBWinRateInHandMetricDesc.NewMetric(archetypeCardData[Color.WUB].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (value) => value - (float)archetypeGihWrDistribution[Color.WUB].Mean), archetypeCardData[Color.WUB].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRateRanks ?? []),
+                CardData.WURWinRateInHandMetricDesc.NewMetric(archetypeCardData[Color.WUR].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (value) => value - (float)archetypeGihWrDistribution[Color.WUR].Mean), archetypeCardData[Color.WUR].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRateRanks ?? []),
+                CardData.WUGWinRateInHandMetricDesc.NewMetric(archetypeCardData[Color.WUG].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (value) => value - (float)archetypeGihWrDistribution[Color.WUG].Mean), archetypeCardData[Color.WUG].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRateRanks ?? []),
+                CardData.WBRWinRateInHandMetricDesc.NewMetric(archetypeCardData[Color.WBR].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (value) => value - (float)archetypeGihWrDistribution[Color.WBR].Mean), archetypeCardData[Color.WBR].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRateRanks ?? []),
+                CardData.WBGWinRateInHandMetricDesc.NewMetric(archetypeCardData[Color.WBG].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (value) => value - (float)archetypeGihWrDistribution[Color.WBG].Mean), archetypeCardData[Color.WBG].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRateRanks ?? []),
+                CardData.WRGWinRateInHandMetricDesc.NewMetric(archetypeCardData[Color.WRG].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (value) => value - (float)archetypeGihWrDistribution[Color.WRG].Mean), archetypeCardData[Color.WRG].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRateRanks ?? []),
+                CardData.UBRWinRateInHandMetricDesc.NewMetric(archetypeCardData[Color.UBR].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (value) => value - (float)archetypeGihWrDistribution[Color.UBR].Mean), archetypeCardData[Color.UBR].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRateRanks ?? []),
+                CardData.UBGWinRateInHandMetricDesc.NewMetric(archetypeCardData[Color.UBG].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (value) => value - (float)archetypeGihWrDistribution[Color.UBG].Mean), archetypeCardData[Color.UBG].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRateRanks ?? []),
+                CardData.URGWinRateInHandMetricDesc.NewMetric(archetypeCardData[Color.URG].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (value) => value - (float)archetypeGihWrDistribution[Color.URG].Mean), archetypeCardData[Color.URG].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRateRanks ?? []),
+                CardData.BRGWinRateInHandMetricDesc.NewMetric(archetypeCardData[Color.BRG].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (value) => value - (float)archetypeGihWrDistribution[Color.BRG].Mean), archetypeCardData[Color.BRG].GetDataForCard(rawCardData.ArenaCardId)?.EverDrawnWinRateRanks ?? [])
+            );
+            ICardMetric[] colorTriplesWinRateImprovementMetrics = PrepareForCompositeMetric
+            (
+                new MetricComparer<float>(),
+                CardData.WUBWinRateImprovementMetricDesc.NewMetric(tripleGameWinRateImprovement[Color.WUB], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
+                CardData.WURWinRateImprovementMetricDesc.NewMetric(tripleGameWinRateImprovement[Color.WUR], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
+                CardData.WUGWinRateImprovementMetricDesc.NewMetric(tripleGameWinRateImprovement[Color.WUG], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
+                CardData.WBRWinRateImprovementMetricDesc.NewMetric(tripleGameWinRateImprovement[Color.WBR], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
+                CardData.WBGWinRateImprovementMetricDesc.NewMetric(tripleGameWinRateImprovement[Color.WBG], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
+                CardData.WRGWinRateImprovementMetricDesc.NewMetric(tripleGameWinRateImprovement[Color.WRG], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
+                CardData.UBRWinRateImprovementMetricDesc.NewMetric(tripleGameWinRateImprovement[Color.UBR], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
+                CardData.UBGWinRateImprovementMetricDesc.NewMetric(tripleGameWinRateImprovement[Color.UBG], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
+                CardData.URGWinRateImprovementMetricDesc.NewMetric(tripleGameWinRateImprovement[Color.URG], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), []),
+                CardData.BRGWinRateImprovementMetricDesc.NewMetric(tripleGameWinRateImprovement[Color.BRG], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), [])
             );
 
             return new CardData(rawCardData.Name,
@@ -139,8 +208,10 @@ public class CardDataSource : ICardDataSource
                                 CardData.WinRateWhenDrawnTurn1OrLaterMetricDesc.NewMetric(rawCardData.DrawnWinRate, rawCardData.DrawnWinRateRanks),
                                 CardData.NumberOfGamesInHandMetricDesc.NewMetric(rawCardData.EverDrawnGameCount, rawCardData.EverDrawnGameCountRanks),
                                 CardData.WinRateInHandMetricDesc.NewMetric(rawCardData.EverDrawnWinRate, ImportanceCalculators.AboveThreshold(CARD_GIH_WR_CRITICAL_THRESHOLD, CARD_GIH_WR_HIGH_THRESHOLD, CARD_GIH_WR_REGULAR_THRESHOLD, (value) => value - (float)archetypeGihWrDistribution[Color.None].Mean), rawCardData.EverDrawnWinRateRanks),
-                                CardData.ColorsWinRateInHandMetricDesc.NewMetric(colorsWinRateInHandMetrics),
-                                CardData.ColorsWinRateImprovementMetricDesc.NewMetric(colorsWinRateImprovementMetrics),
+                                CardData.ColorPairsWinRateInHandMetricDesc.NewMetric(colorPairsWinRateInHandMetrics),
+                                CardData.ColorPairsWinRateImprovementMetricDesc.NewMetric(colorPairsWinRateImprovementMetrics),
+                                CardData.ColorTriplesWinRateInHandMetricDesc.NewMetric(colorTriplesWinRateInHandMetrics),
+                                CardData.ColorTriplesWinRateImprovementMetricDesc.NewMetric(colorTriplesWinRateImprovementMetrics),
                                 CardData.NumberOfGamesNotSeenMetricDesc.NewMetric(rawCardData.NeverDrawnGameCount, rawCardData.NeverDrawnGameCountRanks),
                                 CardData.WinRateNotSeenMetricDesc.NewMetric(rawCardData.NeverDrawnWinRate, rawCardData.NeverDrawnWinRateRanks),
                                 CardData.WinRateImprovementWhenDrawnMetricDesc.NewMetric(rawCardData.DrawnImprovementWinRate, rawCardData.DrawnImprovementWinRateRanks));
