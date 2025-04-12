@@ -4,6 +4,7 @@ public enum SettingType
 {
     Path,
     Number,
+    Decimal,
     Option,
     MultipleOptions,
 }

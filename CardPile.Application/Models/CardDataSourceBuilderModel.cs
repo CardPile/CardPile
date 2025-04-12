@@ -20,6 +20,7 @@ internal class CardDataSourceBuilderModel : ReactiveObject, ICardDataSourceBuild
             { 
                 SettingType.Path => new CardDataSourceSettingPathModel((p as ICardDataSourceSettingPath)!),
                 SettingType.Number => new CardDataSourceSettingNumberModel((p as ICardDataSourceSettingNumber)!),
+                SettingType.Decimal => new CardDataSourceSettingDecimalModel((p as ICardDataSourceSettingDecimal)!),
                 SettingType.Option => new CardDataSourceSettingOptionModel((p as ICardDataSourceSettingOption)!),
                 SettingType.MultipleOptions => new CardDataSourceSettingMultipleOptionsModel((p as ICardDataSourceSettingMultipleOptions)!),
                 _ => new CardDataSourceSettingModel(p)

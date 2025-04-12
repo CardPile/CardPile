@@ -38,12 +38,16 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
         endDateParameter = new(END_DATE_PARAMETER_NAME, DateTime.Now);
 
         currentSetStartDateOffsetInDaysSetting = new("Current set start date offset (days)", Configuration.Instance.CurrentSetStartDateOffsetInDays, 0);
+        winRateColorsSetting = new("Deck win rate color combinations", RankColorsToOptions(Configuration.Instance.WinRateColorsToShow));
+        winRateParticipationCutoffSetting = new("Deck mategame participation cutoff (%)", Configuration.Instance.WinRateParticipationCutoff, 0.0M, 100.0M);
         rankColorsSetting = new("Rank color combinations", RankColorsToOptions(Configuration.Instance.RankColorsToShow));
         maxDisplayedRankSetting = new("Max rank to show", Configuration.Instance.MaxRankToShow, 0);
 
         Settings =
         [
             currentSetStartDateOffsetInDaysSetting,
+            winRateColorsSetting,
+            winRateParticipationCutoffSetting,
             rankColorsSetting,
             maxDisplayedRankSetting
         ];
@@ -106,8 +110,9 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
         var urgCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, userTypeParameter.Value, SeventeenLandsCardDataSourceProvider.URG_COLORS_DECK_TYPE, startDateParameter.Value, endDateParameter.Value), rankColors, maxDisplayedRankSetting.Value);
         var brgCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, userTypeParameter.Value, SeventeenLandsCardDataSourceProvider.BRG_COLORS_DECK_TYPE, startDateParameter.Value, endDateParameter.Value), rankColors, maxDisplayedRankSetting.Value);
 
-        float PARTICIPATION_CUTOFF_PERCENTAGE = 1.0f;
-        var winData = new WinDataSource(await SeventeenLandsCardDataSourceProvider.LoadWinDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, startDateParameter.Value, endDateParameter.Value, true), PARTICIPATION_CUTOFF_PERCENTAGE);
+        var winData = new WinDataSource(await SeventeenLandsCardDataSourceProvider.LoadWinDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, startDateParameter.Value, endDateParameter.Value, true), (float)winRateParticipationCutoffSetting.Value);
+
+        var winRateColors = GetWinRateColors();
 
         return new CardDataSource(cardDataSource,
                                   wuCardDataSource,
@@ -130,11 +135,21 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
                                   ubgCardDataSource,
                                   urgCardDataSource,
                                   brgCardDataSource,
+                                  winRateColors,
                                   winData);
     }
 
     private async Task SaveConfiguration()
     {
+        List<string> winRateColorsToShow = [];
+        foreach (var option in winRateColorsSetting.Options)
+        {
+            if (option.Value)
+            {
+                winRateColorsToShow.Add(option.Name);
+            }
+        }
+
         List<string> rankColorsToShow = [];
         foreach (var option in rankColorsSetting.Options)
         {
@@ -144,9 +159,11 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
             }
         }
 
+        Configuration.Instance.CurrentSetStartDateOffsetInDays = currentSetStartDateOffsetInDaysSetting.Value;
+        Configuration.Instance.WinRateColorsToShow = winRateColorsToShow;
+        Configuration.Instance.WinRateParticipationCutoff = winRateParticipationCutoffSetting.Value;
         Configuration.Instance.RankColorsToShow = rankColorsToShow;
         Configuration.Instance.MaxRankToShow = maxDisplayedRankSetting.Value;
-        Configuration.Instance.CurrentSetStartDateOffsetInDays = currentSetStartDateOffsetInDaysSetting.Value;
 
         await Configuration.Instance.Save();
     }
@@ -174,6 +191,19 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
         if (rankColorsSetting.Options.First(o => o.Name == THREE_COLOR_RANK_COLOR_OPTION_NAME).Value) rankColors.AddRange(ColorsUtil.ColorTriples());
         if (rankColorsSetting.Options.First(o => o.Name == FOUR_COLOR_RANK_COLOR_OPTION_NAME).Value) rankColors.AddRange(ColorsUtil.ColorQuadruples());
         if (rankColorsSetting.Options.First(o => o.Name == FIVE_COLOR_RANK_COLOR_OPTION_NAME).Value) rankColors.AddRange(ColorsUtil.ColorQuintuples());
+
+        return rankColors;
+    }
+
+    private List<Color> GetWinRateColors()
+    {
+        List<Color> rankColors = [];
+        if (winRateColorsSetting.Options.First(o => o.Name == COLORLESS_RANK_COLOR_OPTION_NAME).Value) rankColors.Add(Color.None);
+        if (winRateColorsSetting.Options.First(o => o.Name == ONE_COLOR_RANK_COLOR_OPTION_NAME).Value) rankColors.AddRange(ColorsUtil.ColorSingles());
+        if (winRateColorsSetting.Options.First(o => o.Name == TWO_COLOR_RANK_COLOR_OPTION_NAME).Value) rankColors.AddRange(ColorsUtil.ColorPairs());
+        if (winRateColorsSetting.Options.First(o => o.Name == THREE_COLOR_RANK_COLOR_OPTION_NAME).Value) rankColors.AddRange(ColorsUtil.ColorTriples());
+        if (winRateColorsSetting.Options.First(o => o.Name == FOUR_COLOR_RANK_COLOR_OPTION_NAME).Value) rankColors.AddRange(ColorsUtil.ColorQuadruples());
+        if (winRateColorsSetting.Options.First(o => o.Name == FIVE_COLOR_RANK_COLOR_OPTION_NAME).Value) rankColors.AddRange(ColorsUtil.ColorQuintuples());
 
         return rankColors;
     }
@@ -210,6 +240,8 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
     private readonly ParameterDate endDateParameter;
 
     private readonly SettingNumber currentSetStartDateOffsetInDaysSetting;
+    private readonly SettingMultipleOptions winRateColorsSetting;
+    private readonly SettingDecimal winRateParticipationCutoffSetting;
     private readonly SettingMultipleOptions rankColorsSetting;
     private readonly SettingNumber maxDisplayedRankSetting;
 }

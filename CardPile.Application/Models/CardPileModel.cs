@@ -154,6 +154,12 @@ internal class CardPileModel : ReactiveObject
                 number.ObservableForProperty(x => x.Value)
                       .Subscribe(_ => BuildCardDataSource(builder));
             }
+            else if (setting.Type == SettingType.Decimal)
+            {
+                var dec = setting as ICardDataSourceSettingDecimalService;
+                dec.ObservableForProperty(x => x.Value)
+                   .Subscribe(_ => BuildCardDataSource(builder));
+            }
             else if (setting.Type == SettingType.Option)
             {
                 var option = setting as ICardDataSourceSettingOptionService;

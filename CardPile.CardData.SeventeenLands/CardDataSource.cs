@@ -29,6 +29,7 @@ public class CardDataSource : ICardDataSource
                             RawCardDataSource ubgCardData,
                             RawCardDataSource urgCardData,
                             RawCardDataSource brgCardData,
+                            List<Color> winRateColors,
                             WinDataSource winData)
     {
         archetypeCardData[Color.None] = cardData;
@@ -65,11 +66,9 @@ public class CardDataSource : ICardDataSource
         var avgGihWr = new Statistic<float>("Avg GIH WR", (float)archetypeGihWrDistribution[Color.None].Mean, new PercentFormatter());
         Statistics = [avgGihWr];
 
-        int[] colorsCombinationsToQuery = [2, 3];
-        var sortedColorCombinations = ColorsUtil.Colors(colorsCombinationsToQuery);
-        sortedColorCombinations.Sort((a, b) => -Comparer<float?>.Default.Compare(archetypeWinData.GetWinPercentage((Color)(int)a), archetypeWinData.GetWinPercentage((Color)(int)b))); 
+        winRateColors.Sort((a, b) => -Comparer<float?>.Default.Compare(archetypeWinData.GetWinPercentage((Color)(int)a), archetypeWinData.GetWinPercentage((Color)(int)b))); 
         
-        foreach (Color pair in sortedColorCombinations)
+        foreach (Color pair in winRateColors)
         {
             float? winRate = archetypeWinData.GetWinPercentage((Color)(int)pair);
             if(!winRate.HasValue)
