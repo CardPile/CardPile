@@ -1,13 +1,54 @@
-﻿using Microsoft.Extensions.Primitives;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using NLog;
 using System.Text;
 using System.Web;
 
 namespace CardPile.CardData.SeventeenLands;
 
+public class SeventeenLandsThrottlingDelegatingHandler : DelegatingHandler
+{
+    public SeventeenLandsThrottlingDelegatingHandler(int maxParallelRequests, int maxRequestMillisecondsDelay)
+    {
+        InnerHandler = new HttpClientHandler();
+
+        semaphore = new SemaphoreSlim(maxParallelRequests);
+        rng = new Random();
+        maxMillisecondsDelay = maxRequestMillisecondsDelay;
+    }
+
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        await Task.Delay(rng.Next(0, maxMillisecondsDelay));
+
+        await semaphore.WaitAsync(cancellationToken);
+        try
+        {
+            return await base.SendAsync(request, cancellationToken);
+        }
+        finally
+        {
+            semaphore.Release();
+        }
+    }
+
+    private SemaphoreSlim semaphore;
+    private Random rng;
+    private int maxMillisecondsDelay;
+}
+
 public class SeventeenLandsCardDataSourceProvider
 {
+
+
+    static SeventeenLandsCardDataSourceProvider()
+    {
+        const int MAX_PARALLELISM = 3;
+        const int MAX_DELAY_MILLISECONDS = 2000;
+        httpClient = new(new SeventeenLandsThrottlingDelegatingHandler(MAX_PARALLELISM, MAX_DELAY_MILLISECONDS));
+    }
+
     internal const string ALL_USERS_USER_TYPE = "All users";
     internal const string ALL_COLORS_COLOR_TYPE = "All colors";
     internal const string ALL_COLORS_DECK_TYPE = "All colors";
@@ -422,7 +463,7 @@ public class SeventeenLandsCardDataSourceProvider
         return webStream;
     }
 
-    private static readonly HttpClient httpClient = new();
+    private static readonly HttpClient httpClient;
 
     private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -432,5 +473,5 @@ public class SeventeenLandsCardDataSourceProvider
     private readonly static string AppProgramData = OperatingSystem.IsMacOS() ? "/Users/Shared" : Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
     private readonly static string CardPileProgramData = Path.Combine(AppProgramData, "CardPile");
     private readonly static string CacheDirectory = Path.Combine(CardPileProgramData, "17LandsCache");
-    private const int CacheValidHours = 6;
+    private const int CacheValidHours = 24;
 }
