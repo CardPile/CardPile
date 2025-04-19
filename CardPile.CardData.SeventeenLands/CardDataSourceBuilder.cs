@@ -44,8 +44,8 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
         maxDisplayedRankSetting = new("Max rank to show", Configuration.Instance.MaxRankToShow, 0);
 
         deqDampingSampleSetting = new("DEq dampling sample", Configuration.Instance.DEqDampingSample, 0);
-        deqAtaBetaSetting = new("DEq ATA Beta", Configuration.Instance.DEqAtaBeta, -1.0m, 1.0m, 0.05m);  // TODO
-        deqP1P1ValueSetting = new("DEq P1P1 Value", Configuration.Instance.DEqP1P1Value, 0.0m, 1.0m, 0.05m);  // TODO
+        deqAtaBetaSetting = new("DEq ATA Beta", Configuration.Instance.DEqAtaBeta, -1.0m, 1.0m, 0.05m);
+        deqP1P1ValueSetting = new("DEq P1P1 Value", Configuration.Instance.DEqP1P1Value, 0.0m, 1.0m, 0.05m);
         deqArchetypeDecaySetting = new("DEq Archetype decay", Configuration.Instance.DEqArchetypeDecay, 0.0m, 1.0m, 0.05m);
         deqLossFactorSetting = new("DEq Loss factor", Configuration.Instance.DEqLossFactor, 0.0m, 0.6m, 0.05m);
         deqSampleDecaySetting = new("DEq Sample decay", Configuration.Instance.DEqSampleDecay, 0.0m, 1.0m, 0.05m);
