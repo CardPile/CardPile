@@ -5,7 +5,7 @@ namespace CardPile.CardData.SeventeenLands;
 
 internal class RawCardDataSource : IEnumerable<KeyValuePair<int, RawCardData>>
 {
-    internal RawCardDataSource(List<RawCardData> cardData, List<Color> rankColors, int maxRank)
+    internal RawCardDataSource(List<RawCardData> cardData, DateTime startDate, DateTime endDate, List<Color> rankColors, int maxRank)
     {
         List<MetricRankCalculator> calculatorInfos = new List<MetricRankCalculator>()
         {
@@ -54,12 +54,19 @@ internal class RawCardDataSource : IEnumerable<KeyValuePair<int, RawCardData>>
         }
 
         cardDataSet = cardData.ToDictionary(x => x.ArenaCardId, x => x);
+
+        StartDate = startDate;
+        EndDate = endDate;
     }
 
     public RawCardData? GetDataForCard(int cardNumber)
     {
         return cardDataSet.TryGetValue(cardNumber, out RawCardData? cardData) ? cardData : null;
     }
+
+    public DateTime StartDate { get; init; }
+
+    public DateTime EndDate { get; init; }
 
     public IEnumerator<KeyValuePair<int, RawCardData>> GetEnumerator()
     {

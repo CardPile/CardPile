@@ -7,4 +7,6 @@ public interface ICardDataSourceSettingDecimal : ICardDataSourceSetting
     public decimal MaxAllowedValue { get; }
 
     public decimal MinAllowedValue { get; }
+
+    public decimal Increment { get; }
 }

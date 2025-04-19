@@ -75,7 +75,10 @@ internal class CardData : ICardData
         ),
         NumberOfGamesNotSeenMetricDesc.NewMetric(),
         WinRateNotSeenMetricDesc.NewMetric(),
-        WinRateImprovementWhenDrawnMetricDesc.NewMetric())
+        WinRateImprovementWhenDrawnMetricDesc.NewMetric(),
+        DEqMetricDesc.NewMetric(),
+        DEqGradeMetricDesc.NewMetric()
+        )
     { }
 
     internal CardData
@@ -105,7 +108,9 @@ internal class CardData : ICardData
         ICardMetric colorTriplesWinRateImprovementMetric,
         ICardMetric numberOfGamesNotSeenMetric,
         ICardMetric winRateNotSeenMetric,
-        ICardMetric winRateImprovementWhenDrawnMetric
+        ICardMetric winRateImprovementWhenDrawnMetric,
+        ICardMetric deqMetric,
+        ICardMetric deqGradeMetric
     )
     {
         Name = name;
@@ -136,6 +141,8 @@ internal class CardData : ICardData
             numberOfGamesNotSeenMetric,
             winRateNotSeenMetric,
             winRateImprovementWhenDrawnMetric,
+            deqMetric,
+            deqGradeMetric,
         ];
     }
 
@@ -179,6 +186,8 @@ internal class CardData : ICardData
                 NumberOfGamesNotSeenMetricDesc,
                 WinRateNotSeenMetricDesc,
                 WinRateImprovementWhenDrawnMetricDesc,
+                DEqMetricDesc,
+                DEqGradeMetricDesc,
             ];
         }
     }
@@ -288,4 +297,6 @@ internal class CardData : ICardData
                                                                                                                                   URGWinRateImprovementMetricDesc,
                                                                                                                                   BRGWinRateImprovementMetricDesc);
 
+    internal static readonly MetricDescription<float> DEqMetricDesc = new MetricDescription<float>("DEq", true, false, new PercentFormatter(true));
+    internal static readonly LetterGradeMetricDescription DEqGradeMetricDesc = new LetterGradeMetricDescription("DEq grade", true, false);
 }
