@@ -75,7 +75,7 @@ internal class Configuration
 
     private const int DEFAULT_CURRENT_SET_START_DATE_OFFSET_IN_DAYS = 14;
 
-    private const int DEFAULT_DEQ_DAMPING_SAMPLE = 200;
+    private const int DEFAULT_DEQ_DAMPING_SAMPLE = 25;
     private const decimal DEFAULT_DEQ_ATA_BETA = -0.0033m;
     private const decimal DEFAULT_DEQ_P1P1_VALUE = 0.025m;
     private const decimal DEFAULT_DEQ_ARCHETYPE_DECAY = 0.95m;

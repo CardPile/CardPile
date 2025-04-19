@@ -49,7 +49,7 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
         deqArchetypeDecaySetting = new("DEq Archetype decay", Configuration.Instance.DEqArchetypeDecay, 0.0m, 1.0m, 0.05m);
         deqLossFactorSetting = new("DEq Loss factor", Configuration.Instance.DEqLossFactor, 0.0m, 0.6m, 0.05m);
         deqSampleDecaySetting = new("DEq Sample decay", Configuration.Instance.DEqSampleDecay, 0.0m, 1.0m, 0.05m);
-        deqFutureProjectionDaysSetting = new("DEq future projection days", Configuration.Instance.DEqFutureProjectionDays, 0);
+        deqFutureProjectionDaysSetting = new("DEq future projection days", Configuration.Instance.DEqFutureProjectionDays);
         deqColorsSetting = new("DEq color combination", ColorsCombinationNamesToOptions(Configuration.Instance.DEqColors));
 
         Settings =
