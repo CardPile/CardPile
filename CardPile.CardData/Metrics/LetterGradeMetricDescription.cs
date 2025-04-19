@@ -20,7 +20,7 @@ public class LetterGradeMetricDescription : ICardMetricDescription
 
     public IComparer<ICardMetric> Comparer { get => new CardLetterGradeMetricComparer(); }
 
-    public ICardMetric NewMetric(string? value)
+    public ICardMetric NewMetric(string? value = null)
     {
         var importance = ImportanceLevel.Regular;
         if(value != null && GRADE_TO_VALUE.TryGetValue(value, out int numericalValue))

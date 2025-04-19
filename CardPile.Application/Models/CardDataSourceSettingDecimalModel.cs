@@ -47,6 +47,11 @@ internal class CardDataSourceSettingDecimalModel : CardDataSourceSettingModel, I
         get => As<ICardDataSourceSettingDecimal>()!.MaxAllowedValue;
     }
 
+    public decimal Increment
+    {
+        get => As<ICardDataSourceSettingDecimal>()!.Increment;
+    }
+    
     public decimal temporaryValue;
 }
 

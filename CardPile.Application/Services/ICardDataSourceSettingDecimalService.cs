@@ -9,4 +9,6 @@ internal interface ICardDataSourceSettingDecimalService : ICardDataSourceSetting
     public decimal MinAllowedValue { get; }
 
     public decimal MaxAllowedValue { get; }
+
+    public decimal Increment { get; }
 }
