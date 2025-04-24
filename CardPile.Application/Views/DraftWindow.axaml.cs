@@ -1,15 +1,13 @@
 using Avalonia.ReactiveUI;
-using CardPile.Application.Services;
 using CardPile.Application.ViewModels;
 using ReactiveUI;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CardPile.Application.Views;
 
-public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
+public partial class DraftWindow : ReactiveWindow<DraftWindowViewModel>
 {
-    public MainWindow()
+    public DraftWindow()
     {
         InitializeComponent();
 
@@ -25,5 +23,6 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 
         interaction.SetOutput(await dialog.ShowDialog<bool>(this));
     }
+
 
 }

@@ -44,8 +44,10 @@ internal class CardPileModel : ReactiveObject
         SubscribeToAllBuilderSourceParameters(cardDataSourceBuilderCollectionModel.CurrentCardDataSourceBuilder);
         SubscribeToAllBuilderSourceSettings(cardDataSourceBuilderCollectionModel.CurrentCardDataSourceBuilder);
 
-        draftModel = new DraftModel(new WatcherModel(), cardDataSource);
+        watcherModel = new WatcherModel();
+        draftModel = new DraftModel(watcherModel, cardDataSource);
         statisticsModel = new CardDataSourceStatisticsModel(cardDataSource);
+        overlayModel = new OverlayModel();
     }
 
     public ICardDataSourceBuilderCollectionService CardDataSourceBuilderCollectionService
@@ -204,8 +206,10 @@ internal class CardPileModel : ReactiveObject
     private readonly LogModel logModel;
 
     private readonly CardDataSourceBuilderCollectionModel cardDataSourceBuilderCollectionModel;
+    private readonly WatcherModel watcherModel;
     private readonly DraftModel draftModel;
     private readonly CardDataSourceStatisticsModel statisticsModel;
+    private readonly OverlayModel overlayModel;
 
     private List<IDisposable> parameterDisposables = [];
 

@@ -1,0 +1,24 @@
+﻿<Window x:Class="CardPile.Overlay.Windows.OverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CardPile.Overlay.Windows"
+        mc:Ignorable="d"
+        Title="Card Pile Overlay"
+        Height="450"
+        Width="800"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True"
+>
+    <Window.Background>
+        <SolidColorBrush Color="#00000000" Opacity="0.0" />
+    </Window.Background>
+    <StackPanel>
+        <TextBlock x:Name="TestText" Foreground="White">Hello!</TextBlock>
+        <Button x:Name="TestButton" Width="200">World!</Button>
+    </StackPanel>
+</Window>

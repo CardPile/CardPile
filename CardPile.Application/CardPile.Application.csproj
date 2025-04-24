@@ -2,7 +2,8 @@
   <PropertyGroup>
     <VersionPrefix>0.1.0</VersionPrefix>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework Condition="$([System.OperatingSystem]::IsWindows())">net8.0-windows</TargetFramework>
+    <TargetFramework Condition="$([System.OperatingSystem]::IsMacOS())">net8.0-macos</TargetFramework>
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -37,6 +38,10 @@
     <ProjectReference Include="..\CardPile.CardData\CardPile.CardData.csproj" />
     <ProjectReference Include="..\CardPile.Deck\CardPile.Deck.csproj" />
     <ProjectReference Include="..\CardPile.Draft\CardPile.Draft.csproj" />
+    <ProjectReference Include="..\CardPile.Interprocess\CardPile.Interprocess.csproj" />
+    <ProjectReference Include="..\CardPile.Overlay.Windows\CardPile.Overlay.Windows.csproj">
+      <Private>True</Private>
+    </ProjectReference>
     <ProjectReference Include="..\CardPile.Watchers.ArenaLog\CardPile.Watchers.ArenaLog.csproj" />
     <ProjectReference Include="..\CardPile.Watchers.Unity\CardPile.Watchers.Unity.csproj" />
   </ItemGroup>
@@ -60,6 +65,9 @@
     </Compile>
     <Compile Update="Views\CardMetricsView.axaml.cs">
       <DependentUpon>CardMetricsView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\DraftWindow.axaml.cs">
+      <DependentUpon>DraftWindow.axaml</DependentUpon>
     </Compile>
     <Compile Remove="Extensions\TextBlockExtensions.cs" />
     <Compile Remove="Extensions\**" />

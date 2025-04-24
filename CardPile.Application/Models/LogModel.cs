@@ -4,7 +4,6 @@ using NLog.Layouts;
 using NLog.Targets;
 using ReactiveUI;
 using System;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace CardPile.Application.Models;
 

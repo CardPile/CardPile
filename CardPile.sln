@@ -27,6 +27,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardPile.Watchers.Unity", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardPile.Deck", "CardPile.Deck\CardPile.Deck.csproj", "{6B8982C2-6650-4472-89D1-311C3970A8BA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardPile.Overlay.Windows", "CardPile.Overlay.Windows\CardPile.Overlay.Windows.csproj", "{83412C6D-E7C9-4BE7-AFC2-271C74C3BA00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardPile.Interprocess", "CardPile.Interprocess\CardPile.Interprocess.csproj", "{802DA171-65F3-4F6C-8010-D02DC5356E01}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +85,14 @@ Global
 		{6B8982C2-6650-4472-89D1-311C3970A8BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B8982C2-6650-4472-89D1-311C3970A8BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B8982C2-6650-4472-89D1-311C3970A8BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83412C6D-E7C9-4BE7-AFC2-271C74C3BA00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83412C6D-E7C9-4BE7-AFC2-271C74C3BA00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83412C6D-E7C9-4BE7-AFC2-271C74C3BA00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83412C6D-E7C9-4BE7-AFC2-271C74C3BA00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{802DA171-65F3-4F6C-8010-D02DC5356E01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{802DA171-65F3-4F6C-8010-D02DC5356E01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{802DA171-65F3-4F6C-8010-D02DC5356E01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{802DA171-65F3-4F6C-8010-D02DC5356E01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

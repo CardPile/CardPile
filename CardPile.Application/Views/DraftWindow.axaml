@@ -6,16 +6,18 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:li="using:LoadingIndicators.Avalonia"
-        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="600"
-        x:Class="CardPile.Application.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
+        mc:Ignorable="d"
+        d:DesignWidth="1200"
+        d:DesignHeight="600"
+        x:Class="CardPile.Application.Views.DraftWindow"
+        x:DataType="vm:DraftWindowViewModel"
         Icon="/Assets/cardpile.ico"
         Title="Card Pile"
         WindowStartupLocation="CenterScreen">
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
+        <vm:DraftWindowViewModel/>
     </Design.DataContext>
 
     <Grid RowDefinitions="Auto, Auto, *" ColumnDefinitions="*">
@@ -228,7 +230,7 @@
                       </ItemsControl.Styles>
                       <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                          <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" MinWidth="182" Height="{Binding Converter={x:Static vm:MainWindowViewModel.CardCollectionToStackHeightConverter}}" />
+                          <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" MinWidth="182" Height="{Binding Converter={x:Static vm:DraftWindowViewModel.CardCollectionToStackHeightConverter}}" />
                         </ItemsPanelTemplate>
                       </ItemsControl.ItemsPanel>
                       <ItemsControl.ItemTemplate>
@@ -261,7 +263,7 @@
                 </ItemsControl.Styles>
                 <ItemsControl.ItemsPanel>
                   <ItemsPanelTemplate>
-                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding WhiteCardsSeen, Converter={x:Static vm:MainWindowViewModel.CardCollectionToStackHeightConverter}}" />
+                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding WhiteCardsSeen, Converter={x:Static vm:DraftWindowViewModel.CardCollectionToStackHeightConverter}}" />
                   </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
@@ -283,7 +285,7 @@
                 </ItemsControl.Styles>
                 <ItemsControl.ItemsPanel>
                   <ItemsPanelTemplate>
-                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding BlueCardsSeen, Converter={x:Static vm:MainWindowViewModel.CardCollectionToStackHeightConverter}}" />
+                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding BlueCardsSeen, Converter={x:Static vm:DraftWindowViewModel.CardCollectionToStackHeightConverter}}" />
                   </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
@@ -305,7 +307,7 @@
                 </ItemsControl.Styles>
                 <ItemsControl.ItemsPanel>
                   <ItemsPanelTemplate>
-                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding BlackCardsSeen, Converter={x:Static vm:MainWindowViewModel.CardCollectionToStackHeightConverter}}" />
+                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding BlackCardsSeen, Converter={x:Static vm:DraftWindowViewModel.CardCollectionToStackHeightConverter}}" />
                   </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
@@ -327,7 +329,7 @@
                 </ItemsControl.Styles>
                 <ItemsControl.ItemsPanel>
                   <ItemsPanelTemplate>
-                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding RedCardsSeen, Converter={x:Static vm:MainWindowViewModel.CardCollectionToStackHeightConverter}}" />
+                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding RedCardsSeen, Converter={x:Static vm:DraftWindowViewModel.CardCollectionToStackHeightConverter}}" />
                   </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
@@ -349,7 +351,7 @@
                 </ItemsControl.Styles>
                 <ItemsControl.ItemsPanel>
                   <ItemsPanelTemplate>
-                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding GreenCardsSeen, Converter={x:Static vm:MainWindowViewModel.CardCollectionToStackHeightConverter}}" />
+                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding GreenCardsSeen, Converter={x:Static vm:DraftWindowViewModel.CardCollectionToStackHeightConverter}}" />
                   </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
@@ -371,7 +373,7 @@
                 </ItemsControl.Styles>
                 <ItemsControl.ItemsPanel>
                   <ItemsPanelTemplate>
-                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding MulticolorCardsSeen, Converter={x:Static vm:MainWindowViewModel.CardCollectionToStackHeightConverter}}" />
+                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding MulticolorCardsSeen, Converter={x:Static vm:DraftWindowViewModel.CardCollectionToStackHeightConverter}}" />
                   </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
@@ -393,7 +395,7 @@
                 </ItemsControl.Styles>
                 <ItemsControl.ItemsPanel>
                   <ItemsPanelTemplate>
-                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding ColorlessCardsSeen, Converter={x:Static vm:MainWindowViewModel.CardCollectionToStackHeightConverter}}" />
+                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="{Binding ColorlessCardsSeen, Converter={x:Static vm:DraftWindowViewModel.CardCollectionToStackHeightConverter}}" />
                   </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>

@@ -15,7 +15,7 @@ using ReactiveUI;
 
 namespace CardPile.Application.ViewModels;
 
-public class MainWindowViewModel : ViewModelBase
+public class DraftWindowViewModel : ViewModelBase
 {
     public static FuncValueConverter<ICollection<CardDataViewModel>, int> CardCollectionToStackHeightConverter { get; } = new FuncValueConverter<ICollection<CardDataViewModel>, int>(collection =>
     {
@@ -27,10 +27,10 @@ public class MainWindowViewModel : ViewModelBase
         return (collection.Count - 1) * CardDataViewModel.CARD_HEADER_SIZE + (CardDataModel.CARD_IMAGE_WIDTH * 7) / 5;
     });
 
-    public MainWindowViewModel() : this(new CardPileModel())
+    public DraftWindowViewModel() : this(new CardPileModel())
     { }
 
-    internal MainWindowViewModel(CardPileModel model)
+    internal DraftWindowViewModel(CardPileModel model)
     {
         cardDataSourceBuilderCollectionService = model.CardDataSourceBuilderCollectionService;
         cardsInPackService = model.CurrentCardsInPackService;

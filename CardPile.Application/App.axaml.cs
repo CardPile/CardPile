@@ -45,10 +45,11 @@ public partial class App : Avalonia.Application
             }
 
             var model = new CardPileModel();
-            desktop.MainWindow = new MainWindow
+            desktop.MainWindow = new DraftWindow
             {
-                DataContext = new MainWindowViewModel(model),
+                DataContext = new DraftWindowViewModel(model),
             };
+
             desktop.MainWindow.Closed += MainWindowClosedHandler;
 
             desktop.MainWindow.Show();
