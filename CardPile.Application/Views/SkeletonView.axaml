@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CardPile.Application.ViewModels"
+             xmlns:v="using:CardPile.Application.Views"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CardPile.Application.Views.SkeletonView"
+             x:DataType="vm:SkeletonViewModel"
+             x:Name="SkeletonViewRoot"
+>
+  <Expander VerticalAlignment="Top" Width="{Binding #SkeletonViewRoot.Bounds.Width}">
+    <Expander.Header>
+      <TextBlock FontSize="16" FontWeight="DemiBold">
+        <TextBlock.Text>
+          <MultiBinding StringFormat="{}{0} ({1})">
+            <MultiBinding.Bindings>
+              <Binding Path="Name"/>
+              <Binding Path="Set"/>
+            </MultiBinding.Bindings>
+          </MultiBinding>
+        </TextBlock.Text>
+      </TextBlock>
+    </Expander.Header>
+
+
+    <ItemsControl ItemsSource="{Binding Groups}">
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <StackPanel Orientation="Vertical" />
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <v:SkeletonCardGroupView DataContext="{Binding}" Margin="0, 2" />
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </Expander>
+</UserControl>

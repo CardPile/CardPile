@@ -86,7 +86,7 @@ public class CardDataSource : ICardDataSource
 
     public string Name => "17Lands";
 
-    public ICardData? GetDataForCard(int cardNumber, DraftState state)
+    public ICardData? GetDataForCard(int cardNumber, DraftState? state = null)
     {
         RawCardData? rawCardData = archetypeCardData[Color.None].GetDataForCard(cardNumber);
         var type = CardInfo.Arena.GetCardTypeFromId(cardNumber);
@@ -200,9 +200,9 @@ public class CardDataSource : ICardDataSource
                                 rawCardData.Colors,
                                 rawCardData.Url,
                                 CardData.SeenMetricDesc.NewMetric(rawCardData.SeenCount, rawCardData.SeenCountRanks),
-                                CardData.AverageLastSeenAtMetricDesc.NewMetric(rawCardData.AvgSeen, ImportanceCalculators.BelowOffset(3f, 1f, () => state.LastPick), rawCardData.AvgSeenRanks),
+                                CardData.AverageLastSeenAtMetricDesc.NewMetric(rawCardData.AvgSeen, state != null ? ImportanceCalculators.BelowOffset(3f, 1f, () => state.LastPick) : ImportanceCalculators.Regular<float>(), rawCardData.AvgSeenRanks),
                                 CardData.PickedMetricDesc.NewMetric(rawCardData.PickCount, rawCardData.PickCountRanks),
-                                CardData.AveragePickedAtMetricDesc.NewMetric(rawCardData.AvgPick, ImportanceCalculators.BelowOffset(3f, 1f, () => state.LastPick), rawCardData.AvgPickRanks),
+                                CardData.AveragePickedAtMetricDesc.NewMetric(rawCardData.AvgPick, state != null ? ImportanceCalculators.BelowOffset(3f, 1f, () => state.LastPick) : ImportanceCalculators.Regular<float>(), rawCardData.AvgPickRanks),
                                 CardData.NumberOfGamesPlayedMetricDesc.NewMetric(rawCardData.GameCount, rawCardData.GameCountRanks),
                                 CardData.PlayRateMetricDesc.NewMetric(rawCardData.PlayRate, rawCardData.PlayRateRanks),
                                 CardData.WinRateWhenMaindeckedMetricDesc.NewMetric(rawCardData.WinRate, rawCardData.WinRateRanks),

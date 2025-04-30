@@ -138,24 +138,13 @@
       </Grid>  
       <!-- Picks & missing -->
       <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Name="ContentContainer">
-        <Grid RowDefinitions="Auto,Auto,Auto,Auto,*">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*">
           <!-- Picks -->
           <Expander Grid.Row="0" IsExpanded="true" VerticalAlignment="Top" Width="{Binding #ContentContainer.Bounds.Width}" Margin="0, 2" Padding="5 0 5 0">
             <Expander.Header>
               <TextBlock FontSize="18" FontWeight="DemiBold">Picks</TextBlock>
             </Expander.Header>
-            <ItemsControl ItemsSource="{Binding CardsInPack}">
-              <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                  <WrapPanel Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-              </ItemsControl.ItemsPanel>
-              <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                  <v:CardDataView DataContext="{Binding}" CanBeDeactiveted="true" />
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <v:HorizontalCardListView DataContext="{Binding CardsInPack}" CanBeDeactivated="true"/>
           </Expander>
           <!-- Missing -->
           <Expander Grid.Row="1" VerticalAlignment="Top" Width="{Binding #ContentContainer.Bounds.Width}" Margin="0, 2">
@@ -170,18 +159,7 @@
                   </DataTemplate>
                 </ContentControl.ContentTemplate>
               </ContentControl>
-              <ItemsControl DockPanel.Dock="Right" ItemsSource="{Binding CardsMissingFromPack}">
-                <ItemsControl.ItemsPanel>
-                  <ItemsPanelTemplate>
-                    <WrapPanel Orientation="Horizontal" />
-                  </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                  <DataTemplate>
-                    <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" />
-                  </DataTemplate>
-                </ItemsControl.ItemTemplate>
-              </ItemsControl>
+              <v:HorizontalCardListView DataContext="{Binding CardsMissingFromPack}" ShowMetrics="false" ShowPopup="true" />
             </DockPanel>
           </Expander>
           <!-- Upcoming -->
@@ -189,18 +167,7 @@
             <Expander.Header>
               <TextBlock FontSize="18" FontWeight="DemiBold">Possible upcoming cards</TextBlock>
             </Expander.Header>
-            <ItemsControl ItemsSource="{Binding CardsUpcomingAfterPack}">
-              <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                  <WrapPanel Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-              </ItemsControl.ItemsPanel>
-              <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                  <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" />
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <v:HorizontalCardListView DataContext="{Binding CardsUpcomingAfterPack}" ShowMetrics="false" ShowPopup="true" />
           </Expander>
           <!-- Deck -->
           <Expander Grid.Row="3" VerticalAlignment="Top" Width="{Binding #ContentContainer.Bounds.Width}" Margin="0, 2">
@@ -403,6 +370,24 @@
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
             </Grid>
+          </Expander>
+          <!-- Skeletons -->
+          <Expander Grid.Row="5" VerticalAlignment="Top" Width="{Binding #ContentContainer.Bounds.Width}" Margin="0, 2">
+            <Expander.Header>
+              <TextBlock FontSize="18" FontWeight="DemiBold">Skeletons</TextBlock>
+            </Expander.Header>
+            <ItemsControl ItemsSource="{Binding Skeletons}"  Name="SkeletonContentContainer">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <StackPanel Orientation="Vertical" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <v:SkeletonView Width="{Binding #SkeletonContentContainer.Bounds.Width}" DataContext="{Binding}" Margin="0, 2" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
           </Expander>
         </Grid>
       </ScrollViewer>

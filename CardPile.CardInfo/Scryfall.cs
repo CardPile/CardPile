@@ -58,8 +58,8 @@ public static class Scryfall
                     File.Delete(filePath);
                 }
                 catch(Exception ex)
-                { 
-                    Logger.Error("Error removing image {cardImageFilePath}. Exception: {exception}", filePath, ex);
+                {
+                    logger.Error("Error removing image {cardImageFilePath}. Exception: {exception}", filePath, ex);
                 }
             }
         }
@@ -157,8 +157,8 @@ public static class Scryfall
             else
             {
                 var content = response.Content.ReadAsStringAsync();
-                Logger.Warn("Error fetching image for {cacheIdentifier} from {url}", cacheIdentifier, url);
-                Logger.Warn("Status: {status} Response: {response}", response.StatusCode, content.Result);
+                logger.Warn("Error fetching image for {cacheIdentifier} from {url}", cacheIdentifier, url);
+                logger.Warn("Status: {status} Response: {response}", response.StatusCode, content.Result);
             }
         }
 
@@ -170,7 +170,7 @@ public static class Scryfall
     private  static readonly string ScryfallImageCache = Path.Combine(CardPileProgramData, "ScryfallImageCache");
     private const int CACHE_VALID_DAYS = 30;
 
-    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
     private static readonly HttpClient HttpClient = new();
 }

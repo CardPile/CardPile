@@ -28,11 +28,11 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         
         PreviousPick = null;
 
-        this.logModel = logModel;
-        this.logModel.DraftEnterEvent += DraftEnterHandler;
-        this.logModel.DraftChoiceEvent += DraftChoiceHandler;
-        this.logModel.DraftPickEvent += DraftPickHandler;
-        this.logModel.DraftLeaveEvent += DraftLeaveHandler;
+        this.watcherModel = logModel;
+        this.watcherModel.DraftEnterEvent += DraftEnterHandler;
+        this.watcherModel.DraftChoiceEvent += DraftChoiceHandler;
+        this.watcherModel.DraftPickEvent += DraftPickHandler;
+        this.watcherModel.DraftLeaveEvent += DraftLeaveHandler;
 
         SetCardDataSource(cardDataSource);
     }
@@ -96,7 +96,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error("Error removing card image {cardImageFilePath}. Exception: {exception}", filePath, ex);
+                    logger.Error("Error removing card image {cardImageFilePath}. Exception: {exception}", filePath, ex);
                 }
             }
         }
@@ -133,18 +133,18 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
 
         UpdateCardDataAfterChoice(cardDataSource);
         
-        Logger.Info($"Current deck [{string.Join(",", draftState.GetCurrentDeck())}]");
+        logger.Info($"Current deck [{string.Join(",", draftState.GetCurrentDeck())}]");
 
         var missing = draftState.GetCurrentMissingCards();
         if (missing.Count > 0)
         {
-            Logger.Info($"Missing cards [{string.Join(",", missing)}]");
+            logger.Info($"Missing cards [{string.Join(",", missing)}]");
         }
 
         var upcoming = draftState.GetCurrentUpcomingCards();
         if (upcoming.Count > 0)
         {
-            Logger.Info($"Upcoming cards [{string.Join(",", upcoming)}]");
+            logger.Info($"Upcoming cards [{string.Join(",", upcoming)}]");
         }
     }
 
@@ -166,7 +166,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
 
         UpdateCardDataAfterPick(cardDataSource);
         
-        Logger.Info($"Current deck [{string.Join(",", draftState.GetCurrentDeck())}]");
+        logger.Info($"Current deck [{string.Join(",", draftState.GetCurrentDeck())}]");
     }
 
     private void DraftLeaveHandler(object? sender, DraftLeaveEvent e)
@@ -197,7 +197,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
             }
             else
             {
-                Logger.Info(string.Format($"Could not find card data for in pack card with MTGA id {cardInPack}"));
+                logger.Info(string.Format($"Could not find card data for in pack card with MTGA id {cardInPack}"));
             }
         }
 
@@ -210,7 +210,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
             }
             else
             {
-                Logger.Info(string.Format($"Could not find card data for missing card with MTGA id {missingCard}"));
+                logger.Info(string.Format($"Could not find card data for missing card with MTGA id {missingCard}"));
             }
         }
 
@@ -223,7 +223,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
             }
             else
             {
-                Logger.Info(string.Format($"Could not find card data for upcoming card with MTGA id {upcomingCard}"));
+                logger.Info(string.Format($"Could not find card data for upcoming card with MTGA id {upcomingCard}"));
             }
         }
 
@@ -259,7 +259,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
             }
             else
             {
-                Logger.Info(string.Format($"Could not find card data for seen card with MTGA id {seenCard}"));
+                logger.Info(string.Format($"Could not find card data for seen card with MTGA id {seenCard}"));
             }
         }
     }
@@ -334,8 +334,8 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
     private IDeckService deck;
     private ICardDataService? previousPick;
 
-    private readonly WatcherModel logModel;
+    private readonly WatcherModel watcherModel;
     private ICardDataSource cardDataSource;
 
-    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 }

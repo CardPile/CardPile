@@ -3,10 +3,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using CardPile.Application.Services;
 using CardPile.Deck;
+using ReactiveUI;
 
 namespace CardPile.Application.Models;
 
-public class DeckModel : IDeckService
+public class DeckModel : ReactiveObject, IDeckService
 {
     public void SetDeck(DraftDeck deck)
     {

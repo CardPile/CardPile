@@ -37,6 +37,11 @@ internal class CardMetricViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref visible, value);
     }
 
+    internal string TextValue
+    {
+        get => cardMetric.TextValue;
+    }
+
     private ICardMetric cardMetric;
     private bool visible;
 }

@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CardPile.Application.ViewModels"
+             xmlns:v="using:CardPile.Application.Views"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="CardPile.Application.Views.HorizontalCardListView"
+             x:DataType="vm:CardListViewModel"
+             x:Name="HorizontalCardListViewRoot"
+>
+  <ItemsControl ItemsSource="{Binding Cards}">
+    <ItemsControl.ItemsPanel>
+      <ItemsPanelTemplate>
+        <WrapPanel Orientation="Horizontal" />
+      </ItemsPanelTemplate>
+    </ItemsControl.ItemsPanel>
+    <ItemsControl.ItemTemplate>
+      <DataTemplate>
+        <v:CardDataView DataContext="{Binding}" ShowMetrics="{Binding #HorizontalCardListViewRoot.ShowMetrics}" ShowPopup="{Binding #HorizontalCardListViewRoot.ShowPopup}" CanBeDeactivated="{Binding #HorizontalCardListViewRoot.CanBeDeactivated}" />
+      </DataTemplate>
+    </ItemsControl.ItemTemplate>
+  </ItemsControl>
+</UserControl>
