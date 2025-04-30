@@ -143,6 +143,8 @@ public class Crypt
 
                 group.Cards.Add(parsedCard);                
             }
+
+            group.Cards.Sort((lhs, rhs) => -Comparer<ImportanceLevel>.Default.Compare(lhs.Importance, rhs.Importance));
         }
 
         foreach (var subtableEntry in table.Where(kv => kv.Value is TomlTable))
@@ -174,7 +176,7 @@ public class Crypt
             return null;
         }
 
-        var cardName = card.ArrayValues[0].StringValue;
+        var cardName = card.ArrayValues[0].StringValue.Trim();
         if(string.IsNullOrEmpty(cardName))
         {
             logger.Error("Error parsing card entry in skeleton. Invalid card name {cardName}", cardName);

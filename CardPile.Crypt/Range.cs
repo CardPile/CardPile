@@ -5,7 +5,7 @@ public class Range
     public Range()
     {
         From = 0;
-        To = 0;
+        To = int.MaxValue;
     }
 
     internal int From;
@@ -35,6 +35,11 @@ public class Range
 
     private string ConvertToText()
     {
+        if(From == 0 && To == int.MaxValue)
+        {
+            return "*";
+        }
+
         if(From == To)
         {
             return From.ToString();
