@@ -54,5 +54,11 @@ internal class SkeletonModel : ReactiveObject, ISkeletonService
         }
     }
 
+    internal void ClearCount()
+    {
+        Skeleton.ClearCount();
+        NotifyPropertiesChanged();
+    }
+
     private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 }

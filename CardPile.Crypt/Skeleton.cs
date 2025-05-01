@@ -1,6 +1,7 @@
 ﻿using CardPile.CardData.Importance;
 using NLog;
 using Tomlet.Models;
+using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace CardPile.Crypt;
 
@@ -43,6 +44,14 @@ public class Skeleton
                     break;
                 }
             }
+        }
+    }
+    
+    public void ClearCount()
+    {
+        foreach (var group in Groups)
+        {
+            group.ClearCount();
         }
     }
 

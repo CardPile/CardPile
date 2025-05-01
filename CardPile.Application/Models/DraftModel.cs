@@ -76,10 +76,11 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         private set => this.RaiseAndSetIfChanged(ref crypt, value);
     }
 
-    public void ClearCardsSeenAndDeck()
+    public void ClearPersistentState()
     {
         cardsSeen.Clear();
         deck.Clear();
+        crypt.Clear();
     }
 
     internal static void ClearOldDrafts()
@@ -125,7 +126,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         cardsInCurrentPack.Clear();
         cardsMissingInCurrentPack.Clear();
         cardsUpcomingAfterCurrentPack.Clear();
-        ClearCardsSeenAndDeck();
+        ClearPersistentState();
 
         PreviousPick = null;
     }

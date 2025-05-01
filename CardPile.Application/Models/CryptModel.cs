@@ -1,5 +1,6 @@
 ﻿using CardPile.Application.Services;
 using CardPile.CardData;
+using CardPile.Crypt;
 using NLog;
 using ReactiveUI;
 using System.Collections.Generic;
@@ -44,6 +45,20 @@ internal class CryptModel : ReactiveObject, ICryptService
             }
 
             skeletonModel.NotifyPropertiesChanged();
+        }
+    }
+
+    public void Clear()
+    {
+        foreach (var skeletonService in Skeletons)
+        {
+            if (skeletonService is not SkeletonModel skeletonModel)
+            {
+                logger.Error("ISkeletonService is not a SkeletonModel");
+                continue;
+            }
+
+            skeletonModel.ClearCount();
         }
     }
 

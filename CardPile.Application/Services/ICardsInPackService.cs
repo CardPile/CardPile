@@ -17,5 +17,5 @@ internal interface ICardsInPackService : IReactiveObject
     
     public ICardDataService? PreviousPick { get; }
 
-    public void ClearCardsSeenAndDeck();
+    public void ClearPersistentState();
 }

@@ -128,7 +128,7 @@ public class MainWindowViewModel : ViewModelBase
 
         ClearCardsSeenAndDeckCommand = ReactiveCommand.Create(() =>
         {
-            cardsInPackService.ClearCardsSeenAndDeck();
+            cardsInPackService.ClearPersistentState();
         });
     }
 
