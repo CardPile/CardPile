@@ -24,7 +24,7 @@ internal class SkeletonViewModel : ViewModelBase
 
     internal string Name {  get => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(SkeletonService.Name); }
 
-    internal string Set { get => CultureInfo.CurrentCulture.TextInfo.ToUpper(SkeletonService.Set); }
+    internal string Set { get => SkeletonService.Set; }
 
     internal ObservableCollection<SkeletonCardGroupViewModel> Groups { get; } = [];
 

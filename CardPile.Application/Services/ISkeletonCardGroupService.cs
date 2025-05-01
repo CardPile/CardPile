@@ -9,9 +9,13 @@ internal interface ISkeletonCardGroupService : IReactiveObject
 {
     public string Name { get; }
 
+    public Range? Range { get; }
+
     public ImportanceLevel Importance { get; }
 
-    public Range Range { get; }
+    public int Count { get; }
+
+    public bool IsSatisfied { get; }
 
     public ObservableCollection<ISkeletonCardGroupService> Groups { get; }
 

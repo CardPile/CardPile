@@ -40,5 +40,19 @@ internal class SkeletonModel : ReactiveObject, ISkeletonService
         }
     }
 
+    internal void NotifyPropertiesChanged()
+    {
+        foreach(var groupService in Groups)
+        {
+            if(groupService is not SkeletonCardGroupModel cardGroupModel)
+            {
+                logger.Error("ISkeletonCardGroupService is not a SkeletonCardGroupModel");
+                continue;
+            }
+
+            cardGroupModel.NotifyPropertiesChanged();
+        }
+    }
+
     private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 }

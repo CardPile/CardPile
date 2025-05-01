@@ -2,6 +2,7 @@
 using CardPile.CardData;
 using NLog;
 using ReactiveUI;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -16,7 +17,7 @@ internal class CryptModel : ReactiveObject, ICryptService
 
     public ObservableCollection<ISkeletonService> Skeletons { get; }
 
-    internal void SetCardDataSource(ICardDataSource cardDataSource)
+    public void SetCardDataSource(ICardDataSource cardDataSource)
     {
         foreach (var skeletonService in Skeletons)
         {
@@ -27,6 +28,22 @@ internal class CryptModel : ReactiveObject, ICryptService
             }
 
             skeleton.SetCardDataSource(cardDataSource);
+        }
+    }
+
+    public void UpdateSkeletons(List<int> cardIds)
+    {
+        crypt.UpdateSkeletons(cardIds);
+
+        foreach(var skeletonService in Skeletons)
+        {
+            if(skeletonService is not SkeletonModel skeletonModel)
+            {
+                logger.Error("ISkeletonService is not a SkeletonModel");
+                continue;
+            }
+
+            skeletonModel.NotifyPropertiesChanged();
         }
     }
 

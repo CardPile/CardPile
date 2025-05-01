@@ -1,6 +1,7 @@
 ﻿using CardPile.Application.Services;
 using CardPile.CardData.Importance;
 using ReactiveUI;
+using System;
 
 namespace CardPile.Application.ViewModels;
 
@@ -9,6 +10,9 @@ internal class SkeletonCardEntryViewModel : CardDataViewModel
     internal SkeletonCardEntryViewModel(ISkeletonCardEntryService skeletonCardEntryService, int index) : base(skeletonCardEntryService, index)
     {
         SkeletonCardEntryService = skeletonCardEntryService;
+
+        skeletonCardEntryService.ObservableForProperty(x => x.Count).Subscribe(_ => UpdateRangeText());
+        skeletonCardEntryService.ObservableForProperty(x => x.IsSatisfied).Subscribe(_ => UpdateRangeText());
 
         UpdateRangeText();
     }
@@ -23,10 +27,14 @@ internal class SkeletonCardEntryViewModel : CardDataViewModel
 
     private void UpdateRangeText()
     {
+        const string GREEN_CHECKMARK = "\u2705 ";
+
         RangeText = string.Format(
-            "{0}{1}",
-            ImportanceUtils.ToMarker(SkeletonCardEntryService.Importance),
-            SkeletonCardEntryService.Range.TextValue
+            "{0}{1} out of {2}{3}",
+            SkeletonCardEntryService.IsSatisfied && SkeletonCardEntryService.Count > 0 ? ConverterUtils.HIGHLIGHT_GREEN_MARKER : ImportanceUtils.ToMarker(SkeletonCardEntryService.Importance),
+            SkeletonCardEntryService.Count,
+            SkeletonCardEntryService.Range.TextValue,
+            SkeletonCardEntryService.IsSatisfied ? GREEN_CHECKMARK : string.Empty
         );
     }
 

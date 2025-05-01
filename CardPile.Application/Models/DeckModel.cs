@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using CardPile.Application.Services;
+using CardPile.CardData;
 using CardPile.Deck;
 using ReactiveUI;
 
@@ -9,8 +10,15 @@ namespace CardPile.Application.Models;
 
 public class DeckModel : ReactiveObject, IDeckService
 {
-    public void SetDeck(DraftDeck deck)
+    public DeckModel()
     {
+        deck = new DraftDeck();
+    }
+
+    public void UpdateDeck(List<ICardData> cards)
+    {
+        deck.UpdateDeck(cards);
+
         CardStacks.Clear();
         
         foreach (var stack in deck.CardStacks)
@@ -25,4 +33,6 @@ public class DeckModel : ReactiveObject, IDeckService
     }
 
     public ObservableCollection<List<ICardDataService>> CardStacks { get; init; } = [];
+
+    private DraftDeck deck;
 }

@@ -44,7 +44,6 @@ internal class CardPileModel : ReactiveObject
         SubscribeToAllBuilderSourceParameters(cardDataSourceBuilderCollectionModel.CurrentCardDataSourceBuilder);
         SubscribeToAllBuilderSourceSettings(cardDataSourceBuilderCollectionModel.CurrentCardDataSourceBuilder);
 
-        cryptModel = new CryptModel(cardDataSource);
         draftModel = new DraftModel(new WatcherModel(), cardDataSource);
         statisticsModel = new CardDataSourceStatisticsModel(cardDataSource);
     }
@@ -71,7 +70,7 @@ internal class CardPileModel : ReactiveObject
 
     public ICryptService CryptService
     {
-        get => cryptModel;
+        get => draftModel.Crypt;
     }
 
     public bool IsCardDataSourceBeingBuilt
@@ -197,7 +196,6 @@ internal class CardPileModel : ReactiveObject
                                   {
                                       if(x.IsCompletedSuccessfully)
                                       {
-                                          cryptModel.SetCardDataSource(x.Result);
                                           draftModel.SetCardDataSource(x.Result);
                                           statisticsModel.SetCardDataSource(x.Result);
                                       }
@@ -211,7 +209,6 @@ internal class CardPileModel : ReactiveObject
     private readonly LogModel logModel;
 
     private readonly CardDataSourceBuilderCollectionModel cardDataSourceBuilderCollectionModel;
-    private readonly CryptModel cryptModel;
     private readonly DraftModel draftModel;
     private readonly CardDataSourceStatisticsModel statisticsModel;
 

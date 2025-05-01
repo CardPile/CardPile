@@ -1,5 +1,4 @@
-﻿using Avalonia.Media;
-using CardPile.CardData;
+﻿using CardPile.CardData;
 using Color = CardPile.CardData.Color;
 using Type = CardPile.CardData.Type;
 
@@ -7,10 +6,14 @@ namespace CardPile.Deck;
 
 public class DraftDeck
 {
-    public DraftDeck(List<ICardData> cards)
+    public List<List<ICardData>> CardStacks { get; private set; } = [];
+    
+    public void UpdateDeck(List<ICardData> cards)
     {
+        CardStacks.Clear();
+
         const int MAIN_COLOR_COUNT = 2;
-        
+
         var cardGroups = GroupCards(cards, MAIN_COLOR_COUNT);
         var mainColorAndCards = cardGroups.MaxBy(x => x.Value.Count);
         var sideboardCards = SplitSideboard(cards, mainColorAndCards.Key);
@@ -27,15 +30,13 @@ public class DraftDeck
             // No main colors - split sideboard cards by mana value, then sort each stack by color
             CardStacks = SplitCardsByManaValue(sideboardCards);
         }
-        
+
         foreach (var cardStack in CardStacks)
         {
             SortStackByColor(cardStack);
-        }        
+        }
     }
-    
-    public List<List<ICardData>> CardStacks { get; init; }
-    
+
     private Dictionary<Color, List<ICardData>> GroupCards(List<ICardData> cards, int numberOfColorsToConsider)
     {
         var colorCombinationCounts = ColorsUtil.Colors(numberOfColorsToConsider)

@@ -18,6 +18,9 @@ internal class SkeletonCardGroupViewModel : ViewModelBase
 
         Cards = [.. skeletonCardGroupService.Cards.Select((c, i) => new SkeletonCardEntryViewModel(c, i))];
 
+        skeletonCardGroupService.ObservableForProperty(x => x.Count).Subscribe(_ => UpdateTitle());
+        skeletonCardGroupService.ObservableForProperty(x => x.IsSatisfied).Subscribe(_ => UpdateTitle());
+
         UpdateTitle();
     }
 
@@ -48,20 +51,26 @@ internal class SkeletonCardGroupViewModel : ViewModelBase
 
     private void UpdateTitle()
     {
-        if(SkeletonCardGroupService.Range != null)
+        const string GREEN_CHECKMARK = "\u2705 ";
+
+        if (SkeletonCardGroupService.Range != null)
         {
             Title = string.Format(
-                "{0}{1} ({2})",
-                ImportanceUtils.ToMarker(SkeletonCardGroupService.Importance),
+                "{0}{1}{2} ({3} out of {4})",
+                SkeletonCardGroupService.IsSatisfied ? GREEN_CHECKMARK : string.Empty,
+                SkeletonCardGroupService.IsSatisfied && SkeletonCardGroupService.Count > 0 ? ConverterUtils.HIGHLIGHT_GREEN_MARKER : ImportanceUtils.ToMarker(SkeletonCardGroupService.Importance),
                 CultureInfo.CurrentCulture.TextInfo.ToTitleCase(SkeletonCardGroupService.Name),
+                SkeletonCardGroupService.Count,
                 SkeletonCardGroupService.Range.TextValue);
         }
         else
         {
             Title = string.Format(
-                "{0}{1}",
-                ImportanceUtils.ToMarker(SkeletonCardGroupService.Importance),
-                CultureInfo.CurrentCulture.TextInfo.ToTitleCase(SkeletonCardGroupService.Name));
+                "{0}{1}{2} (currently {3})",
+                SkeletonCardGroupService.IsSatisfied ? GREEN_CHECKMARK : string.Empty,
+                SkeletonCardGroupService.IsSatisfied && SkeletonCardGroupService.Count > 0 ? ConverterUtils.HIGHLIGHT_GREEN_MARKER : ImportanceUtils.ToMarker(SkeletonCardGroupService.Importance),
+                CultureInfo.CurrentCulture.TextInfo.ToTitleCase(SkeletonCardGroupService.Name),
+                SkeletonCardGroupService.Count);
         }
     }
 

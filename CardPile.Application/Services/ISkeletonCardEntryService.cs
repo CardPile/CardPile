@@ -8,4 +8,8 @@ internal interface ISkeletonCardEntryService : ICardDataService
     public Range Range { get; }
 
     public ImportanceLevel Importance { get; }
+
+    public int Count { get; }
+
+    public bool IsSatisfied { get; }
 }

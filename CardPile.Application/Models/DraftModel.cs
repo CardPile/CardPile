@@ -9,7 +9,7 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using CardPile.Deck;
+using CardPile.Crypt;
 
 namespace CardPile.Application.Models;
 
@@ -25,7 +25,8 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         cardsSeen = [];
         
         deck = new DeckModel();
-        
+        crypt = new CryptModel(cardDataSource);
+
         PreviousPick = null;
 
         this.watcherModel = logModel;
@@ -57,22 +58,28 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         get => cardsSeen;
     }
 
-    public IDeckService Deck
-    {
-        get => deck;
-        private set => this.RaiseAndSetIfChanged(ref deck, value);
-    }
-
     public ICardDataService? PreviousPick
     {
         get => previousPick;
         private set => this.RaiseAndSetIfChanged(ref previousPick, value);
     }
 
+    public IDeckService Deck
+    {
+        get => deck;
+        private set => this.RaiseAndSetIfChanged(ref deck, value);
+    }
+
+    public ICryptService Crypt
+    {
+        get => crypt;
+        private set => this.RaiseAndSetIfChanged(ref crypt, value);
+    }
+
     public void ClearCardsSeenAndDeck()
     {
         cardsSeen.Clear();
-        Deck.Clear();
+        deck.Clear();
     }
 
     internal static void ClearOldDrafts()
@@ -106,6 +113,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
     internal void SetCardDataSource(ICardDataSource newCardDataSource)
     {
         cardDataSource = newCardDataSource;
+        crypt.SetCardDataSource(newCardDataSource);
         UpdateCardDataAfterChoice(cardDataSource);
         UpdateCardDataAfterPick(cardDataSource);
     }
@@ -241,15 +249,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
     private void UpdateCardDataAfterPick(ICardDataSource newCardDataSource)
     {
         cardsSeen.Clear();
-        Deck.Clear();
 
-        var cardList = draftState.GetCurrentDeck()
-                                 .Select(c => newCardDataSource.GetDataForCard(c, draftState))
-                                 .Where(x => x != null)
-                                 .Cast<ICardData>()
-                                 .ToList();
-        Deck.SetDeck(new DraftDeck(cardList));
-        
         foreach (var seenCard in draftState.GetSeenCards())
         {
             var seenCardData = newCardDataSource.GetDataForCard(seenCard, draftState);
@@ -262,6 +262,16 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
                 logger.Info(string.Format($"Could not find card data for seen card with MTGA id {seenCard}"));
             }
         }
+
+        var cardList = draftState.GetCurrentDeck()
+                                 .Select(c => newCardDataSource.GetDataForCard(c, draftState))
+                                 .Where(x => x != null)
+                                 .Cast<ICardData>()
+                                 .ToList();
+
+        deck.UpdateDeck(cardList);
+
+        crypt.UpdateSkeletons(draftState.GetCurrentDeck());
     }
 
     private static void SerializeDraftState(DraftState state)
@@ -331,8 +341,9 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
     private readonly ObservableCollection<ICardDataService> cardsMissingInCurrentPack;
     private readonly ObservableCollection<ICardDataService> cardsUpcomingAfterCurrentPack;
     private readonly ObservableCollection<ICardDataService> cardsSeen;
-    private IDeckService deck;
     private ICardDataService? previousPick;
+    private IDeckService deck;
+    private ICryptService crypt;
 
     private readonly WatcherModel watcherModel;
     private ICardDataSource cardDataSource;
