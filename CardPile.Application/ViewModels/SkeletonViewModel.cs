@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Reactive.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CardPile.Application.ViewModels;
 
@@ -33,6 +34,14 @@ internal class SkeletonViewModel : ViewModelBase
         foreach (var group in Groups)
         {
             group.UpdateCardMetricVisibility(updater);
+        }
+    }
+
+    internal void UpdateCountVisibility(bool visible)
+    {
+        foreach (var group in Groups)
+        {
+            group.UpdateCountVisibility(visible);
         }
     }
 }

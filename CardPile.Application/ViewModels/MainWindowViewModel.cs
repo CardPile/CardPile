@@ -88,6 +88,9 @@ public class MainWindowViewModel : ViewModelBase
         this.ObservableForProperty(p => p.SortByMetricDescription)
             .Subscribe(_ => SortCardsDescendingBySelectedMetric(ColorlessCardsSeen));
 
+        this.ObservableForProperty(p => p.ShowSkeletonCounts)
+            .Subscribe(v => UpdateSkeletonCountVisibility(v.Value));
+
         logWindow = new LogWindow()
         {
             DataContext = new LogWindowViewModel(model.LogService)
@@ -184,6 +187,12 @@ public class MainWindowViewModel : ViewModelBase
     internal ObservableCollection<List<CardDataViewModel>> CardStacksInDeck { get; } = [];
 
     internal ObservableCollection<SkeletonViewModel> Skeletons { get; } = [];
+
+    internal bool ShowSkeletonCounts
+    { 
+        get => showSkeletonCounts;
+        set => this.RaiseAndSetIfChanged(ref showSkeletonCounts, value);
+    }
 
     internal ICommand ShowLogCommand { get; init; }
 
@@ -901,10 +910,20 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    private void UpdateSkeletonCountVisibility(bool visible)
+    {
+        foreach (var skeleton in Skeletons)
+        {
+            skeleton.UpdateCountVisibility(visible);
+        }
+    }
+
     private readonly ICardDataSourceBuilderCollectionService cardDataSourceBuilderCollectionService;
     private readonly ICardsInPackService cardsInPackService;
     private readonly ICardDataSourceStatisticsService statisticsService;
     private readonly ICryptService cryptService;
+
+    private readonly LogWindow logWindow;
 
     private ObservableCollection<CardDataMetricDescriptionViewModel> metricDescriptionViewModels;
     private CardDataMetricDescriptionViewModel? sortByMetricDescriptionViewModel;
@@ -913,7 +932,7 @@ public class MainWindowViewModel : ViewModelBase
 
     private CardDataViewModel? previouslyPickedCardFromPack = null;
 
-    private readonly LogWindow logWindow;
-
     private bool isCardDataSourceBeingBuilt = false;
+
+    private bool showSkeletonCounts = true;
 }

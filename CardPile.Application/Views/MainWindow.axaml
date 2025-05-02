@@ -376,18 +376,21 @@
             <Expander.Header>
               <TextBlock FontSize="18" FontWeight="DemiBold">Skeletons</TextBlock>
             </Expander.Header>
-            <ItemsControl ItemsSource="{Binding Skeletons}"  Name="SkeletonContentContainer">
-              <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                  <StackPanel Orientation="Vertical" />
-                </ItemsPanelTemplate>
-              </ItemsControl.ItemsPanel>
-              <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                  <v:SkeletonView Width="{Binding #SkeletonContentContainer.Bounds.Width}" DataContext="{Binding}" Margin="0, 2" />
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <StackPanel>
+              <CheckBox IsChecked="{Binding ShowSkeletonCounts, Mode=TwoWay}">Show counts</CheckBox>
+              <ItemsControl ItemsSource="{Binding Skeletons}" Name="SkeletonContentContainer">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <v:SkeletonView Width="{Binding #SkeletonContentContainer.Bounds.Width}" DataContext="{Binding}" Margin="0, 2" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
           </Expander>
         </Grid>
       </ScrollViewer>

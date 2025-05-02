@@ -26,4 +26,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         interaction.SetOutput(await dialog.ShowDialog<bool>(this));
     }
 
+    private void TwoWay(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+    }
 }

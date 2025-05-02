@@ -25,18 +25,37 @@ internal class SkeletonCardEntryViewModel : CardDataViewModel
         set => this.RaiseAndSetIfChanged(ref rangeText, value);
     }
 
+    internal void UpdateCountVisibility(bool visible)
+    {
+        showCounts = visible;
+        UpdateRangeText();
+    }
+
     private void UpdateRangeText()
     {
         const string GREEN_CHECKMARK = "\u2705 ";
 
-        RangeText = string.Format(
-            "{0}{1} out of {2}{3}",
-            SkeletonCardEntryService.IsSatisfied && SkeletonCardEntryService.Count > 0 ? ConverterUtils.HIGHLIGHT_GREEN_MARKER : ImportanceUtils.ToMarker(SkeletonCardEntryService.Importance),
-            SkeletonCardEntryService.Count,
-            SkeletonCardEntryService.Range.TextValue,
-            SkeletonCardEntryService.IsSatisfied ? GREEN_CHECKMARK : string.Empty
-        );
+        if(showCounts)
+        {
+            RangeText = string.Format(
+                "{0}{1} out of {2}{3}",
+                SkeletonCardEntryService.IsSatisfied && SkeletonCardEntryService.Count > 0 ? ConverterUtils.HIGHLIGHT_GREEN_MARKER : ImportanceUtils.ToMarker(SkeletonCardEntryService.Importance),
+                SkeletonCardEntryService.Count,
+                SkeletonCardEntryService.Range.TextValue,
+                SkeletonCardEntryService.IsSatisfied ? GREEN_CHECKMARK : string.Empty
+            );
+        }
+        else
+        {
+            RangeText = string.Format(
+                "{0}{1}",
+                ImportanceUtils.ToMarker(SkeletonCardEntryService.Importance),
+                SkeletonCardEntryService.Range.TextValue
+            );
+        }
     }
 
     private string rangeText = string.Empty;
+
+    private bool showCounts = true;
 }
