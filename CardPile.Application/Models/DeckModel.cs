@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -15,7 +16,7 @@ public class DeckModel : ReactiveObject, IDeckService
         deck = new DraftDeck();
     }
 
-    public void UpdateDeck(List<ICardData> cards)
+    public void UpdateDeck(List<ICardData> cards, Func<ICardDataService, ICardDataService> annotator)
     {
         deck.UpdateDeck(cards);
 
@@ -23,7 +24,7 @@ public class DeckModel : ReactiveObject, IDeckService
         
         foreach (var stack in deck.CardStacks)
         {
-            CardStacks.Add(stack.Select(card => new CardDataModel(card)).ToList<ICardDataService>());
+            CardStacks.Add([.. stack.Select(card => annotator(new CardDataModel(card)))]);
         }
     }
 

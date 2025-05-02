@@ -1,7 +1,9 @@
-﻿using Avalonia.Media.Imaging;
+﻿using Avalonia.Controls.Documents;
+using Avalonia.Data.Converters;
+using Avalonia.Media.Imaging;
 using CardPile.Application.Services;
-using CardPile.CardData.Metrics;
 using ReactiveUI;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,6 +11,8 @@ namespace CardPile.Application.ViewModels;
 
 public class CardDataViewModel : ViewModelBase
 {
+    public static FuncValueConverter<string, InlineCollection> AnnotationTextToInlinesConverter { get; } = new FuncValueConverter<string, InlineCollection>(text => ConverterUtils.TextToInlines(text));
+
     public const int CARD_HEADER_SIZE = 26;
 
     internal CardDataViewModel(ICardDataService cardDataService, int index, bool highlight = false)
@@ -27,6 +31,11 @@ public class CardDataViewModel : ViewModelBase
     }
 
     internal CardMetricsViewModel Metrics { get; init; }
+
+    internal List<ICardAnnotationService> Annotations
+    { 
+        get => CardDataService.Annotations; 
+    }
 
     internal Task<Bitmap?> CardImage
     { 

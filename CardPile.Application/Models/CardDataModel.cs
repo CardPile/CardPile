@@ -42,6 +42,8 @@ public class CardDataModel : ReactiveObject, ICardDataService
         get => cardData.Metrics; 
     }
 
+    public List<ICardAnnotationService> Annotations { get; } = [];
+
     public Task<Bitmap?> CardImage
     {
         get => Scryfall.LoadBitmap($"{ArenaCardId}", Url); 

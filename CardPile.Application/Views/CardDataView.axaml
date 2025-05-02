@@ -57,16 +57,28 @@
         </Border>
       </StackPanel>
       <Border Grid.Column="1" Grid.Row="1" CornerRadius="10" ClipToBounds="True" Background="Gray">
-        <v:CardMetricsView DataContext="{Binding Metrics}" HighlightImportance="{Binding !#CardDataViewRoot.ShowPopup}" ShowRanks="{Binding !#CardDataViewRoot.ShowPopup}">
-          <v:CardMetricsView.IsVisible>
-            <MultiBinding Converter="{x:Static BoolConverters.And}">
-              <MultiBinding.Bindings>
-                <Binding Path="#CardDataViewRoot.ShowMetrics"/>
-                <Binding Path="AnyMetricVisible"/>
-              </MultiBinding.Bindings>
-            </MultiBinding>
-          </v:CardMetricsView.IsVisible>
-        </v:CardMetricsView>
+        <StackPanel Orientation="Vertical">
+          <v:CardMetricsView DataContext="{Binding Metrics}" HighlightImportance="{Binding !#CardDataViewRoot.ShowPopup}" ShowRanks="{Binding !#CardDataViewRoot.ShowPopup}">
+            <v:CardMetricsView.IsVisible>
+              <MultiBinding Converter="{x:Static BoolConverters.And}">
+                <MultiBinding.Bindings>
+                  <Binding Path="#CardDataViewRoot.ShowMetrics"/>
+                  <Binding Path="AnyMetricVisible"/>
+                </MultiBinding.Bindings>
+              </MultiBinding>
+            </v:CardMetricsView.IsVisible>
+          </v:CardMetricsView>
+          <ItemsControl ItemsSource="{Binding Annotations}" >
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <UniformGrid Rows="1" Margin="5 0">
+                  <TextBlock Inlines="{Binding Name, Converter={x:Static vm:CardDataViewModel.AnnotationTextToInlinesConverter}}" Margin="5 2" />
+                  <TextBlock Inlines="{Binding TextValue, Converter={x:Static vm:CardDataViewModel.AnnotationTextToInlinesConverter}}" Margin="5 2" HorizontalAlignment="Right" />
+                </UniformGrid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
       </Border>
     </Grid>
   </StackPanel>

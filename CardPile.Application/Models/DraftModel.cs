@@ -202,7 +202,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
             var cardInPackData = newCardDataSource.GetDataForCard(cardInPack, draftState);
             if (cardInPackData != null)
             {
-                cardsInCurrentPack.Add(new CardDataModel(cardInPackData));
+                cardsInCurrentPack.Add(AnnotateCard(new CardDataModel(cardInPackData)));
             }
             else
             {
@@ -215,7 +215,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
             var missingCardData = newCardDataSource.GetDataForCard(missingCard, draftState);
             if (missingCardData != null)
             {
-                cardsMissingInCurrentPack.Add(new CardDataModel(missingCardData));
+                cardsMissingInCurrentPack.Add(AnnotateCard(new CardDataModel(missingCardData)));
             }
             else
             {
@@ -228,7 +228,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
             var upcomingCardData = newCardDataSource.GetDataForCard(upcomingCard, draftState);
             if (upcomingCardData != null)
             {
-                cardsUpcomingAfterCurrentPack.Add(new CardDataModel(upcomingCardData));
+                cardsUpcomingAfterCurrentPack.Add(AnnotateCard(new CardDataModel(upcomingCardData)));
             }
             else
             {
@@ -242,7 +242,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
             var previouslyPickedCardData = newCardDataSource.GetDataForCard(previouslyPickedCard.Value, draftState);
             if(previouslyPickedCardData != null)
             {
-                PreviousPick = new CardDataModel(previouslyPickedCardData);
+                PreviousPick = AnnotateCard(new CardDataModel(previouslyPickedCardData));
             }
         }
     }
@@ -256,7 +256,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
             var seenCardData = newCardDataSource.GetDataForCard(seenCard, draftState);
             if (seenCardData != null)
             {
-                cardsSeen.Add(new CardDataModel(seenCardData));
+                cardsSeen.Add(AnnotateCard(new CardDataModel(seenCardData)));
             }
             else
             {
@@ -270,7 +270,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
                                  .Cast<ICardData>()
                                  .ToList();
 
-        deck.UpdateDeck(cardList);
+        deck.UpdateDeck(cardList, c => AnnotateCard(c));
 
         crypt.UpdateSkeletons(draftState.GetCurrentDeck());
     }
@@ -332,6 +332,12 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         string executableDirectory = Environment.ProcessPath != null ? Path.GetDirectoryName(Environment.ProcessPath) ?? "." : ".";
         string draftDirectory = Path.Combine(executableDirectory, "Drafts");
         return draftDirectory;
+    }
+
+    private ICardDataService AnnotateCard(ICardDataService card)
+    {
+        card.Annotations.Add(new CardAnnotationModel("{ImportanceLevel.Critical}Hello", "{ImportanceLevel.Low}World"));
+        return card;
     }
 
     private readonly DraftState draftState;
