@@ -11,14 +11,13 @@ namespace CardPile.Application.ViewModels;
 
 public class CardDataViewModel : ViewModelBase
 {
-    public static FuncValueConverter<string, InlineCollection> AnnotationTextToInlinesConverter { get; } = new FuncValueConverter<string, InlineCollection>(text => ConverterUtils.TextToInlines(text));
-
     public const int CARD_HEADER_SIZE = 26;
 
     internal CardDataViewModel(ICardDataService cardDataService, int index, bool highlight = false)
     {
         CardDataService = cardDataService;
         Metrics = new CardMetricsViewModel([.. CardDataService.Metrics.Select(x => new CardMetricViewModel(x))]);
+        Annotations = new CardAnnotationsViewModel([.. CardDataService.Annotations.Select(x => new CardAnnotationViewModel(x))]);
         Index = index;
         Highlight = highlight;
     }
@@ -32,10 +31,7 @@ public class CardDataViewModel : ViewModelBase
 
     internal CardMetricsViewModel Metrics { get; init; }
 
-    internal List<ICardAnnotationService> Annotations
-    { 
-        get => CardDataService.Annotations; 
-    }
+    internal CardAnnotationsViewModel Annotations { get; init; }
 
     internal Task<Bitmap?> CardImage
     { 
