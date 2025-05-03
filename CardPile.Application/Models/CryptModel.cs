@@ -1,5 +1,6 @@
 ﻿using CardPile.Application.Services;
 using CardPile.CardData;
+using CardPile.CardData.Importance;
 using CardPile.Crypt;
 using NLog;
 using ReactiveUI;
@@ -29,6 +30,27 @@ internal class CryptModel : ReactiveObject, ICryptService
             }
 
             skeleton.SetCardDataSource(cardDataSource);
+        }
+    }
+
+    public void AnnotateCard(ICardDataService card)
+    {
+        foreach (var skeletonService in Skeletons)
+        {
+            if (skeletonService is not SkeletonModel skeleton)
+            {
+                logger.Error("ISkeletonService is not a SkeletonModel");
+                continue;
+            }
+
+            var result = skeleton.CanAcceptCard(card);
+            if(result != null)
+            {
+                var (importance, range) = result.Value;
+                var name = string.Format("{0}{1}", ImportanceUtils.ToMarker(importance), skeleton.Name);
+                var text = string.Format("{0}{1}", ImportanceUtils.ToMarker(importance), range.TextValue);
+                card.Annotations.Add(new CardAnnotationModel(name, text));
+            }
         }
     }
 

@@ -28,6 +28,8 @@ public class CardEntry : IBone
 
     public bool IsSatisfied { get => Range.Contains(Count); }
 
+    public List<int> CardIds { get; }
+
     public int PrimaryCardId { get => CardIds.First(); }
 
     public void ClearCount()
@@ -47,11 +49,29 @@ public class CardEntry : IBone
             return false;
         }
 
+        // TODO: Check upwards
+
         Count++;
+
         return true;
     }
 
-    internal List<int> CardIds { get; }
+    internal bool CanAddCard(int cardId)
+    {
+        if(!CardIds.Contains(cardId))
+        {
+            return false;
+        }
+
+        if (Range.To < Count + 1)
+        {
+            return false;
+        }
+
+        // TODO: Check upwards
+
+        return true;
+    }
 
     internal static CardEntry? TryLoad(TomlArray card, string set)
     {

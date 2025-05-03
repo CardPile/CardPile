@@ -47,6 +47,32 @@ public class Skeleton
         }
     }
     
+    public (ImportanceLevel, Range)? CanAcceptCard(int cardId)
+    {
+        var cardEntries = GetAllCardEntries();
+
+        cardEntries.Sort((lhs, rhs) =>
+        {
+            var result = -Comparer<ImportanceLevel>.Default.Compare(lhs.Importance, rhs.Importance);
+            if (result != 0)
+            {
+                return result;
+            }
+            return Comparer<int>.Default.Compare(lhs.Height, rhs.Height);
+        });
+
+
+        foreach (var entry in cardEntries)
+        {
+            if (entry.CanAddCard(cardId))
+            {
+                return (entry.Importance, entry.Range);
+            }
+        }
+
+        return null;
+    }
+
     public void ClearCount()
     {
         foreach (var group in Groups)
@@ -114,13 +140,23 @@ public class Skeleton
         return true;
     }
 
-    internal List<IBone> GetAllBones()
+    private List<IBone> GetAllBones()
     {
         var result = new List<IBone>();
         foreach (var group in Groups)
         {
             result.Add(group);
             result.AddRange(group.GetAllChildBones());
+        }
+        return result;
+    }
+
+    private List<CardEntry> GetAllCardEntries()
+    {
+        var result = new List<CardEntry>();
+        foreach (var group in Groups)
+        {
+            result.AddRange(group.GetAllCardEntries());
         }
         return result;
     }

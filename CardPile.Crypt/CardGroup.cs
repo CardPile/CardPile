@@ -218,5 +218,19 @@ public class CardGroup : IBone
         return result;
     }
 
+    internal List<CardEntry> GetAllCardEntries()
+    {
+        var result = new List<CardEntry>();
+
+        foreach (var group in Groups)
+        {
+            result.AddRange(group.GetAllCardEntries());
+        }
+
+        result.AddRange(Cards);
+
+        return result;
+    }
+
     private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 }

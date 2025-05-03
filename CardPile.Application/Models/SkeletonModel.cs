@@ -1,5 +1,6 @@
 ﻿using CardPile.Application.Services;
 using CardPile.CardData;
+using CardPile.CardData.Importance;
 using CardPile.Crypt;
 using NLog;
 using ReactiveUI;
@@ -38,6 +39,11 @@ internal class SkeletonModel : ReactiveObject, ISkeletonService
 
             group.SetCardDataSource(cardDataSource);
         }
+    }
+
+    public (ImportanceLevel, Range)? CanAcceptCard(ICardDataService card)
+    {
+        return Skeleton.CanAcceptCard(card.ArenaCardId);
     }
 
     internal void NotifyPropertiesChanged()

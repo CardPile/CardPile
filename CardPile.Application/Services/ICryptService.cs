@@ -11,6 +11,8 @@ internal interface ICryptService : IReactiveObject
 
     public void SetCardDataSource(ICardDataSource cardDataSource);
 
+    public void AnnotateCard(ICardDataService card);
+
     public void UpdateSkeletons(List<int> cardIds);
 
     public void Clear();

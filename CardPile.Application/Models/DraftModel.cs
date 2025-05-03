@@ -336,7 +336,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
 
     private ICardDataService AnnotateCard(ICardDataService card)
     {
-        card.Annotations.Add(new CardAnnotationModel("{ImportanceLevel.Critical}Hello", "{ImportanceLevel.Low}World"));
+        crypt.AnnotateCard(card);
         return card;
     }
 
