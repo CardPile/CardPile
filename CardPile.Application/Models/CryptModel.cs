@@ -47,7 +47,7 @@ internal class CryptModel : ReactiveObject, ICryptService
             if(result != null)
             {
                 var (importance, range) = result.Value;
-                var name = string.Format("{0}{1}", ImportanceUtils.ToMarker(importance), skeleton.Name);
+                var name = string.Format("Skeleton: {0}{1}", ImportanceUtils.ToMarker(importance), skeleton.Name);
                 var text = string.Format("{0}{1}", ImportanceUtils.ToMarker(importance), range.TextValue);
                 card.Annotations.Add(new CardAnnotationModel(name, text));
             }
