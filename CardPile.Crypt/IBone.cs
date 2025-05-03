@@ -19,4 +19,6 @@ public interface IBone
     public void ClearCount();
 
     public bool TryAddCard(int cardId);
+
+    public bool CanAddCard(int cardId);
 }

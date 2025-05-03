@@ -7,14 +7,17 @@ namespace CardPile.Crypt;
 
 public class CardEntry : IBone
 {
-    internal CardEntry(string name, List<int> cardIds, Range range, ImportanceLevel importance)
+    internal CardEntry(CardGroup parent, string name, List<int> cardIds, Range range, ImportanceLevel importance)
     {
+        Parent = parent;
         Name = name;
         Range = range;
         Importance = importance;
         CardIds = cardIds;
         Count = 0;
     }
+
+    public CardGroup Parent { get; init; }
 
     public string Name { get; }
 
@@ -39,24 +42,17 @@ public class CardEntry : IBone
 
     public bool TryAddCard(int cardId)
     {
-        if (!CardIds.Contains(cardId))
+        if (!CanAddCard(cardId))
         {
             return false;
         }
-
-        if (Range.To < Count + 1)
-        {
-            return false;
-        }
-
-        // TODO: Check upwards
 
         Count++;
 
         return true;
     }
 
-    internal bool CanAddCard(int cardId)
+    public bool CanAddCard(int cardId)
     {
         if(!CardIds.Contains(cardId))
         {
@@ -68,12 +64,20 @@ public class CardEntry : IBone
             return false;
         }
 
-        // TODO: Check upwards
+        var parent = Parent;
+        while (parent != null)
+        {
+            if(parent.Range != null && parent.Range.To < Count + 1)
+            {
+                return false;
+            }
+            parent = parent.Parent;
+        }
 
         return true;
     }
 
-    internal static CardEntry? TryLoad(TomlArray card, string set)
+    internal static CardEntry? TryLoad(TomlArray card, CardGroup parent, string set)
     {
         if (card.Count < 2 && 3 < card.Count)
         {
@@ -114,7 +118,7 @@ public class CardEntry : IBone
             }
         }
 
-        return new CardEntry(cardName, cardIds, range, importance);
+        return new CardEntry(parent, cardName, cardIds, range, importance);
     }
 
     private static readonly Logger logger = LogManager.GetCurrentClassLogger();

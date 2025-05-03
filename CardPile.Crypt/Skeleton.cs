@@ -47,11 +47,11 @@ public class Skeleton
         }
     }
     
-    public (ImportanceLevel, Range)? CanAcceptCard(int cardId)
+    public (ImportanceLevel, Range?)? CanAcceptCard(int cardId)
     {
-        var cardEntries = GetAllCardEntries();
+        var bones = GetAllBones();
 
-        cardEntries.Sort((lhs, rhs) =>
+        bones.Sort((lhs, rhs) =>
         {
             var result = -Comparer<ImportanceLevel>.Default.Compare(lhs.Importance, rhs.Importance);
             if (result != 0)
@@ -61,12 +61,13 @@ public class Skeleton
             return Comparer<int>.Default.Compare(lhs.Height, rhs.Height);
         });
 
+        bones.ForEach(b => b.ClearCount());
 
-        foreach (var entry in cardEntries)
+        foreach (var bone in bones)
         {
-            if (entry.CanAddCard(cardId))
+            if (bone.CanAddCard(cardId))
             {
-                return (entry.Importance, entry.Range);
+                return (bone.Importance, bone.Range);
             }
         }
 
@@ -108,7 +109,7 @@ public class Skeleton
                 return null;
             }
 
-            var cardGroup = CardGroup.TryLoad(tableEntry.Key, table, set);
+            var cardGroup = CardGroup.TryLoad(table, null, tableEntry.Key, set);
             if (cardGroup == null)
             {
                 logger.Error("Error parsing skeleton. Invalid card group {table}", table);
@@ -147,16 +148,6 @@ public class Skeleton
         {
             result.Add(group);
             result.AddRange(group.GetAllChildBones());
-        }
-        return result;
-    }
-
-    private List<CardEntry> GetAllCardEntries()
-    {
-        var result = new List<CardEntry>();
-        foreach (var group in Groups)
-        {
-            result.AddRange(group.GetAllCardEntries());
         }
         return result;
     }

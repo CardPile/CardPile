@@ -6,7 +6,6 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Reactive.Linq;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CardPile.Application.ViewModels;
 

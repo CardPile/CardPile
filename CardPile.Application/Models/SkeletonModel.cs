@@ -41,14 +41,14 @@ internal class SkeletonModel : ReactiveObject, ISkeletonService
         }
     }
 
-    public (ImportanceLevel, Range)? CanAcceptCard(ICardDataService card)
+    public (ImportanceLevel, Range?)? CanAcceptCard(ICardDataService card)
     {
         return Skeleton.CanAcceptCard(card.ArenaCardId);
     }
 
     internal void NotifyPropertiesChanged()
     {
-        foreach(var groupService in Groups)
+        foreach (var groupService in Groups)
         {
             if(groupService is not SkeletonCardGroupModel cardGroupModel)
             {
