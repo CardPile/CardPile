@@ -36,7 +36,7 @@ internal class WatcherModel : ReactiveObject, IWatcherService
 
     private string GetPlayerLogLocation()
     {
-        return Path.Combine(Util.GetRepositoryRoot() ?? "\\", "Test data", "Logs", "Player_fed.log");
+        // return Path.Combine(Util.GetRepositoryRoot() ?? "\\", "Test data", "Logs", "Player_fed.log");
 
         if(OperatingSystem.IsMacOS())
         {
