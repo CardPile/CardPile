@@ -1,5 +1,4 @@
-﻿using CardPile.CardInfo;
-using NLog;
+﻿using NLog;
 using Tomlet;
 
 namespace CardPile.Crypt;
@@ -7,9 +6,7 @@ namespace CardPile.Crypt;
 public class Crypt
 {
     public Crypt()
-    {
-        LoadSkeletons();
-    }
+    {}
 
     public List<Skeleton> Skeletons { get; init; } = [];
 
@@ -21,15 +18,14 @@ public class Crypt
         }
     }
 
-    private void LoadSkeletons()
+    public void LoadSkeletons(string skeletonDirectory)
     {
-        string executableDirectory = Environment.ProcessPath != null ? Path.GetDirectoryName(Environment.ProcessPath) ?? "." : ".";
-        string skeletonDirectory = Path.Combine(executableDirectory, "Skeletons");
-
         if (!Directory.Exists(skeletonDirectory))
         {
             return;
         }
+
+        Skeletons.Clear();
 
         var filePaths = Directory.GetFiles(skeletonDirectory, "*.toml", SearchOption.AllDirectories);
         foreach (var filePath in filePaths)

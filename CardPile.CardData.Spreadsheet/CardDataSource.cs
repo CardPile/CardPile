@@ -14,6 +14,8 @@ public class CardDataSource : ICardDataSource
 
     public string Name => "Spreadsheet";
 
+    public string? Set => null;
+
     public ICardData? GetDataForCard(int cardNumber, DraftState? draftState = null)
     {
         string? cardNameFromArena = CardInfo.Arena.GetCardNameFromId(cardNumber);

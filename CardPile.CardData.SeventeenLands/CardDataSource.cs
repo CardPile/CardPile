@@ -3,12 +3,14 @@ using CardPile.CardData.Importance;
 using CardPile.CardData.Metrics;
 using CardPile.Draft;
 using MathNet.Numerics.Distributions;
+using System.Collections.Generic;
 
 namespace CardPile.CardData.SeventeenLands;
 
 public class CardDataSource : ICardDataSource
 {
-    internal CardDataSource(RawCardDataSource cardData,
+    internal CardDataSource(string set,
+                            RawCardDataSource cardData,
                             RawCardDataSource wuCardData,
                             RawCardDataSource wbCardData,
                             RawCardDataSource wrCardData,
@@ -33,6 +35,8 @@ public class CardDataSource : ICardDataSource
                             WinDataSource winData,
                             DEqCalculator calculator)
     {
+        Set = set;
+
         archetypeCardData[Color.None] = cardData;
         archetypeCardData[Color.WU] = wuCardData;
         archetypeCardData[Color.WB] = wbCardData;
@@ -85,6 +89,8 @@ public class CardDataSource : ICardDataSource
     }
 
     public string Name => "17Lands";
+
+    public string? Set { get; init; }
 
     public ICardData? GetDataForCard(int cardNumber, DraftState? state = null)
     {

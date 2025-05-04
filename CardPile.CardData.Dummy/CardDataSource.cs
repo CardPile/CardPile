@@ -15,6 +15,8 @@ public class CardDataSource : ICardDataSource
 
     public string Name => "Dummy";
 
+    public string? Set => null;
+
     public ICardData? GetDataForCard(int cardNumber, DraftState? state = null)
     {
         if (firstCardNumber == null)

@@ -20,7 +20,7 @@ internal class WinDataSource
             return null;
         }
 
-        return (float)Math.Round((double)winData.Wins / (double)winData.Games, 3);
+        return (float)Math.Round(winData.Wins.Value / winData.Games.Value, 3);
     }
 
     private int? NameToColorCount(string? name)

@@ -1,12 +1,11 @@
-﻿using CardPile.Application.Services;
+﻿using System;
+using CardPile.Application.Services;
 using CardPile.CardData;
 using CardPile.CardData.Importance;
-using CardPile.Crypt;
 using NLog;
 using ReactiveUI;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace CardPile.Application.Models;
 
@@ -14,23 +13,19 @@ internal class CryptModel : ReactiveObject, ICryptService
 {
     internal CryptModel(ICardDataSource cardDataSource)
     {
-        Skeletons = [.. crypt.Skeletons.Select(s => new SkeletonModel(s, cardDataSource))];
+        this.cardDataSource = cardDataSource;
+        
+        ReloadSkeletons();
+
+        Configuration.Instance.ObservableForProperty(x => x.CryptLocation).Subscribe(_ => ReloadSkeletons());
     }
 
-    public ObservableCollection<ISkeletonService> Skeletons { get; }
+    public ObservableCollection<ISkeletonService> Skeletons { get; } = [];
 
-    public void SetCardDataSource(ICardDataSource cardDataSource)
+    public void SetCardDataSource(ICardDataSource newCardDataSource)
     {
-        foreach (var skeletonService in Skeletons)
-        {
-            if(skeletonService is not SkeletonModel skeleton)
-            {
-                logger.Error("ISkeletonService is not a SkeletonModel");
-                continue;
-            }
-
-            skeleton.SetCardDataSource(cardDataSource);
-        }
+        cardDataSource = newCardDataSource;
+        UpdateSkeletonModels();
     }
 
     public void AnnotateCard(ICardDataService card)
@@ -52,6 +47,12 @@ internal class CryptModel : ReactiveObject, ICryptService
                 card.Annotations.Add(new CardAnnotationModel(name, text));
             }
         }
+    }
+
+    public void ReloadSkeletons()
+    {
+        crypt.LoadSkeletons(Configuration.Instance.CryptLocation);
+        UpdateSkeletonModels();
     }
 
     public void UpdateSkeletons(List<int> cardIds)
@@ -84,7 +85,24 @@ internal class CryptModel : ReactiveObject, ICryptService
         }
     }
 
+    private void UpdateSkeletonModels()
+    {
+        Skeletons.Clear();
+
+        foreach (var skeleton in crypt.Skeletons)
+        {
+            if (cardDataSource.Set != null && cardDataSource.Set != skeleton.Set)
+            {
+                continue;
+            }
+
+            Skeletons.Add(new SkeletonModel(skeleton, cardDataSource));
+        }
+    }
+
     private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
     private readonly Crypt.Crypt crypt = new();
+
+    private ICardDataSource cardDataSource;
 }

@@ -39,30 +39,6 @@ internal class SkeletonCardGroupModel : ReactiveObject, ISkeletonCardGroupServic
 
     public ObservableCollection<ISkeletonCardEntryService> Cards { get; }
 
-    internal void SetCardDataSource(ICardDataSource cardDataSource)
-    { 
-        foreach(var groupService in Groups)
-        {
-            if(groupService is not  SkeletonCardGroupModel group)
-            {
-                logger.Error("ISkeletonCardGroupService is not a SkeletonCardGroupModel");
-                continue;
-            }
-
-            group.SetCardDataSource(cardDataSource);
-        }
-
-        var cardList = CardGroup.Cards.Select(c => (cardDataSource.GetDataForCard(c.PrimaryCardId), c))
-                                      .Where(x => x.Item1 != null)
-                                      .Cast<(ICardData, CardEntry)>();
-
-        Cards.Clear();
-        foreach (var (card, cardEntry) in cardList)
-        {
-            Cards.Add(new SkeletonCardEntryModel(card, cardEntry));
-        }
-    }
-
     internal void NotifyPropertiesChanged()
     {
         this.RaisePropertyChanged(nameof(Count));

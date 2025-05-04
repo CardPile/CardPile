@@ -27,20 +27,6 @@ internal class SkeletonModel : ReactiveObject, ISkeletonService
 
     public ObservableCollection<ISkeletonCardGroupService> Groups { get; init; }
 
-    internal void SetCardDataSource(ICardDataSource cardDataSource)
-    {
-        foreach (var groupService in Groups)
-        {
-            if(groupService is not SkeletonCardGroupModel group)
-            {
-                logger.Error("ISkeletonCardGroupService is not a SkeletonCardGroupModel");
-                continue;
-            }
-
-            group.SetCardDataSource(cardDataSource);
-        }
-    }
-
     public (ImportanceLevel, Range?)? CanAcceptCard(ICardDataService card)
     {
         return Skeleton.CanAcceptCard(card.ArenaCardId);

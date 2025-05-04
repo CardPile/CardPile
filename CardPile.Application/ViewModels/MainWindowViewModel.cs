@@ -11,6 +11,7 @@ using CardPile.Application.Services;
 using CardPile.Application.Views;
 using CardPile.CardData;
 using CardPile.CardData.Metrics;
+using CardPile.CardData.Settings;
 using DynamicData;
 using ReactiveUI;
 
@@ -109,6 +110,7 @@ public class MainWindowViewModel : ViewModelBase
         });
 
         ShowCardDataSourceSettingsDialog = new Interaction<CardDataSourceSettingsDialogViewModel, bool>();
+        ShowSettingsDialog = new Interaction<SettingsDialogViewModel, bool>();
 
         ShowCardDataSourceSettingsCommand = ReactiveCommand.CreateFromTask(async () =>
         {
@@ -124,9 +126,14 @@ public class MainWindowViewModel : ViewModelBase
             }
         });
 
-        ShowSettingsCommand = ReactiveCommand.Create(() =>
+        ShowSettingsCommand = ReactiveCommand.Create(async () =>
         {
-            // TODO....
+            var settingsViewModel = new SettingsDialogViewModel();
+            var result = await ShowSettingsDialog.Handle(settingsViewModel);
+            if (result)
+            {
+                await Configuration.Instance.Save();
+            }
         });
 
         ClearCardsSeenAndDeckCommand = ReactiveCommand.Create(() =>
@@ -197,6 +204,8 @@ public class MainWindowViewModel : ViewModelBase
     internal ICommand ShowLogCommand { get; init; }
 
     internal Interaction<CardDataSourceSettingsDialogViewModel, bool> ShowCardDataSourceSettingsDialog { get; }
+
+    internal Interaction<SettingsDialogViewModel, bool> ShowSettingsDialog { get; }
 
     internal ICommand ShowCardDataSourceSettingsCommand { get; init; }
 
@@ -695,7 +704,7 @@ public class MainWindowViewModel : ViewModelBase
 
         void ClearItems()
         {
-            Statistics.Clear();
+            Skeletons.Clear();
         }
 
         DispatchObservableCollectionChanges(e, ClearItems, ProcessNewItems, ProcessOldItems);
