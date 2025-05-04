@@ -7,7 +7,7 @@ namespace CardPile.Crypt;
 
 public class CardEntry : IBone
 {
-    internal CardEntry(CardGroup parent, string name, List<int> cardIds, Range range, ImportanceLevel importance)
+    internal CardEntry(CardGroup parent, string name, List<int> cardIds, Range? range, ImportanceLevel importance)
     {
         Parent = parent;
         Name = name;
@@ -21,7 +21,7 @@ public class CardEntry : IBone
 
     public string Name { get; }
 
-    public Range Range { get; }
+    public Range? Range { get; }
 
     public ImportanceLevel Importance { get; }
 
@@ -29,7 +29,7 @@ public class CardEntry : IBone
 
     public int Count { get; private set; }
 
-    public bool IsSatisfied { get => Range.Contains(Count); }
+    public bool IsSatisfied { get => (Range == null || Range.Contains(Count)); }
 
     public List<int> CardIds { get; }
 
@@ -59,7 +59,7 @@ public class CardEntry : IBone
             return false;
         }
 
-        if (Range.To < Count + 1)
+        if (Range != null && Range.To < Count + 1)
         {
             return false;
         }
@@ -99,12 +99,16 @@ public class CardEntry : IBone
             return null;
         }
 
+        var range = (Range?)null;
         var rangeString = card.ArrayValues[1].StringValue;
-        var range = Range.TryParse(rangeString);
-        if (range == null)
+        if (!string.IsNullOrWhiteSpace(rangeString))
         {
-            logger.Error("Error parsing card entry in skeleton. Invalid range {rangeString}", rangeString);
-            return null;
+            range = Range.TryParse(rangeString);
+            if (range == null)
+            {
+                logger.Error("Error parsing card entry in skeleton. Invalid range {rangeString}", rangeString);
+                return null;
+            }
         }
 
         var importance = ImportanceLevel.Regular;

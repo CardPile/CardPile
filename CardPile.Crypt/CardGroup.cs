@@ -198,7 +198,10 @@ public class CardGroup : IBone
         Range result = new();
         foreach (var card in Cards)
         {
-            result.Extend(card.Range);
+            if(card.Range != null)
+            {
+                result.Extend(card.Range);
+            }
         }
 
         foreach (var group in Groups)

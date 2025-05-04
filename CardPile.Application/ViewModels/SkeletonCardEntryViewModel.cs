@@ -37,21 +37,43 @@ internal class SkeletonCardEntryViewModel : CardDataViewModel
 
         if(showCounts)
         {
-            RangeText = string.Format(
-                "{0}{1} out of {2}{3}",
-                SkeletonCardEntryService.IsSatisfied && SkeletonCardEntryService.Count > 0 ? ConverterUtils.HIGHLIGHT_GREEN_MARKER : ImportanceUtils.ToMarker(SkeletonCardEntryService.Importance),
-                SkeletonCardEntryService.Count,
-                SkeletonCardEntryService.Range.TextValue,
-                SkeletonCardEntryService.IsSatisfied ? GREEN_CHECKMARK : string.Empty
-            );
+            if (SkeletonCardEntryService.Range != null)
+            {
+                RangeText = string.Format(
+                    "{0}{1} out of {2}{3}",
+                    SkeletonCardEntryService.IsSatisfied && SkeletonCardEntryService.Count > 0 ? ConverterUtils.HIGHLIGHT_GREEN_MARKER : ImportanceUtils.ToMarker(SkeletonCardEntryService.Importance),
+                    SkeletonCardEntryService.Count,
+                    SkeletonCardEntryService.Range.TextValue,
+                    SkeletonCardEntryService.IsSatisfied ? GREEN_CHECKMARK : string.Empty
+                );
+            }
+            else
+            {
+                RangeText = string.Format(
+                    "{0}Currently {1}{2}",
+                    SkeletonCardEntryService.IsSatisfied && SkeletonCardEntryService.Count > 0 ? ConverterUtils.HIGHLIGHT_GREEN_MARKER : ImportanceUtils.ToMarker(SkeletonCardEntryService.Importance),
+                    SkeletonCardEntryService.Count,
+                    SkeletonCardEntryService.IsSatisfied ? GREEN_CHECKMARK : string.Empty
+                );
+            }
         }
         else
         {
-            RangeText = string.Format(
-                "{0}{1}",
-                ImportanceUtils.ToMarker(SkeletonCardEntryService.Importance),
-                SkeletonCardEntryService.Range.TextValue
-            );
+            if(SkeletonCardEntryService.Range != null)
+            {
+                RangeText = string.Format(
+                    "{0}{1}",
+                    ImportanceUtils.ToMarker(SkeletonCardEntryService.Importance),
+                    SkeletonCardEntryService.Range.TextValue
+                );
+            }
+            else
+            {
+                RangeText = string.Format(
+                    "{0}Any",
+                    ImportanceUtils.ToMarker(SkeletonCardEntryService.Importance)
+                );
+            }
         }
     }
 

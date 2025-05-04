@@ -1,4 +1,6 @@
-﻿namespace CardPile.Crypt;
+﻿using NLog;
+
+namespace CardPile.Crypt;
 
 public class Range
 {
@@ -28,24 +30,19 @@ public class Range
 
     public string ToText()
     {
-        if (From == 0 && To == int.MaxValue)
-        {
-            return "0+";
-        }
-
         if (From == To)
         {
             return From.ToString();
         }
 
-        if (From == 0)
-        {
-            return To.ToString() + "-";
-        }
-
         if (To == int.MaxValue)
         {
             return From.ToString() + "+";
+        }
+
+        if (From == 1)
+        {
+            return To.ToString() + "-";
         }
 
         return From.ToString() + "-" + To.ToString();
@@ -68,6 +65,12 @@ public class Range
         {
             if (int.TryParse(str.AsSpan(0, str.Length - 1), out int from))
             {
+                if(from < 1)
+                {
+                    logger.Error("Half open range should start with a number greater of equal to 1 (currently {0}+)", from);
+                    return null;
+                }
+
                 return new Range { From = from, To = int.MaxValue };
             }
         }
@@ -75,21 +78,48 @@ public class Range
         {
             if (int.TryParse(str.AsSpan(0, str.Length - 1), out int to))
             {
-                return new Range { From = 0, To = to };
+                if (to < 1)
+                {
+                    logger.Error("Half open range should end with a number greater of equal to 1 (currently {0}-)", to);
+                    return null;
+                }
+
+                return new Range { From = 1, To = to };
             }
         }
         else if (str.Contains('-'))
         {
             var parts = str.Split('-', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length == 2 && int.TryParse(parts[0], out int rangeFrom) && int.TryParse(parts[1], out int rangeTo))
+            if (parts.Length == 2 && int.TryParse(parts[0], out int from) && int.TryParse(parts[1], out int to))
             {
-                return new Range { From = rangeFrom, To = rangeTo };
+                if(from < 1)
+                {
+                    logger.Warn("Range should start with a number greater or equal to 1. Currently {0}-{1}.", from, to);
+                    return null;
+                }
+                if(to < 1)
+                {
+                    logger.Warn("Range should end with a number greater of equal to 1. Currently {0}-{1}.", from, to);
+                    return null;
+                }
+                if(from > to)
+                {
+                    logger.Warn("Range start should be less or equal to it's end. Currently {0}-{1}.", from, to);
+                    return null;
+                }
+
+                return new Range { From = from, To = to };
             }
         }
         else
         {
             if (int.TryParse(str, out int value))
             {
+                if(value < 1)
+                {
+                    logger.Warn("Single value range must consist of a value greater or equal to 1. Currently {0}.", value);
+                    return null;
+                }
                 return new Range { From = value, To = value };
             }
         }
@@ -97,5 +127,5 @@ public class Range
         return null;
     }
 
-
+    private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 }

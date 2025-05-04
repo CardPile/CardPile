@@ -15,7 +15,7 @@ internal class SkeletonCardEntryModel : CardDataModel, ISkeletonCardEntryService
 
     public CardEntry CardEntry { get; init; }
 
-    public Range Range { get => CardEntry.Range; }
+    public Range? Range { get => CardEntry.Range; }
 
     public ImportanceLevel Importance { get => CardEntry.Importance; }
 
