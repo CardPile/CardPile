@@ -153,8 +153,6 @@ public class CardGroup : IBone
 
                 result.Cards.Add(parsedCard);
             }
-
-            result.Cards.Sort((lhs, rhs) => -Comparer<ImportanceLevel>.Default.Compare(lhs.Importance, rhs.Importance));
         }
 
         foreach (var subtableEntry in table.Where(kv => kv.Value is TomlTable))
