@@ -40,7 +40,7 @@ public class Range
             return From.ToString() + "+";
         }
 
-        if (From == 1)
+        if (From == 0)
         {
             return To.ToString() + "-";
         }
@@ -65,9 +65,9 @@ public class Range
         {
             if (int.TryParse(str.AsSpan(0, str.Length - 1), out int from))
             {
-                if(from < 1)
+                if(from < 0)
                 {
-                    logger.Error("Half open range should start with a number greater of equal to 1 (currently {0}+)", from);
+                    logger.Error("Half open range should start with a number greater of equal to 0 (currently {0}+)", from);
                     return null;
                 }
 
@@ -78,9 +78,9 @@ public class Range
         {
             if (int.TryParse(str.AsSpan(0, str.Length - 1), out int to))
             {
-                if (to < 1)
+                if (to < 0)
                 {
-                    logger.Error("Half open range should end with a number greater of equal to 1 (currently {0}-)", to);
+                    logger.Error("Half open range should end with a number greater of equal to 0 (currently {0}-)", to);
                     return null;
                 }
 
@@ -92,14 +92,14 @@ public class Range
             var parts = str.Split('-', StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length == 2 && int.TryParse(parts[0], out int from) && int.TryParse(parts[1], out int to))
             {
-                if(from < 1)
+                if(from < 0)
                 {
-                    logger.Warn("Range should start with a number greater or equal to 1. Currently {0}-{1}.", from, to);
+                    logger.Warn("Range should start with a number greater or equal to 0. Currently {0}-{1}.", from, to);
                     return null;
                 }
-                if(to < 1)
+                if(to < 0)
                 {
-                    logger.Warn("Range should end with a number greater of equal to 1. Currently {0}-{1}.", from, to);
+                    logger.Warn("Range should end with a number greater of equal to 0. Currently {0}-{1}.", from, to);
                     return null;
                 }
                 if(from > to)
@@ -115,9 +115,9 @@ public class Range
         {
             if (int.TryParse(str, out int value))
             {
-                if(value < 1)
+                if(value < 0)
                 {
-                    logger.Warn("Single value range must consist of a value greater or equal to 1. Currently {0}.", value);
+                    logger.Warn("Single value range must consist of a value greater or equal to 0. Currently {0}.", value);
                     return null;
                 }
                 return new Range { From = value, To = value };

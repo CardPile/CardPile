@@ -40,20 +40,20 @@ internal class SkeletonCardEntryViewModel : CardDataViewModel
             if (SkeletonCardEntryService.Range != null)
             {
                 RangeText = string.Format(
-                    "{0}{1} out of {2}{3}",
-                    SkeletonCardEntryService.IsSatisfied && SkeletonCardEntryService.Count > 0 ? ConverterUtils.HIGHLIGHT_GREEN_MARKER : ImportanceUtils.ToMarker(SkeletonCardEntryService.Importance),
+                    "{0}{1}{2} out of {3}",
+                    SkeletonCardEntryService.IsSatisfied && SkeletonCardEntryService.Count > 0 ? GREEN_CHECKMARK : string.Empty,
+                    ImportanceUtils.ToMarker(SkeletonCardEntryService.Importance),
                     SkeletonCardEntryService.Count,
-                    SkeletonCardEntryService.Range.TextValue,
-                    SkeletonCardEntryService.IsSatisfied ? GREEN_CHECKMARK : string.Empty
+                    SkeletonCardEntryService.Range.TextValue
                 );
             }
             else
             {
                 RangeText = string.Format(
-                    "{0}Currently {1}{2}",
-                    SkeletonCardEntryService.IsSatisfied && SkeletonCardEntryService.Count > 0 ? ConverterUtils.HIGHLIGHT_GREEN_MARKER : ImportanceUtils.ToMarker(SkeletonCardEntryService.Importance),
-                    SkeletonCardEntryService.Count,
-                    SkeletonCardEntryService.IsSatisfied ? GREEN_CHECKMARK : string.Empty
+                    "{0}{1}Currently {2}",
+                    SkeletonCardEntryService.IsSatisfied && SkeletonCardEntryService.Count > 0 ? GREEN_CHECKMARK : string.Empty,
+                    ImportanceUtils.ToMarker(SkeletonCardEntryService.Importance),
+                    SkeletonCardEntryService.Count
                 );
             }
         }
