@@ -1,9 +1,7 @@
-﻿using Avalonia.Controls.Documents;
-using Avalonia.Data.Converters;
-using Avalonia.Media.Imaging;
+﻿using Avalonia.Media.Imaging;
+using CardPile.Application.Models;
 using CardPile.Application.Services;
 using ReactiveUI;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,8 +9,6 @@ namespace CardPile.Application.ViewModels;
 
 public class CardDataViewModel : ViewModelBase
 {
-    public const int CARD_HEADER_SIZE = 26;
-
     internal CardDataViewModel(ICardDataService cardDataService, int index, bool highlight = false)
     {
         CardDataService = cardDataService;
@@ -38,6 +34,11 @@ public class CardDataViewModel : ViewModelBase
         get => CardDataService.CardImage; 
     }
 
+    internal Task<Bitmap?> StandardCardImage
+    {
+        get => CardDataService.StandardCardImage;
+    }
+
     internal int Index
     {
         get => index;
@@ -58,7 +59,7 @@ public class CardDataViewModel : ViewModelBase
     {
         get
         {
-            return index * CARD_HEADER_SIZE;
+            return index * CardDataModel.CARD_HEADER_SIZE;
         }
     }
     

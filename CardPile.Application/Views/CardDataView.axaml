@@ -35,8 +35,8 @@
                 <StackPanel Grid.Column="0" Grid.Row="1" Spacing="5" Margin="5 0">
                   <Border CornerRadius="10" ClipToBounds="True">
                     <Panel>
-                      <Image Width="172" Height="240" Source="{Binding CardImage^}" RenderOptions.BitmapInterpolationMode="HighQuality" />
-                      <Panel Height="240" Background="LightGray" IsVisible="{Binding CardImage^, Converter={x:Static ObjectConverters.IsNull}}">
+                      <Image Width="172" Height="240" Source="{Binding StandardCardImage^}" RenderOptions.BitmapInterpolationMode="HighQuality" />
+                      <Panel Width="172" Height="240" Background="LightGray" IsVisible="{Binding StandardCardImage^, Converter={x:Static ObjectConverters.IsNull}}">
                         <PathIcon Height="75" Width="75" Data="{StaticResource card_placeholder}" />
                       </Panel>
                     </Panel>
@@ -51,8 +51,8 @@
               </Grid>
             </ToolTip.Tip>
             <Rectangle Width="172" Height="240" Fill="LightGray" Opacity="0.7" ZIndex="1" PointerReleased="HandlePointerReleased" IsVisible="{Binding !#CardDataViewRoot.Active}"/>
-            <Image Width="172" Height="240" Source="{Binding CardImage^}" ZIndex="0" PointerReleased="HandlePointerReleased" RenderOptions.BitmapInterpolationMode="HighQuality" />
-            <Panel Height="240" Background="LightGray" IsVisible="{Binding CardImage^, Converter={x:Static ObjectConverters.IsNull}}" ZIndex="0" >
+            <Image Width="172" Height="240" Source="{Binding StandardCardImage^}" ZIndex="0" PointerReleased="HandlePointerReleased" RenderOptions.BitmapInterpolationMode="HighQuality" />
+            <Panel Width="172" Height="240" Background="LightGray" IsVisible="{Binding StandardCardImage^, Converter={x:Static ObjectConverters.IsNull}}" ZIndex="0" >
               <PathIcon Height="75" Width="75" Data="{StaticResource card_placeholder}" />
             </Panel>
             <Border Width="172" Height="240" BorderThickness="3" BorderBrush="Green" CornerRadius="10" IsVisible="{Binding Highlight}"/>

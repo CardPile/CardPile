@@ -26,7 +26,7 @@ public class MainWindowViewModel : ViewModelBase
             return 0;
         }
 
-        return (collection.Count - 1) * CardDataViewModel.CARD_HEADER_SIZE + (CardDataModel.CARD_IMAGE_WIDTH * 7) / 5;
+        return (collection.Count - 1) * CardDataModel.CARD_HEADER_SIZE + CardDataModel.CARD_IMAGE_HEIGHT;
     });
 
     public MainWindowViewModel() : this(new CardPileModel())

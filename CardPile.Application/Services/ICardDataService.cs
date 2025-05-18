@@ -21,4 +21,6 @@ public interface ICardDataService : IReactiveObject
     public List<ICardAnnotationService> Annotations { get; }
 
     public Task<Bitmap?> CardImage { get; }
+
+    public Task<Bitmap?> StandardCardImage { get; }
 }
