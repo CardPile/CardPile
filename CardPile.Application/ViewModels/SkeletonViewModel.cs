@@ -22,7 +22,7 @@ internal class SkeletonViewModel : ViewModelBase
 
     internal ISkeletonService SkeletonService { get; init; }
 
-    internal string Name {  get => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(SkeletonService.Name); }
+    internal string Name {  get => SkeletonService.Name; }
 
     internal string Set { get => SkeletonService.Set; }
 

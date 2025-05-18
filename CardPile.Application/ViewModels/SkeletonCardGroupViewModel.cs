@@ -78,7 +78,7 @@ internal class SkeletonCardGroupViewModel : ViewModelBase
                     "{0}{1}{2} ({3} out of {4})",
                     SkeletonCardGroupService.IsSatisfied && SkeletonCardGroupService.Count > 0 ? GREEN_CHECKMARK : string.Empty,
                     ImportanceUtils.ToMarker(SkeletonCardGroupService.Importance),
-                    CultureInfo.CurrentCulture.TextInfo.ToTitleCase(SkeletonCardGroupService.Name),
+                    SkeletonCardGroupService.Name,
                     SkeletonCardGroupService.Count,
                     SkeletonCardGroupService.Range.TextValue);
             }
@@ -88,7 +88,7 @@ internal class SkeletonCardGroupViewModel : ViewModelBase
                     "{0}{1}{2} (currently {3})",
                     SkeletonCardGroupService.IsSatisfied && SkeletonCardGroupService.Count > 0 ? GREEN_CHECKMARK : string.Empty,
                     ImportanceUtils.ToMarker(SkeletonCardGroupService.Importance),
-                    CultureInfo.CurrentCulture.TextInfo.ToTitleCase(SkeletonCardGroupService.Name),
+                    SkeletonCardGroupService.Name,
                     SkeletonCardGroupService.Count);
             }
         }
@@ -99,7 +99,7 @@ internal class SkeletonCardGroupViewModel : ViewModelBase
                 Title = string.Format(
                     "{0}{1} ({2})",
                     ImportanceUtils.ToMarker(SkeletonCardGroupService.Importance),
-                    CultureInfo.CurrentCulture.TextInfo.ToTitleCase(SkeletonCardGroupService.Name),
+                    SkeletonCardGroupService.Name,
                     SkeletonCardGroupService.Range.TextValue);
             }
             else
@@ -107,7 +107,7 @@ internal class SkeletonCardGroupViewModel : ViewModelBase
                 Title = string.Format(
                     "{0}{1}",
                     ImportanceUtils.ToMarker(SkeletonCardGroupService.Importance),
-                    CultureInfo.CurrentCulture.TextInfo.ToTitleCase(SkeletonCardGroupService.Name));
+                    SkeletonCardGroupService.Name);
             }
         }
     }
