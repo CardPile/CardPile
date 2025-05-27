@@ -36,6 +36,7 @@ namespace CardPile.Draft
             }
         }
 
+        [JsonIgnore]
         public Guid DraftId
         {
             get => draftId;
@@ -51,6 +52,7 @@ namespace CardPile.Draft
             return false;
         }
 
+        [JsonIgnore]
         public List<int> CurrentPack
         {
             get
@@ -63,6 +65,7 @@ namespace CardPile.Draft
             }
         }
 
+        [JsonIgnore]
         public List<List<int>> Picks 
         {
             get
@@ -71,6 +74,7 @@ namespace CardPile.Draft
             }
         }
 
+        [JsonIgnore]
         public int LastPack
         {
             get
@@ -79,6 +83,7 @@ namespace CardPile.Draft
             }
         }
 
+        [JsonIgnore]
         public int LastPick
         {
             get
