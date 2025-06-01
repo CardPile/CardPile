@@ -10,6 +10,8 @@ using Newtonsoft.Json;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CardPile.Crypt;
+using System.Collections.Generic;
+using DynamicData;
 
 namespace CardPile.Application.Models;
 
@@ -23,7 +25,8 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         cardsMissingInCurrentPack = [];
         cardsUpcomingAfterCurrentPack = [];
         cardsSeen = [];
-        
+        packsSeen = [];
+
         deck = new DeckModel();
         crypt = new CryptModel(cardDataSource);
 
@@ -58,6 +61,11 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         get => cardsSeen;
     }
 
+    public ObservableCollection<IDraftPackService> PacksSeen
+    { 
+        get => packsSeen; 
+    }
+
     public ICardDataService? PreviousPick
     {
         get => previousPick;
@@ -79,6 +87,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
     public void ClearPersistentState()
     {
         cardsSeen.Clear();
+        packsSeen.Clear();
         deck.Clear();
         crypt.Clear();
     }
@@ -250,6 +259,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
     private void UpdateCardDataAfterPick(ICardDataSource newCardDataSource)
     {
         cardsSeen.Clear();
+        packsSeen.Clear();
 
         foreach (var seenCard in draftState.GetSeenCards())
         {
@@ -262,6 +272,25 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
             {
                 logger.Info(string.Format($"Could not find card data for seen card with MTGA id {seenCard}"));
             }
+        }
+
+        foreach(var seenPack in draftState.GetSeenPacks())
+        {
+            var seenPackCardsData = new List<ICardDataService>();
+            foreach(var cardInPack in seenPack.Cards)
+            {
+                var cardInPackData = newCardDataSource.GetDataForCard(cardInPack, draftState);
+                if (cardInPackData != null)
+                {
+                    seenPackCardsData.Add(AnnotateCard(new CardDataModel(cardInPackData)));
+                }
+                else
+                {
+                    logger.Info(string.Format($"Could not find card data for seen card with MTGA id {cardInPack}"));
+                }
+            }
+
+            packsSeen.Add(new DraftPackModel(seenPack.PackNumber, seenPack.PickNumber, seenPackCardsData));
         }
 
         var cardList = draftState.GetCurrentDeck()
@@ -348,6 +377,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
     private readonly ObservableCollection<ICardDataService> cardsMissingInCurrentPack;
     private readonly ObservableCollection<ICardDataService> cardsUpcomingAfterCurrentPack;
     private readonly ObservableCollection<ICardDataService> cardsSeen;
+    private readonly ObservableCollection<IDraftPackService> packsSeen;
     private ICardDataService? previousPick;
     private IDeckService deck;
     private ICryptService crypt;

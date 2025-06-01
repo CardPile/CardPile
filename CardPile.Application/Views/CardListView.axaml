@@ -7,9 +7,9 @@
              mc:Ignorable="d"
              d:DesignWidth="800"
              d:DesignHeight="450"
-             x:Class="CardPile.Application.Views.HorizontalCardListView"
+             x:Class="CardPile.Application.Views.CardListView"
              x:DataType="vm:CardListViewModel"
-             x:Name="HorizontalCardListViewRoot"
+             x:Name="CardListViewRoot"
 >
   <ItemsControl ItemsSource="{Binding Cards}">
     <ItemsControl.ItemsPanel>
@@ -19,7 +19,7 @@
     </ItemsControl.ItemsPanel>
     <ItemsControl.ItemTemplate>
       <DataTemplate>
-        <v:CardDataView DataContext="{Binding}" ShowMetrics="{Binding #HorizontalCardListViewRoot.ShowMetrics}" ShowPopup="{Binding #HorizontalCardListViewRoot.ShowPopup}" CanBeDeactivated="{Binding #HorizontalCardListViewRoot.CanBeDeactivated}" />
+        <v:CardDataView DataContext="{Binding}" ShowMetrics="{Binding #CardListViewRoot.ShowMetrics}" ShowPopup="{Binding #CardListViewRoot.ShowPopup}" CanBeDeactivated="{Binding #CardListViewRoot.CanBeDeactivated}" />
       </DataTemplate>
     </ItemsControl.ItemTemplate>
   </ItemsControl>

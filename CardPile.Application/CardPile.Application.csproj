@@ -62,6 +62,12 @@
     <Compile Update="Views\CardMetricsView.axaml.cs">
       <DependentUpon>CardMetricsView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\CardListView.axaml.cs">
+      <DependentUpon>CardListView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\SeenCardsView.axaml.cs">
+      <DependentUpon>SeenCardsView.axaml</DependentUpon>
+    </Compile>
     <Compile Remove="Extensions\TextBlockExtensions.cs" />
     <Compile Remove="Extensions\**" />
     <Compile Remove="Views\CardView.axaml.cs" />

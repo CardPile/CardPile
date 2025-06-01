@@ -5,13 +5,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Windows.Input;
-using Avalonia.Data.Converters;
 using CardPile.Application.Models;
 using CardPile.Application.Services;
 using CardPile.Application.Views;
 using CardPile.CardData;
-using CardPile.CardData.Metrics;
-using CardPile.CardData.Settings;
 using DynamicData;
 using ReactiveUI;
 
@@ -19,16 +16,6 @@ namespace CardPile.Application.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    public static FuncValueConverter<ICollection<CardDataViewModel>, int> CardCollectionToStackHeightConverter { get; } = new FuncValueConverter<ICollection<CardDataViewModel>, int>(collection =>
-    {
-        if (collection == null || collection.Count == 0)
-        {
-            return 0;
-        }
-
-        return (collection.Count - 1) * CardDataModel.CARD_HEADER_SIZE + CardDataModel.CARD_IMAGE_HEIGHT;
-    });
-
     public MainWindowViewModel() : this(new CardPileModel())
     { }
 
@@ -42,10 +29,16 @@ public class MainWindowViewModel : ViewModelBase
         sortByMetricDescriptionViewModel = null;
         statisticsViewModels = [];
 
-        cardsInPackService.CardsInPack.CollectionChanged += UpdateCardsInPack;
-        cardsInPackService.CardsMissingFromPack.CollectionChanged += UpdateCardsMissingFromPack;
-        cardsInPackService.CardsUpcomingAfterPack.CollectionChanged += UpdateCardsUpcomingAfterPack;
-        cardsInPackService.CardsSeen.CollectionChanged += UpdateCardsSeen;
+        CardsInPack = new CardListViewModel((c, i) => MakeCardDataViewModel(c, i), SortCardsDescendingBySelectedMetric);
+        SeenCards = new SeenCardsViewModel((c, i) => MakeCardDataViewModel(c, i), SortCardsDescendingBySelectedMetric);
+        CardsMissingFromPack = new CardListViewModel((c, i) => MakeCardDataViewModel(c, i), SortCardsDescendingBySelectedMetric);
+        CardsUpcomingAfterPack = new CardListViewModel((c, i) => MakeCardDataViewModel(c, i), SortCardsAscendingBySelectedMetric);
+
+        cardsInPackService.CardsInPack.CollectionChanged += CardsInPack.Update;
+        cardsInPackService.CardsMissingFromPack.CollectionChanged += CardsMissingFromPack.Update;
+        cardsInPackService.CardsUpcomingAfterPack.CollectionChanged += CardsUpcomingAfterPack.Update;
+        cardsInPackService.CardsSeen.CollectionChanged += SeenCards.UpdateCardsSeen;
+        cardsInPackService.PacksSeen.CollectionChanged += SeenCards.UpdatePacksSeen;
         cardsInPackService.Deck.CardStacks.CollectionChanged += UpdateDeck;
         cardsInPackService.ObservableForProperty(x => x.PreviousPick)
                           .Subscribe(x => UpdatePreviouslyPickedCardFromPack(x.Value));
@@ -73,21 +66,10 @@ public class MainWindowViewModel : ViewModelBase
         InitializeSkeletons();
 
         this.ObservableForProperty(p => p.SortByMetricDescription)
-            .Subscribe(_ => SortCardsDescendingBySelectedMetric(CardsInPack.Cards));
+            .Subscribe(_ => CardsInPack.Sort());
+
         this.ObservableForProperty(p => p.SortByMetricDescription)
-            .Subscribe(_ => SortCardsDescendingBySelectedMetric(WhiteCardsSeen));
-        this.ObservableForProperty(p => p.SortByMetricDescription)
-            .Subscribe(_ => SortCardsDescendingBySelectedMetric(BlueCardsSeen));
-        this.ObservableForProperty(p => p.SortByMetricDescription)
-            .Subscribe(_ => SortCardsDescendingBySelectedMetric(BlackCardsSeen));
-        this.ObservableForProperty(p => p.SortByMetricDescription)
-            .Subscribe(_ => SortCardsDescendingBySelectedMetric(RedCardsSeen));
-        this.ObservableForProperty(p => p.SortByMetricDescription)
-            .Subscribe(_ => SortCardsDescendingBySelectedMetric(GreenCardsSeen));
-        this.ObservableForProperty(p => p.SortByMetricDescription)
-            .Subscribe(_ => SortCardsDescendingBySelectedMetric(MulticolorCardsSeen));
-        this.ObservableForProperty(p => p.SortByMetricDescription)
-            .Subscribe(_ => SortCardsDescendingBySelectedMetric(ColorlessCardsSeen));
+            .Subscribe(_ => SeenCards.Sort());
 
         this.ObservableForProperty(p => p.ShowSkeletonCounts)
             .Subscribe(v => UpdateSkeletonCountVisibility(v.Value));
@@ -165,7 +147,7 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref statisticsViewModels, value);
     }
 
-    internal CardListViewModel CardsInPack { get; } = [];
+    internal CardListViewModel CardsInPack { get; }
 
     internal CardDataViewModel? PreviouslyPickedCardFromPack
     {
@@ -173,25 +155,13 @@ public class MainWindowViewModel : ViewModelBase
         private set => this.RaiseAndSetIfChanged(ref previouslyPickedCardFromPack, value);
     }
 
-    internal CardListViewModel CardsMissingFromPack { get; } = [];
+    internal CardListViewModel CardsMissingFromPack { get; }
 
-    internal CardListViewModel CardsUpcomingAfterPack { get; } = [];
+    internal CardListViewModel CardsUpcomingAfterPack { get; }
 
-    internal ObservableCollection<CardDataViewModel> WhiteCardsSeen { get; } = [];
+    internal SeenCardsViewModel SeenCards { get; }
 
-    internal ObservableCollection<CardDataViewModel> BlueCardsSeen { get; } = [];
-
-    internal ObservableCollection<CardDataViewModel> BlackCardsSeen { get; } = [];
-
-    internal ObservableCollection<CardDataViewModel> RedCardsSeen { get; } = [];
-
-    internal ObservableCollection<CardDataViewModel> GreenCardsSeen { get; } = [];
-
-    internal ObservableCollection<CardDataViewModel> MulticolorCardsSeen { get; } = [];
-
-    internal ObservableCollection<CardDataViewModel> ColorlessCardsSeen { get; } = [];
-
-    internal ObservableCollection<List<CardDataViewModel>> CardStacksInDeck { get; } = [];
+    internal ObservableCollection<CardStackViewModel> CardStacksInDeck { get; } = [];
 
     internal ObservableCollection<SkeletonViewModel> Skeletons { get; } = [];
 
@@ -219,7 +189,7 @@ public class MainWindowViewModel : ViewModelBase
         private set => this.RaiseAndSetIfChanged(ref isCardDataSourceBeingBuilt, value);
     }
 
-    private static void SortCards<T, TKey>(ObservableCollection<T> collection, Func<T, TKey> selector, IComparer<TKey>? comparer = null) where T : CardDataViewModel
+    private static void SortCardsAscending<T, TKey>(ObservableCollection<T> collection, Func<T, TKey> selector, IComparer<TKey>? comparer = null) where T : CardDataViewModel
     {
         List<T> sorted = [.. collection.OrderBy(selector, comparer ?? Comparer<TKey>.Default)];
         for (int i = 0; i < sorted.Count; i++)
@@ -239,281 +209,6 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
-    private void UpdateCardsInPack(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-    {
-        void ProcessNewItems(IList? newItems)
-        {
-            if (newItems != null)
-            {
-                foreach (var item in newItems)
-                {
-                    if (item is ICardDataService cardDataService)
-                    {
-                        CardsInPack.Cards.Add(UpdateCardMetricVisibility(new CardDataViewModel(cardDataService, CardsInPack.Cards.Count)));
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("Expected a ICardDataService as a new item");
-                    }
-                }
-            }
-        }
-        
-        void ProcessOldItems(IList? oldItems)
-        {
-            if (oldItems != null)
-            {
-                foreach (var item in oldItems)
-                {
-                    if (item is ICardDataService)
-                    {
-                        CardsInPack.Cards.Remove(CardsInPack.Cards.Where(x => x.CardDataService == item));
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("Expected a ICardDataService as a old item");
-                    }
-                }
-            }
-        }
-
-        void ClearItems()
-        {
-            CardsInPack.Cards.Clear();
-        }
-
-        DispatchObservableCollectionChanges(e, ClearItems, ProcessNewItems, ProcessOldItems);
-        SortCardsDescendingBySelectedMetric(CardsInPack.Cards);
-    }
-
-    private void UpdateCardsMissingFromPack(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-    {
-        void ProcessNewItems(IList? newItems)
-        {
-            if (newItems != null)
-            {
-                foreach (var item in newItems)
-                {
-                    if (item is ICardDataService cardDataService)
-                    {
-                        CardsMissingFromPack.Cards.Add(UpdateCardMetricVisibility(new CardDataViewModel(cardDataService, CardsMissingFromPack.Cards.Count)));
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("Expected a ICardDataService as a new item");
-                    }
-                }
-            }
-        }
-        
-        void ProcessOldItems(IList? oldItems)
-        {
-            if (oldItems != null)
-            {
-                foreach (var item in oldItems)
-                {
-                    if (item is ICardDataService)
-                    {
-                        CardsMissingFromPack.Cards.Remove(CardsMissingFromPack.Cards.Where(x => x.CardDataService == item));
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("Expected a ICardDataService as a old item");
-                    }
-                }
-            }
-        }
-
-        void ClearItems()
-        {
-            CardsMissingFromPack.Cards.Clear();
-        }
-
-        DispatchObservableCollectionChanges(e, ClearItems, ProcessNewItems, ProcessOldItems);
-        
-        SortCardsBySelectedMetric(CardsMissingFromPack.Cards);
-        
-        this.RaisePropertyChanged(nameof(CardsMissingFromPack));
-    }
-
-    private void UpdateCardsUpcomingAfterPack(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-    {
-        void ProcessNewItems(IList? newItems)
-        {
-            if (newItems != null)
-            {
-                foreach (var item in newItems)
-                {
-                    if (item is ICardDataService cardDataService)
-                    {
-                        CardsUpcomingAfterPack.Cards.Add(UpdateCardMetricVisibility(new CardDataViewModel(cardDataService, CardsUpcomingAfterPack.Cards.Count)));
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("Expected a ICardDataService as a new item");
-                    }
-                }
-            }
-        }
-
-        void ProcessOldItems(IList? oldItems)
-        {
-            if (oldItems != null)
-            {
-                foreach (var item in oldItems)
-                {
-                    if (item is ICardDataService)
-                    {
-                        CardsUpcomingAfterPack.Cards.Remove(CardsUpcomingAfterPack.Cards.Where(x => x.CardDataService == item));
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("Expected a ICardDataService as a old item");
-                    }
-                }
-            }
-        }
-
-        void ClearItems()
-        {
-            CardsUpcomingAfterPack.Cards.Clear();
-        }
-
-        DispatchObservableCollectionChanges(e, ClearItems, ProcessNewItems, ProcessOldItems);
-        
-        SortCardsDescendingBySelectedMetric(CardsMissingFromPack.Cards);
-        
-        this.RaisePropertyChanged(nameof(CardsUpcomingAfterPack));
-    }
-
-    private void UpdateCardsSeen(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-    {
-        void ProcessNewItems(IList? newItems)
-        {
-            if (newItems != null)
-            {
-                foreach (var item in newItems)
-                {
-                    if (item is ICardDataService cardDataService)
-                    {
-                        if (cardDataService.Colors.Count() == 0)
-                        {
-                            ColorlessCardsSeen.Add(UpdateCardMetricVisibility(new CardDataViewModel(cardDataService, ColorlessCardsSeen.Count)));
-                        }
-                        else if (cardDataService.Colors.Count() == 1)
-                        {
-                            if(cardDataService.Colors == Color.White)
-                            {
-                                WhiteCardsSeen.Add(UpdateCardMetricVisibility(new CardDataViewModel(cardDataService, WhiteCardsSeen.Count)));
-                            }
-                            else if(cardDataService.Colors == Color.Blue)
-                            {
-                                BlueCardsSeen.Add(UpdateCardMetricVisibility(new CardDataViewModel(cardDataService, BlueCardsSeen.Count)));
-                            }
-                            else if (cardDataService.Colors == Color.Black)
-                            {
-                                BlackCardsSeen.Add(UpdateCardMetricVisibility(new CardDataViewModel(cardDataService, BlackCardsSeen.Count)));
-                            }
-                            else if (cardDataService.Colors == Color.Red)
-                            {
-                                RedCardsSeen.Add(UpdateCardMetricVisibility(new CardDataViewModel(cardDataService, RedCardsSeen.Count)));
-                            }
-                            else if (cardDataService.Colors == Color.Green)
-                            {
-                                GreenCardsSeen.Add(UpdateCardMetricVisibility(new CardDataViewModel(cardDataService, GreenCardsSeen.Count)));
-                            }
-                        }
-                        else
-                        {
-                            MulticolorCardsSeen.Add(UpdateCardMetricVisibility(new CardDataViewModel(cardDataService, MulticolorCardsSeen.Count)));
-                        }
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("Expected a ICardDataService as a new item");
-                    }
-                }
-            }
-        }
-
-        void ProcessOldItems(IList? oldItems)
-        {
-            if (oldItems != null)
-            {
-                foreach (var item in oldItems)
-                {
-                    if (item is ICardDataService cardDataService)
-                    {
-                        if (cardDataService.Colors.Count() == 0)
-                        {
-                            ColorlessCardsSeen.Remove(ColorlessCardsSeen.Where(x => x.CardDataService == item));
-                        }
-                        else if (cardDataService.Colors.Count() == 1)
-                        {
-                            if (cardDataService.Colors == Color.White)
-                            {
-                                WhiteCardsSeen.Remove(WhiteCardsSeen.Where(x => x.CardDataService == item));
-                            }
-                            else if (cardDataService.Colors == Color.Blue)
-                            {
-                                BlueCardsSeen.Remove(BlueCardsSeen.Where(x => x.CardDataService == item));
-                            }
-                            else if (cardDataService.Colors == Color.Black)
-                            {
-                                BlackCardsSeen.Remove(BlackCardsSeen.Where(x => x.CardDataService == item));
-                            }
-                            else if (cardDataService.Colors == Color.Red)
-                            {
-                                RedCardsSeen.Remove(RedCardsSeen.Where(x => x.CardDataService == item));
-                            }
-                            else if (cardDataService.Colors == Color.Green)
-                            {
-                                GreenCardsSeen.Remove(GreenCardsSeen.Where(x => x.CardDataService == item));
-                            }
-                        }
-                        else
-                        {
-                            MulticolorCardsSeen.Remove(MulticolorCardsSeen.Where(x => x.CardDataService == item));
-                        }
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("Expected a ICardDataService as a old item");
-                    }
-                }
-            }
-        }
-
-        void ClearItems()
-        {
-            WhiteCardsSeen.Clear();
-            BlueCardsSeen.Clear();
-            BlackCardsSeen.Clear();
-            RedCardsSeen.Clear();
-            GreenCardsSeen.Clear();
-            MulticolorCardsSeen.Clear();
-            ColorlessCardsSeen.Clear();
-        }
-
-        DispatchObservableCollectionChanges(e, ClearItems, ProcessNewItems, ProcessOldItems);
-
-        SortCardsDescendingBySelectedMetric(WhiteCardsSeen);
-        SortCardsDescendingBySelectedMetric(BlueCardsSeen);
-        SortCardsDescendingBySelectedMetric(BlackCardsSeen);
-        SortCardsDescendingBySelectedMetric(RedCardsSeen);
-        SortCardsDescendingBySelectedMetric(GreenCardsSeen);
-        SortCardsDescendingBySelectedMetric(MulticolorCardsSeen);
-        SortCardsDescendingBySelectedMetric(ColorlessCardsSeen);
-
-        this.RaisePropertyChanged(nameof(WhiteCardsSeen));
-        this.RaisePropertyChanged(nameof(BlueCardsSeen));
-        this.RaisePropertyChanged(nameof(BlackCardsSeen));
-        this.RaisePropertyChanged(nameof(RedCardsSeen));
-        this.RaisePropertyChanged(nameof(GreenCardsSeen));
-        this.RaisePropertyChanged(nameof(MulticolorCardsSeen));
-        this.RaisePropertyChanged(nameof(ColorlessCardsSeen));
-    }
-
     private void UpdateDeck(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
         void ProcessNewItems(IList? newItems)
@@ -524,8 +219,9 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     if (item is List<ICardDataService> cardStack)
                     {
-                        var cardViewModelStack = cardStack.Select((c, i) => UpdateCardMetricVisibility(new CardDataViewModel(c, i))).ToList();;
-                        CardStacksInDeck.Add(cardViewModelStack);
+                        var cardStackViewModel = new CardStackViewModel(_ => true, (c, i) => MakeCardDataViewModel(c, i), _ => {});
+                        cardStackViewModel.AddCards(cardStack);
+                        CardStacksInDeck.Add(cardStackViewModel);                        
                     }
                     else
                     {
@@ -543,7 +239,7 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     if (item is List<ICardDataService> cardStack)
                     {
-                        CardStacksInDeck.Remove(CardStacksInDeck.Where(deckStack => deckStack.Count == cardStack.Count && deckStack.Select(x => x.CardDataService).All(cardStack.Contains)));
+                        CardStacksInDeck.Remove(CardStacksInDeck.Where(deckStack => deckStack.Cards.Count == cardStack.Count && deckStack.Cards.Select(x => x.CardDataService).All(cardStack.Contains)));
                     }
                     else
                     {
@@ -591,7 +287,7 @@ public class MainWindowViewModel : ViewModelBase
         CardDataViewModel? vm = null;
         if (cardDataService != null)
         {
-            vm = UpdateCardMetricVisibility(new CardDataViewModel(cardDataService, 0, true));
+            vm = MakeCardDataViewModel(cardDataService, 0, true);
         }
         PreviouslyPickedCardFromPack = vm;
         
@@ -723,16 +419,10 @@ public class MainWindowViewModel : ViewModelBase
 
     private void ClearCardData()
     {
-        CardsInPack.Cards.Clear();
-        CardsMissingFromPack.Cards.Clear();
-        CardsUpcomingAfterPack.Cards.Clear();
-        WhiteCardsSeen.Clear();
-        BlueCardsSeen.Clear();
-        BlackCardsSeen.Clear();
-        RedCardsSeen.Clear();
-        GreenCardsSeen.Clear();
-        MulticolorCardsSeen.Clear();
-        ColorlessCardsSeen.Clear();
+        CardsInPack.Clear();
+        CardsMissingFromPack.Clear();
+        CardsUpcomingAfterPack.Clear();
+        SeenCards.Clear();
         CardStacksInDeck.Clear();
         PreviouslyPickedCardFromPack = null;
     }
@@ -800,7 +490,7 @@ public class MainWindowViewModel : ViewModelBase
         private readonly int metricIndex;
     };
 
-    private void SortCardsBySelectedMetric(ObservableCollection<CardDataViewModel> collection)
+    private void SortCardsAscendingBySelectedMetric(ObservableCollection<CardDataViewModel> collection)
     {
         if (sortByMetricDescriptionViewModel == null)
         {
@@ -811,7 +501,7 @@ public class MainWindowViewModel : ViewModelBase
         int metricIndex = metricDescriptionViewModels.IndexOf(sortByMetricDescriptionViewModel);
 
         CardDataViewModelComparer comparer = new CardDataViewModelComparer(internalComparer, metricIndex);
-        SortCards(collection, x => x, comparer);
+        SortCardsAscending(collection, x => x, comparer);
     }
     
     private void SortCardsDescendingBySelectedMetric(ObservableCollection<CardDataViewModel> collection)
@@ -831,68 +521,23 @@ public class MainWindowViewModel : ViewModelBase
     private void UpdateMetricVisibility(CardDataMetricDescriptionViewModel vm, bool visible)
     {
         int metricIndex = metricDescriptionViewModels.IndexOf(vm);
-        foreach (var card in CardsInPack.Cards)
-        {
-            card.Metrics.Metrics[metricIndex].Visible = visible;
-        }
+
+        CardsInPack.UpdateMetricVisibility(metricIndex, visible);
 
         if(PreviouslyPickedCardFromPack != null)
         {
             PreviouslyPickedCardFromPack.Metrics.Metrics[metricIndex].Visible = visible;
         }
 
+        CardsMissingFromPack.UpdateMetricVisibility(metricIndex, visible);
 
-        foreach (var card in CardsMissingFromPack.Cards)
-        {
-            card.Metrics.Metrics[metricIndex].Visible = visible;
-        }
+        CardsUpcomingAfterPack.UpdateMetricVisibility(metricIndex, visible);
 
-        foreach (var card in CardsUpcomingAfterPack.Cards)
-        {
-            card.Metrics.Metrics[metricIndex].Visible = visible;
-        }
-
-        foreach (var card in WhiteCardsSeen)
-        {
-            card.Metrics.Metrics[metricIndex].Visible = visible;
-        }
-
-        foreach (var card in BlueCardsSeen)
-        {
-            card.Metrics.Metrics[metricIndex].Visible = visible;
-        }
-
-        foreach (var card in BlackCardsSeen)
-        {
-            card.Metrics.Metrics[metricIndex].Visible = visible;
-        }
-
-        foreach (var card in RedCardsSeen)
-        {
-            card.Metrics.Metrics[metricIndex].Visible = visible;
-        }
-
-        foreach (var card in GreenCardsSeen)
-        {
-            card.Metrics.Metrics[metricIndex].Visible = visible;
-        }
-
-        foreach (var card in MulticolorCardsSeen)
-        {
-            card.Metrics.Metrics[metricIndex].Visible = visible;
-        }
-
-        foreach (var card in ColorlessCardsSeen)
-        {
-            card.Metrics.Metrics[metricIndex].Visible = visible;
-        }
+        SeenCards.UpdateMetricVisibility(metricIndex, visible);
 
         foreach (var stack in CardStacksInDeck)
         {
-            foreach(var card in stack)
-            {
-                card.Metrics.Metrics[metricIndex].Visible = visible;
-            }
+            stack.UpdateMetricVisibility(metricIndex, visible);
         }
 
         foreach(var skeleton in Skeletons)
@@ -909,6 +554,11 @@ public class MainWindowViewModel : ViewModelBase
         }
 
         return cardVm;
+    }
+
+    private CardDataViewModel MakeCardDataViewModel(ICardDataService cardDataService, int index, bool highlight = false)
+    {
+        return UpdateCardMetricVisibility(new CardDataViewModel(cardDataService, index, highlight));
     }
 
     private void ClearCardMetricVisibility(CardDataViewModel cardVm)

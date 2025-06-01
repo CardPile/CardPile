@@ -1,67 +1,57 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using CardPile.Application.Services;
 using System.Collections.ObjectModel;
+using System;
+using System.Collections;
+using DynamicData;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CardPile.Application.ViewModels;
 
-internal class CardListViewModel : ViewModelBase, ICollection<CardDataViewModel>
+internal class CardListViewModel : CardCollectionViewModel
 {
-    internal CardListViewModel()
+    internal CardListViewModel(Func<ICardDataService, int, CardDataViewModel> factory,
+                               Action<ObservableCollection<CardDataViewModel>> sorter) : base(factory, sorter)
     {
-        Cards = [];
     }
 
-    internal CardListViewModel(IEnumerable<CardDataViewModel> e)
+    internal override void AddCards(IList? items)
     {
-        Cards = [.. e];
+        if (items == null)
+        {
+            return;
+        }
+
+        foreach (var item in items)
+        {
+            if (item is ICardDataService cardDataService)
+            {
+                Cards.Add(Factory(cardDataService, Cards.Count));
+            }
+            else
+            {
+                throw new InvalidOperationException("Expected a ICardDataService as a added item");
+            }
+        }
     }
 
-    internal CardListViewModel(ReadOnlySpan<CardDataViewModel> e)
+    internal override void RemoveCards(IList? items)
     {
-        Cards = [.. e];
+        if (items == null)
+        {
+            return;
+        }
+
+        foreach (var item in items)
+        {
+            if (item is ICardDataService)
+            {
+                Cards.Remove(Cards.Where(x => x.CardDataService == item));
+            }
+            else
+            {
+                throw new InvalidOperationException("Expected a ICardDataService as a removed item");
+            }
+        }
     }
-
-    internal ObservableCollection<CardDataViewModel> Cards { get; }
-
-    public int Count => Cards.Count;
-
-    public bool IsReadOnly => false;
-
-    public IEnumerator<CardDataViewModel> GetEnumerator()
-    {
-        return Cards.GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
-
-    public void Add(CardDataViewModel item)
-    {
-        Cards.Add(item);
-    }
-
-    public void Clear()
-    {
-        Cards.Clear();
-    }
-
-    public bool Contains(CardDataViewModel item)
-    {
-        return Cards.Contains(item);
-    }
-
-    public void CopyTo(CardDataViewModel[] array, int arrayIndex)
-    {
-        Cards.CopyTo(array, arrayIndex);
-    }
-
-    public bool Remove(CardDataViewModel item)
-    {
-        return Cards.Remove(item);
-    }
-
-    internal static CardListViewModel Create(ReadOnlySpan<CardDataViewModel> values) => new(values);
 }

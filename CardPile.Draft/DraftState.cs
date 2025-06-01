@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace CardPile.Draft
 {
@@ -261,6 +262,59 @@ namespace CardPile.Draft
             return result;
         }
 
+        public List<DraftPack> GetSeenPacks()
+        {
+            var result = new List<DraftPack>();
+            for (int packIndex = 0; packIndex < packsSeen.Count; ++packIndex)
+            {
+                var currentPackResult = new List<DraftPack>();
+
+                // We want to look at PACK_LOOK_BACK packs we seen
+                // Unless we have seen less than that which can happen if:
+                // - We have seen just packsSeen[packIndex].Count that is less than PACK_LOOK_BACK
+                // - We have seen just picks[packIndex].Count that is less than PACK_LOOK_BACK
+                //   This can happen if we are currently picking a card from a pack in which case we don't
+                //   consider this pack as seen
+                //   This also needs a guard because for the PxP1 we have seen a pack, but have not made a
+                //   pick so the packsSeen[packIndex] is valid, but picks[packIndex] is not
+                var packLookBackCount = Math.Min(PACK_LOOK_BACK, Math.Min(packsSeen[packIndex].Count, packIndex < picks.Count ? picks[packIndex].Count : 0));
+                for (int i = 0; i < packLookBackCount; i++)
+                {
+                    var packSeen = new DraftPack()
+                    {
+                        PackNumber = packIndex + 1,
+                        PickNumber = i + 1,
+                        Cards = [..packsSeen[packIndex][i]]
+                    };
+
+                    if(packIndex < picks.Count)
+                    {
+                        packSeen.Cards.Remove(picks[packIndex][i]);
+                        if(i + PACK_LOOK_FORWARD < picks[packIndex].Count)
+                        {
+                            packSeen.Cards.Remove(picks[packIndex][i + PACK_LOOK_FORWARD]);
+                        }
+                    }
+
+                    currentPackResult.Add(packSeen);
+                }
+
+                // If we are at PxP1 we have no picks to remove
+                if (packIndex >= picks.Count)
+                {
+                    continue;
+                }
+
+                for (int i = 0; i < packLookBackCount; i++)
+                {
+                    currentPackResult[i].Cards.Remove(picks[packIndex][i]);
+                }
+
+                result.AddRange(currentPackResult);
+            }
+            return result;
+        }
+
         private void AddPick(int packNumber, int pickNumber, int cardPicked)
         {
             var packIndex = packNumber - 1;
@@ -294,6 +348,7 @@ namespace CardPile.Draft
             packsSeen[packIndex][pickIndex] = new List<int>(pack);
         }
 
+        private const int PACK_LOOK_FORWARD = 8;
         private const int PACK_LOOK_BACK = 8;
         private const int UPCOMING_PACK_LOOK_BACK = 7;
 

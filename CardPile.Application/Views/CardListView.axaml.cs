@@ -3,27 +3,27 @@ using Avalonia.Controls;
 
 namespace CardPile.Application.Views;
 
-public partial class HorizontalCardListView : UserControl
+public partial class CardListView : UserControl
 {
-    public static readonly DirectProperty<HorizontalCardListView, bool> ShowMetricsProperty = AvaloniaProperty.RegisterDirect<HorizontalCardListView, bool>(
+    public static readonly DirectProperty<CardListView, bool> ShowMetricsProperty = AvaloniaProperty.RegisterDirect<CardListView, bool>(
     nameof(ShowMetrics),
     o => o.ShowMetrics,
     (o, v) => o.ShowMetrics = v
 );
 
-    public static readonly DirectProperty<HorizontalCardListView, bool> ShowPopupProperty = AvaloniaProperty.RegisterDirect<HorizontalCardListView, bool>(
+    public static readonly DirectProperty<CardListView, bool> ShowPopupProperty = AvaloniaProperty.RegisterDirect<CardListView, bool>(
         nameof(ShowPopup),
         o => o.ShowPopup,
         (o, v) => o.ShowPopup = v
     );
 
-    public static readonly DirectProperty<HorizontalCardListView, bool> CanBeDeactivatedProperty = AvaloniaProperty.RegisterDirect<HorizontalCardListView, bool>(
+    public static readonly DirectProperty<CardListView, bool> CanBeDeactivatedProperty = AvaloniaProperty.RegisterDirect<CardListView, bool>(
         nameof(CanBeDeactivated),
         o => o.CanBeDeactivated,
         (o, v) => o.CanBeDeactivated = v
     );
 
-    public HorizontalCardListView()
+    public CardListView()
     {
         InitializeComponent();
     }
