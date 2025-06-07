@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using System.Diagnostics;
 
 namespace CardPile.Application.Views;
 
@@ -25,10 +24,10 @@ public partial class CardDataView : UserControl
         (o, v) => o.ShowPopup = v
     );
 
-    public static readonly DirectProperty<CardDataView, bool> CanBeDeactivetedProperty = AvaloniaProperty.RegisterDirect<CardDataView, bool>(
-        nameof(CanBeDeactiveted),
-        o => o.CanBeDeactiveted,
-        (o, v) => o.CanBeDeactiveted = v
+    public static readonly DirectProperty<CardDataView, bool> CanBeDeactivatedProperty = AvaloniaProperty.RegisterDirect<CardDataView, bool>(
+        nameof(CanBeDeactivated),
+        o => o.CanBeDeactivated,
+        (o, v) => o.CanBeDeactivated = v
     );
 
     public static readonly DirectProperty<CardDataView, bool> ActiveProperty = AvaloniaProperty.RegisterDirect<CardDataView, bool>(
@@ -60,10 +59,10 @@ public partial class CardDataView : UserControl
         set => SetAndRaise(ShowPopupProperty, ref showPopup, value);
     }
 
-    public bool CanBeDeactiveted
+    public bool CanBeDeactivated
     {
-        get => canBeDeactiveted;
-        set => SetAndRaise(CanBeDeactivetedProperty, ref canBeDeactiveted, value);
+        get => canBeDeactivated;
+        set => SetAndRaise(CanBeDeactivatedProperty, ref canBeDeactivated, value);
     }
 
     public bool Active
@@ -74,7 +73,7 @@ public partial class CardDataView : UserControl
 
     private void HandlePointerReleased(object sender, RoutedEventArgs e)
     {
-        if(!canBeDeactiveted)
+        if(!canBeDeactivated)
         {
             return;
         }
@@ -84,6 +83,6 @@ public partial class CardDataView : UserControl
     private bool showLabel = true;
     private bool showMetrics = true;
     private bool showPopup = false;
-    private bool canBeDeactiveted = false;
+    private bool canBeDeactivated = false;
     private bool active = true;
 }

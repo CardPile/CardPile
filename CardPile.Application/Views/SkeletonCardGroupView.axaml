@@ -1,0 +1,56 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CardPile.Application.ViewModels"             
+             xmlns:v="using:CardPile.Application.Views"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="CardPile.Application.Views.SkeletonCardGroupView"
+             x:DataType="vm:SkeletonCardGroupViewModel"
+             x:Name="SkeletonCardGroupViewRoot"
+>
+  <Expander VerticalAlignment="Top" Width="{Binding #SkeletonCardGroupViewRoot.Bounds.Width}">
+    <Expander.Header>
+      <TextBlock FontSize="12" FontWeight="DemiBold" Inlines="{Binding Title, Converter={x:Static vm:SkeletonViewModel.TextToInlinesConverter}}" />
+    </Expander.Header>
+
+    <StackPanel>
+      <ItemsControl ItemsSource="{Binding Groups}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <StackPanel Orientation="Vertical" />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <StackPanel>
+              <v:SkeletonCardGroupView DataContext="{Binding}" />
+            </StackPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <ItemsControl ItemsSource="{Binding Cards}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <WrapPanel Orientation="Horizontal" />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <RelativePanel HorizontalAlignment="Left">
+              <v:CardDataView DataContext="{Binding}" ShowMetrics="false" ShowPopup="true" CanBeDeactivated="false" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True" />
+              <Panel RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True" >
+                <Border Background="#bb000000" CornerRadius="10" ClipToBounds="True" Margin="20 50 0 0" Padding="3">
+                  <TextBlock FontSize="18" FontWeight="DemiBold" Inlines="{Binding RangeText, Converter={x:Static vm:SkeletonViewModel.TextToInlinesConverter}}"/>
+                </Border>
+              </Panel>
+            </RelativePanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>    
+  </Expander>
+</UserControl>

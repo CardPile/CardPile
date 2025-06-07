@@ -1,24 +1,24 @@
-﻿using Avalonia.Data.Converters;
-using Avalonia.Media;
-using Avalonia.Media.Imaging;
+﻿using Avalonia.Media.Imaging;
+using CardPile.Application.Models;
 using CardPile.Application.Services;
-using CardPile.CardData.Importance;
 using ReactiveUI;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace CardPile.Application.ViewModels;
 
-public class CardDataViewModel : CardViewModelBase
+public class CardDataViewModel : ViewModelBase
 {
-    public const int CARD_HEADER_SIZE = 26;
-
-    internal CardDataViewModel(ICardDataService cardDataService, int index, bool highlight = false) : base(cardDataService)
+    internal CardDataViewModel(ICardDataService cardDataService, int index, bool highlight = false)
     {
+        CardDataService = cardDataService;
         Metrics = new CardMetricsViewModel([.. CardDataService.Metrics.Select(x => new CardMetricViewModel(x))]);
+        Annotations = new CardAnnotationsViewModel([.. CardDataService.Annotations.Select(x => new CardAnnotationViewModel(x))]);
         Index = index;
         Highlight = highlight;
     }
+
+    internal ICardDataService CardDataService { get; init; }
 
     internal string CardName
     { 
@@ -27,9 +27,16 @@ public class CardDataViewModel : CardViewModelBase
 
     internal CardMetricsViewModel Metrics { get; init; }
 
+    internal CardAnnotationsViewModel Annotations { get; init; }
+
     internal Task<Bitmap?> CardImage
     { 
         get => CardDataService.CardImage; 
+    }
+
+    internal Task<Bitmap?> StandardCardImage
+    {
+        get => CardDataService.StandardCardImage;
     }
 
     internal int Index
@@ -52,7 +59,7 @@ public class CardDataViewModel : CardViewModelBase
     {
         get
         {
-            return index * CARD_HEADER_SIZE;
+            return index * CardDataModel.CARD_HEADER_SIZE;
         }
     }
     

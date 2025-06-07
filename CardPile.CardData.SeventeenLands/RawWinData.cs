@@ -9,8 +9,8 @@ internal class RawWinData
         bool? isSummary,
         string? colorName,
         string? shortColorName,
-        int? wins,
-        int? games,
+        double? wins,
+        double? games,
         Color colors
     )
     {
@@ -28,8 +28,8 @@ internal class RawWinData
         bool? is_summary,
         string? color_name,
         string? short_name,
-        int? wins,
-        int? games
+        double? wins,
+        double? games
     ) : this(is_summary, color_name, short_name, wins, games, Utils.ParseColors(short_name))
     {}
 
@@ -39,9 +39,9 @@ internal class RawWinData
 
     internal string? ShortColorName { get; init; }
 
-    internal int? Wins { get; set; }
+    internal double? Wins { get; set; }
 
-    internal int? Games { get; init; }
+    internal double? Games { get; init; }
 
     internal Color Colors { get; init; }
 }

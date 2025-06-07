@@ -1,0 +1,16 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CardPile.Application.ViewModels"
+             xmlns:v="using:CardPile.Application.Views"
+             xmlns:vmd="using:CardPile.Application.ViewModels.Design"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CardPile.Application.Views.CardAnnotationView"
+             x:DataType="vm:CardAnnotationViewModel"
+             x:Name="CardAnnotationViewRoot">
+  <UniformGrid Rows="1" Margin="5 0">
+    <TextBlock Inlines="{Binding Name, Converter={x:Static vm:CardAnnotationViewModel.AnnotationTextToInlinesConverter}}" Margin="5 2" />
+    <TextBlock Inlines="{Binding TextValue, Converter={x:Static vm:CardAnnotationViewModel.AnnotationTextToInlinesConverter}}" Margin="5 2" HorizontalAlignment="Right" />
+  </UniformGrid>
+</UserControl>

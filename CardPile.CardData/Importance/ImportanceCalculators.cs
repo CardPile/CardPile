@@ -4,6 +4,26 @@ namespace CardPile.CardData.Importance;
 
 public static class ImportanceCalculators
 {
+    static public Func<T, ImportanceLevel> Critical<T>()
+    {
+        return Constant<T>(ImportanceLevel.Critical);
+    }
+
+    static public Func<T, ImportanceLevel> High<T>()
+    {
+        return Constant<T>(ImportanceLevel.High);
+    }
+
+    static public Func<T, ImportanceLevel> Regular<T>()
+    {
+        return Constant<T>(ImportanceLevel.Regular);
+    }
+
+    static public Func<T, ImportanceLevel> Low<T>()
+    {
+        return Constant<T>(ImportanceLevel.Low);
+    }
+
     static public Func<T, ImportanceLevel> Constant<T>(ImportanceLevel level)
     {
         return (T) => level;
@@ -13,7 +33,7 @@ public static class ImportanceCalculators
     {
         return (T value) =>
         {
-            T? thresholdValue = referenceValueSelector();
+            var thresholdValue = referenceValueSelector();
             if (value >= thresholdValue + criticalOffset)
             {
                 return ImportanceLevel.Critical;
@@ -34,7 +54,7 @@ public static class ImportanceCalculators
     {
         return (T value) =>
         {
-            T? thresholdValue = referenceValueSelector();
+            var thresholdValue = referenceValueSelector();
             if (value <= thresholdValue - criticalOffset)
             {
                 return ImportanceLevel.Critical;

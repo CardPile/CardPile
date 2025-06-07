@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardPile.Watchers.Unity", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardPile.Deck", "CardPile.Deck\CardPile.Deck.csproj", "{6B8982C2-6650-4472-89D1-311C3970A8BA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardPile.Crypt", "CardPile.Crypt\CardPile.Crypt.csproj", "{279BA757-D47F-4C6C-8D48-9CA464DE5399}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{6B8982C2-6650-4472-89D1-311C3970A8BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B8982C2-6650-4472-89D1-311C3970A8BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B8982C2-6650-4472-89D1-311C3970A8BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{279BA757-D47F-4C6C-8D48-9CA464DE5399}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{279BA757-D47F-4C6C-8D48-9CA464DE5399}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{279BA757-D47F-4C6C-8D48-9CA464DE5399}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{279BA757-D47F-4C6C-8D48-9CA464DE5399}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

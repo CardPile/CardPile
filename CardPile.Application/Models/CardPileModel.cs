@@ -68,6 +68,11 @@ internal class CardPileModel : ReactiveObject
         get => statisticsModel;
     }
 
+    public ICryptService CryptService
+    {
+        get => draftModel.Crypt;
+    }
+
     public bool IsCardDataSourceBeingBuilt
     {
         get => isCardDataSourceBeingBuilt;

@@ -132,7 +132,8 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
         var winRateColors = OptionsToColors(winRateColorsSetting.Options);
         var deqCalculator = GetDEqCalculator(cardDataSource);
 
-        return new CardDataSource(cardDataSource,
+        return new CardDataSource(setParameter.Value,
+                                  cardDataSource,
                                   wuCardDataSource,
                                   wbCardDataSource,
                                   wrCardDataSource,

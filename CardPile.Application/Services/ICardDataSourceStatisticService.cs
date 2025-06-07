@@ -1,6 +1,8 @@
-﻿namespace CardPile.Application.Services;
+﻿using ReactiveUI;
 
-internal interface ICardDataSourceStatisticService
+namespace CardPile.Application.Services;
+
+internal interface ICardDataSourceStatisticService : IReactiveObject
 {
     public string Name { get; }
 

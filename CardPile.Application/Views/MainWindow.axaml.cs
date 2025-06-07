@@ -1,8 +1,6 @@
 using Avalonia.ReactiveUI;
-using CardPile.Application.Services;
 using CardPile.Application.ViewModels;
 using ReactiveUI;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CardPile.Application.Views;
@@ -13,7 +11,11 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
         InitializeComponent();
 
-        this.WhenActivated(action => action(ViewModel!.ShowCardDataSourceSettingsDialog.RegisterHandler(DoShowCardDataSourceSettingsDialogAsync)));
+        this.WhenActivated(action =>
+        {
+            action(ViewModel!.ShowCardDataSourceSettingsDialog.RegisterHandler(DoShowCardDataSourceSettingsDialogAsync));
+            action(ViewModel!.ShowSettingsDialog.RegisterHandler(DoShowSettingsDialogAsync));
+        });
     }
 
     private async Task DoShowCardDataSourceSettingsDialogAsync(IInteractionContext<CardDataSourceSettingsDialogViewModel, bool> interaction)
@@ -26,4 +28,13 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         interaction.SetOutput(await dialog.ShowDialog<bool>(this));
     }
 
+    private async Task DoShowSettingsDialogAsync(IInteractionContext<SettingsDialogViewModel, bool> interaction)
+    {
+        var dialog = new SettingsDialog
+        {
+            DataContext = interaction.Input
+        };
+
+        interaction.SetOutput(await dialog.ShowDialog<bool>(this));
+    }
 }

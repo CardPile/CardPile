@@ -7,12 +7,13 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using CardPile.CardData.Importance;
 using System;
-using Tmds.DBus.Protocol;
 
 namespace CardPile.Application.ViewModels;
 
 internal class ConverterUtils
 {
+    public static string HIGHLIGHT_GREEN_MARKER = "{HighlightGreen}";
+
     public static IBrush ImportanceToBrush(ImportanceLevel level)
     {
         switch (level)
@@ -61,6 +62,12 @@ internal class ConverterUtils
             return null;
         };
 
+        Func<TextToInlinesState, Color, Control?> highlightReplacer = (TextToInlinesState state, Color color) =>
+        {
+            state.Foreground = new SolidColorBrush(color);
+            return null;
+        };
+
         Dictionary<string, Func<TextToInlinesState, Control?>> delimiters = new(){{"{W}", _ => manaSymbolReplacer(Scryfall.WhiteManaSymbol) },
                                                                                   {"{U}", _ => manaSymbolReplacer(Scryfall.BlueManaSymbol) },
                                                                                   {"{B}", _ => manaSymbolReplacer(Scryfall.BlackManaSymbol) },
@@ -71,6 +78,7 @@ internal class ConverterUtils
                                                                                   {IMPORTANCE_REGULAR, s => importanceReplacer(s, ImportanceLevel.Regular) },
                                                                                   {IMPORTANCE_HIGH, s => importanceReplacer(s, ImportanceLevel.High) },
                                                                                   {IMPORTANCE_CRITICAL, s => importanceReplacer(s, ImportanceLevel.Critical) },
+                                                                                  {HIGHLIGHT_GREEN_MARKER, s => highlightReplacer(s, Colors.Green)}
 
         };
 

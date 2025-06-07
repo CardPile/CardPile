@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using NLog;
+using System.Collections.Generic;
 using System.Text;
 using System.Web;
 
@@ -148,7 +149,16 @@ public class SeventeenLandsCardDataSourceProvider
 
     internal static List<RawWinData> LoadWinData(string jsonText)
     {
-        var result = JsonConvert.DeserializeObject<List<RawWinData>>(jsonText);
+        List<RawWinData>? result = null;
+        try
+        {
+            result = JsonConvert.DeserializeObject<List<RawWinData>>(jsonText);
+        }
+        catch(Exception ex)
+        {
+            logger.Error("Error deserializing win data. {ex}", ex);
+        }
+
         return result == null ? throw new ArgumentException("Invalid JSON", nameof(jsonText)) : result;
     }
 

@@ -33,7 +33,7 @@
           </Panel>
         </Button>
       </StackPanel>
-      <TextBlock Inlines="{Binding Metric.TextValue, Converter={x:Static vm:CardMetricViewModel.MetricTextToInlinesConverter}}" Margin="5 2" HorizontalAlignment="Right">
+      <TextBlock Inlines="{Binding TextValue, Converter={x:Static vm:CardMetricViewModel.MetricTextToInlinesConverter}}" Margin="5 2" HorizontalAlignment="Right">
         <TextBlock.Styles>
           <Style Selector="v|CardMetricView#CardMetricViewRoot[HighlightImportance=true] TextBlock">
             <Setter Property="Foreground" Value="{Binding Metric.Importance, Converter={x:Static vm:CardMetricsViewModel.ImportanceConverter}}" />

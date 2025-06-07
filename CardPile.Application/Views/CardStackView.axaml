@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CardPile.Application.ViewModels"
+             xmlns:v="using:CardPile.Application.Views"
+             xmlns:vmd="using:CardPile.Application.ViewModels.Design"             
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="CardPile.Application.Views.CardStackView"
+             x:DataType="vm:CardStackViewModel"
+             x:Name="CardStackViewRoot">
+  <ItemsControl VerticalAlignment="Top" Classes="CardStack" ItemsSource="{Binding Cards}">
+    <ItemsControl.Styles>
+      <Style Selector=".CardStack > ContentPresenter" x:DataType="vm:CardDataViewModel">
+        <Setter Property="Canvas.Top" Value="{Binding OffsetInStack}"/>
+        <Setter Property="Canvas.Left" Value="0" />
+        <Setter Property="Width" Value="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
+        <Setter Property="Height" Value="{Binding Bounds.Height, RelativeSource={RelativeSource AncestorType=Canvas}}"/>
+        <Setter Property="ZIndex" Value="{Binding Index}" />
+      </Style>
+    </ItemsControl.Styles>
+    <ItemsControl.ItemsPanel>
+      <ItemsPanelTemplate>
+        <Canvas Name="CardStackViewCanvas" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" MinWidth="182" Height="{Binding Cards, Converter={x:Static vm:CardStackViewModel.CardCollectionToStackHeightConverter}}" />
+      </ItemsPanelTemplate>
+    </ItemsControl.ItemsPanel>
+    <ItemsControl.ItemTemplate>
+      <DataTemplate>
+        <v:CardDataView DataContext="{Binding}" ShowLabel="false" ShowMetrics="false" ShowPopup="true" />
+      </DataTemplate>
+    </ItemsControl.ItemTemplate>
+  </ItemsControl>
+</UserControl>

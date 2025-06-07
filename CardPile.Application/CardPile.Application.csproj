@@ -19,15 +19,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.2.1" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.2.1" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.1" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.1" />
+    <PackageReference Include="Avalonia" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.0" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.1" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.1" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.0" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.0" />
     <PackageReference Include="LoadingIndicators.Avalonia" Version="11.0.11.1" />
-    <PackageReference Include="NLog.Extensions.Logging" Version="5.3.14" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="5.4.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,6 +35,7 @@
     <ProjectReference Include="..\CardPile.CardData.SeventeenLands\CardPile.CardData.SeventeenLands.csproj" />
     <ProjectReference Include="..\CardPile.CardData.Spreadsheet\CardPile.CardData.Spreadsheet.csproj" />
     <ProjectReference Include="..\CardPile.CardData\CardPile.CardData.csproj" />
+    <ProjectReference Include="..\CardPile.Crypt\CardPile.Crypt.csproj" />
     <ProjectReference Include="..\CardPile.Deck\CardPile.Deck.csproj" />
     <ProjectReference Include="..\CardPile.Draft\CardPile.Draft.csproj" />
     <ProjectReference Include="..\CardPile.Watchers.ArenaLog\CardPile.Watchers.ArenaLog.csproj" />
@@ -60,6 +61,12 @@
     </Compile>
     <Compile Update="Views\CardMetricsView.axaml.cs">
       <DependentUpon>CardMetricsView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\CardListView.axaml.cs">
+      <DependentUpon>CardListView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\SeenCardsView.axaml.cs">
+      <DependentUpon>SeenCardsView.axaml</DependentUpon>
     </Compile>
     <Compile Remove="Extensions\TextBlockExtensions.cs" />
     <Compile Remove="Extensions\**" />

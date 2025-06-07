@@ -70,6 +70,11 @@ public class Arena
         return CardDictionary.TryGetValue(cardId, out var data) ? data.Colors : Color.None;
     }
 
+    public static List<int> GetCardIdsFromNameAndExpansion(string name, string expansion)
+    {
+        return [.. CardDictionary.Where(kv => string.Equals(kv.Value.Name, name, StringComparison.OrdinalIgnoreCase) && string.Equals(kv.Value.Expansion, expansion, StringComparison.OrdinalIgnoreCase)).Select(kv => kv.Key)];
+    }
+
     private static string? GetArenaInstallDirectory()
     {
         if (OperatingSystem.IsWindows())
@@ -170,7 +175,7 @@ public class Arena
         connection.Open();
 
         var command = connection.CreateCommand();
-        command.CommandText = @"SELECT GrpId, ExpansionCode, CollectorNumber, Types, Order_CMCWithXLast, Colors, enUS FROM Cards LEFT JOIN Localizations ON Cards.TitleId == Localizations.LocId WHERE Localizations.Formatted = 2";
+        command.CommandText = @"SELECT GrpId, ExpansionCode, CollectorNumber, Types, Order_CMCWithXLast, Colors, Loc FROM Cards LEFT JOIN Localizations_enUS ON Cards.TitleId == Localizations_enUS.LocId WHERE Loc IS NOT NULL GROUP BY GrpId ORDER BY Localizations_enUS.Formatted DESC";
         
         using var reader = command.ExecuteReader();
         while (reader.Read())

@@ -10,9 +10,9 @@
         Title="Card data source settings"
         Icon="/Assets/cardpile.ico"        
         WindowStartupLocation="CenterOwner"
-        Name="SettingsWindow">
+        Name="CardSourceSettingsWindow">
   <Grid RowDefinitions="Auto,*,Auto">
-    <TextBlock Margin="5" FontSize="18" FontWeight="DemiBold">Card source settings</TextBlock>
+    <TextBlock Grid.Row="0" Margin="5" FontSize="18" FontWeight="DemiBold">Card source settings</TextBlock>
     <StackPanel Grid.Row="1" >
       <ItemsControl ItemsSource="{Binding Settings}">
         <ItemsControl.ItemsPanel>
@@ -28,7 +28,7 @@
                   <Grid ColumnDefinitions="Auto,*,Auto">
                     <Label Grid.Column="0" Margin="5" VerticalAlignment="Center" Content="{Binding Name}"/>
                     <TextBox Grid.Column="1" Margin="5" IsEnabled="False" Text="{Binding TemporaryValue}"/>
-                    <Button Grid.Column="2" Margin="5" Content="Browse..." Command="{Binding #SettingsWindow.((vm:CardDataSourceSettingsDialogViewModel)DataContext).BrowseFileCommand}" CommandParameter="{Binding}"/>
+                    <Button Grid.Column="2" Margin="5" Content="Browse..." Command="{Binding #CardSourceSettingsWindow.((vm:CardDataSourceSettingsDialogViewModel)DataContext).BrowseFileCommand}" CommandParameter="{Binding}"/>
                   </Grid>
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type services:ICardDataSourceSettingNumberService}">

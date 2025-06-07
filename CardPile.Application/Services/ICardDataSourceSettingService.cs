@@ -1,8 +1,9 @@
 ﻿using CardPile.CardData.Settings;
+using ReactiveUI;
 
 namespace CardPile.Application.Services;
 
-internal interface ICardDataSourceSettingService
+internal interface ICardDataSourceSettingService : IReactiveObject
 {
     public string Name { get; }
 
