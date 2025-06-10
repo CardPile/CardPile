@@ -18,6 +18,7 @@ internal class CryptModel : ReactiveObject, ICryptService
         ReloadSkeletons();
 
         Configuration.Instance.ObservableForProperty(x => x.CryptLocation).Subscribe(_ => ReloadSkeletons());
+        Configuration.Instance.ObservableForProperty(x => x.ShowAllSkeletons).Subscribe(_ => ReloadSkeletons());
     }
 
     public ObservableCollection<ISkeletonService> Skeletons { get; } = [];
@@ -25,7 +26,7 @@ internal class CryptModel : ReactiveObject, ICryptService
     public void SetCardDataSource(ICardDataSource newCardDataSource)
     {
         cardDataSource = newCardDataSource;
-        UpdateSkeletonModels();
+        UpdateSkeletonModels(Configuration.Instance.ShowAllSkeletons);
     }
 
     public void AnnotateCard(ICardDataService card)
@@ -52,7 +53,7 @@ internal class CryptModel : ReactiveObject, ICryptService
     public void ReloadSkeletons()
     {
         crypt.LoadSkeletons(Configuration.Instance.CryptLocation);
-        UpdateSkeletonModels();
+        UpdateSkeletonModels(Configuration.Instance.ShowAllSkeletons);
     }
 
     public void UpdateSkeletons(List<int> cardIds)
@@ -85,13 +86,13 @@ internal class CryptModel : ReactiveObject, ICryptService
         }
     }
 
-    private void UpdateSkeletonModels()
+    private void UpdateSkeletonModels(bool showAllSkeletons)
     {
         Skeletons.Clear();
 
         foreach (var skeleton in crypt.Skeletons)
         {
-            if (cardDataSource.Set != null && cardDataSource.Set != skeleton.Set)
+            if (!showAllSkeletons && cardDataSource.Set != null && cardDataSource.Set != skeleton.Set)
             {
                 continue;
             }

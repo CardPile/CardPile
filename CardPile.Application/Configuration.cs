@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,7 +20,14 @@ internal class Configuration : INotifyPropertyChanged
     { 
         get => cryptLocation; 
         set => RaiseAndSetIfChanged(ref cryptLocation, value); 
-    } 
+    }
+
+    [JsonProperty("show_all_skeletons")]
+    internal bool ShowAllSkeletons
+    {
+        get => showAllSkeletons;
+        set => this.RaiseAndSetIfChanged(ref showAllSkeletons, value);
+    }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -61,4 +67,6 @@ internal class Configuration : INotifyPropertyChanged
     private static Lazy<Configuration> instance = new Lazy<Configuration>(() => Load());
 
     private string cryptLocation = Path.Combine(Environment.ProcessPath != null ? Path.GetDirectoryName(Environment.ProcessPath) ?? "." : ".", "Skeletons");
+
+    private bool showAllSkeletons = false;
 }

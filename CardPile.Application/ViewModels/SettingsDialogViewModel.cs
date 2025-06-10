@@ -9,10 +9,12 @@ public class SettingsDialogViewModel : ViewModelBase
     internal SettingsDialogViewModel()
     {
         cryptLocation = Configuration.Instance.CryptLocation;
+        showAllSkeletons = Configuration.Instance.ShowAllSkeletons;
 
         ApplySettingsCommand = ReactiveCommand.Create(() =>
         {
             Configuration.Instance.CryptLocation = CryptLocation;
+            Configuration.Instance.ShowAllSkeletons = ShowAllSkeletons;
             return true;
         });
 
@@ -39,6 +41,12 @@ public class SettingsDialogViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref cryptLocation, value); 
     }
 
+    internal bool ShowAllSkeletons
+    {
+        get => showAllSkeletons;
+        set => this.RaiseAndSetIfChanged(ref showAllSkeletons, value);
+    }
+
     internal ReactiveCommand<Unit, bool> ApplySettingsCommand { get; init; }
 
     internal ReactiveCommand<Unit, bool> DiscardSettingsCommand { get; init; }
@@ -48,4 +56,5 @@ public class SettingsDialogViewModel : ViewModelBase
     internal Interaction<string, string?> BrowseFolderInteraction { get; init; }
 
     private string cryptLocation;
+    private bool showAllSkeletons;
 }
