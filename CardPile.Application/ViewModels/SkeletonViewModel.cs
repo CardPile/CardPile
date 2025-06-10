@@ -26,6 +26,8 @@ internal class SkeletonViewModel : ViewModelBase
 
     internal string Set { get => SkeletonService.Set; }
 
+    internal string Desc { get => SkeletonService.Desc; }
+
     internal ObservableCollection<SkeletonCardGroupViewModel> Groups { get; } = [];
 
     internal void UpdateCardMetricVisibility(Action<CardDataViewModel> updater)

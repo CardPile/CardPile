@@ -25,6 +25,8 @@ internal class SkeletonModel : ReactiveObject, ISkeletonService
 
     public string Set { get => Skeleton.Set; }
 
+    public string Desc { get => Skeleton.Desc; }
+
     public ObservableCollection<ISkeletonCardGroupService> Groups { get; init; }
 
     public (ImportanceLevel, Range?)? CanAcceptCard(ICardDataService card)

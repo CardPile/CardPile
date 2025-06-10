@@ -7,15 +7,18 @@ namespace CardPile.Crypt;
 
 public class Skeleton
 {
-    internal Skeleton(string name, string set)
+    internal Skeleton(string name, string set, string desc)
     {
         Name = name;
         Set = set;
+        Desc = desc;
     }
 
     public string Name { get; init; }
 
     public string Set { get; init; }
+
+    public string Desc { get; init; }
 
     public List<CardGroup> Groups { get; } = [];
 
@@ -99,7 +102,13 @@ public class Skeleton
         var name = nameValue.StringValue;
         var set = setValue.StringValue.ToUpper();
 
-        var skeleton = new Skeleton(name, set);
+        var desc = string.Empty;
+        if(document.TryGetValue("desc", out var descValue))
+        {
+            desc = descValue.StringValue;
+        }
+
+        var skeleton = new Skeleton(name, set, desc);
 
         foreach (var tableEntry in document.Where(kv => kv.Value is TomlTable))
         {

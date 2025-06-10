@@ -10,5 +10,7 @@ internal interface ISkeletonService : IReactiveObject
 
     public string Set { get; }
 
+    public string Desc { get; }
+
     public ObservableCollection<ISkeletonCardGroupService> Groups { get; }
 }

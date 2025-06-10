@@ -11,30 +11,34 @@
 >
   <Expander VerticalAlignment="Top" Width="{Binding #SkeletonViewRoot.Bounds.Width}">
     <Expander.Header>
-      <TextBlock FontSize="16" FontWeight="DemiBold">
-        <TextBlock.Text>
-          <MultiBinding StringFormat="{}{0} ({1})">
-            <MultiBinding.Bindings>
-              <Binding Path="Name"/>
-              <Binding Path="Set"/>
-            </MultiBinding.Bindings>
-          </MultiBinding>
-        </TextBlock.Text>
-      </TextBlock>
+      <StackPanel Orientation="Horizontal">
+        <TextBlock FontSize="16" FontWeight="DemiBold" Inlines="{Binding Name, Converter={x:Static vm:SkeletonViewModel.TextToInlinesConverter}}" />
+        <TextBlock FontSize="16" FontWeight="DemiBold">
+          <TextBlock.Text>
+            <MultiBinding StringFormat="{} ({0})">
+              <MultiBinding.Bindings>
+                <Binding Path="Set"/>
+              </MultiBinding.Bindings>
+            </MultiBinding>
+          </TextBlock.Text>
+        </TextBlock>
+      </StackPanel>
     </Expander.Header>
 
-
-    <ItemsControl ItemsSource="{Binding Groups}">
-      <ItemsControl.ItemsPanel>
-        <ItemsPanelTemplate>
-          <StackPanel Orientation="Vertical" />
-        </ItemsPanelTemplate>
-      </ItemsControl.ItemsPanel>
-      <ItemsControl.ItemTemplate>
-        <DataTemplate>
-          <v:SkeletonCardGroupView DataContext="{Binding}" Margin="0, 2" />
-        </DataTemplate>
-      </ItemsControl.ItemTemplate>
-    </ItemsControl>
+    <StackPanel Orientation="Vertical">
+      <TextBlock FontSize="14" Text="{Binding Desc, Converter={x:Static vm:SkeletonViewModel.TextToInlinesConverter}}" Margin="0 0 0 10" IsVisible="{Binding Desc, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+      <ItemsControl ItemsSource="{Binding Groups}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <StackPanel Orientation="Vertical" />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <v:SkeletonCardGroupView DataContext="{Binding}" Margin="0, 2" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
   </Expander>
 </UserControl>
