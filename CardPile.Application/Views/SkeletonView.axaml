@@ -26,7 +26,7 @@
     </Expander.Header>
 
     <StackPanel Orientation="Vertical">
-      <TextBlock FontSize="14" Text="{Binding Desc, Converter={x:Static vm:SkeletonViewModel.TextToInlinesConverter}}" Margin="0 0 0 10" IsVisible="{Binding Desc, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+      <TextBlock FontSize="14" Inlines="{Binding Desc, Converter={x:Static vm:SkeletonViewModel.TextToInlinesConverter}}" Margin="0 0 0 10" IsVisible="{Binding Desc, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
       <ItemsControl ItemsSource="{Binding Groups}">
         <ItemsControl.ItemsPanel>
           <ItemsPanelTemplate>
