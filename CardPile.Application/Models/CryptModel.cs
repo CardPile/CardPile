@@ -74,6 +74,11 @@ internal class CryptModel : ReactiveObject, ICryptService
 
     public void Clear()
     {
+        Skeletons.Clear();
+    }
+
+    public void ClearCounts()
+    {
         foreach (var skeletonService in Skeletons)
         {
             if (skeletonService is not SkeletonModel skeletonModel)

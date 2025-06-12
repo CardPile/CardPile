@@ -3,9 +3,7 @@ using CardPile.CardData.Importance;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CardPile.Application.ViewModels;
 

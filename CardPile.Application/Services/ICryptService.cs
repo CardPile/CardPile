@@ -15,5 +15,7 @@ internal interface ICryptService : IReactiveObject
 
     public void UpdateSkeletons(List<int> cardIds);
 
+    public void ClearCounts();
+
     public void Clear();
 }

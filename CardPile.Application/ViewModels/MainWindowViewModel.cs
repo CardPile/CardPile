@@ -425,6 +425,7 @@ public class MainWindowViewModel : ViewModelBase
         SeenCards.Clear();
         CardStacksInDeck.Clear();
         PreviouslyPickedCardFromPack = null;
+        cryptService.Clear();
     }
 
     private void UpdateMetricViewModels(ICardDataSourceBuilderService builder)

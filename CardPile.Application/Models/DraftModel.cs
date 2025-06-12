@@ -89,7 +89,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         cardsSeen.Clear();
         packsSeen.Clear();
         deck.Clear();
-        crypt.Clear();
+        crypt.ClearCounts();
     }
 
     internal static void ClearOldDrafts()
