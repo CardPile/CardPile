@@ -62,7 +62,12 @@ internal class Configuration
         }
 
         var jsonText = File.ReadAllText(CONFIG_FILENAME);
-        return JsonConvert.DeserializeObject<Configuration>(jsonText) ?? new Configuration();
+        var deserializedConfig = JsonConvert.DeserializeObject<Configuration>(jsonText, new JsonSerializerSettings()
+        {
+            ObjectCreationHandling = ObjectCreationHandling.Replace
+        });
+        
+        return deserializedConfig ?? new Configuration();
     }
 
     private static readonly string CONFIG_FILENAME = Path.Combine(Environment.ProcessPath != null ? Path.GetDirectoryName(Environment.ProcessPath) ?? "." : ".", "seventeenlands.config.json");
