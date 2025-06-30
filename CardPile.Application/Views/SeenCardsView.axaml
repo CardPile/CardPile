@@ -17,6 +17,7 @@
         <CheckBox IsChecked="{Binding #SeenCardsViewRoot.ReversePacks, Mode=TwoWay}" Margin="5 0" IsEnabled="{Binding !#SeenCardsViewRoot.MergePacks}">Reverse packs</CheckBox>
         <CheckBox IsChecked="{Binding #SeenCardsViewRoot.StackPacks, Mode=TwoWay}" Margin="5 0" IsEnabled="{Binding !#SeenCardsViewRoot.MergePacks}">Stack packs</CheckBox>
       </StackPanel>
+      <!-- Stacker view -->
       <ScrollViewer HorizontalScrollBarVisibility="Auto" IsVisible="{Binding #SeenCardsViewRoot.MergePacks}">
         <Grid ColumnDefinitions="*,*,*,*,*,*,*">
           <v:CardStackView Grid.Column="0" DataContext="{Binding ColorStacks.WhiteCards}" />
@@ -28,10 +29,63 @@
           <v:CardStackView Grid.Column="6" DataContext="{Binding ColorStacks.ColorlessCards}" />
         </Grid>
       </ScrollViewer>
-      <ItemsControl ItemsSource="{Binding Packs}" IsVisible="{Binding !#SeenCardsViewRoot.MergePacks}">
+      <!-- Normal order -->
+      <ItemsControl ItemsSource="{Binding Packs}">
+        <ItemsControl.IsVisible>
+          <MultiBinding Converter="{x:Static BoolConverters.And}">
+            <MultiBinding.Bindings>
+              <Binding Path="!#SeenCardsViewRoot.MergePacks"/>
+              <Binding Path="!#SeenCardsViewRoot.ReversePacks"/>
+            </MultiBinding.Bindings>
+          </MultiBinding>
+        </ItemsControl.IsVisible>
         <ItemsControl.ItemsPanel>
           <ItemsPanelTemplate>
-            <ReversibleStackPanel Orientation="Vertical" ReverseOrder="{Binding #SeenCardsViewRoot.ReversePacks}" />
+            <StackPanel Orientation="Vertical" />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Orientation="Vertical">
+              <TextBlock FontSize="16" FontWeight="DemiBold" Margin="0 5">
+                <TextBlock.Text>
+                  <MultiBinding StringFormat="{}Pack {0} Pick {1}">
+                    <MultiBinding.Bindings>
+                      <Binding Path="PackNumber"/>
+                      <Binding Path="PickNumber"/>
+                    </MultiBinding.Bindings>
+                  </MultiBinding>
+                </TextBlock.Text>
+              </TextBlock>
+              <v:CardListView Grid.Column="0" Grid.Row="0" DataContext="{Binding Cards}" ShowMetrics="false" ShowPopup="true" Margin="0 2" IsVisible="{Binding !#SeenCardsViewRoot.StackPacks}" />
+              <ScrollViewer HorizontalScrollBarVisibility="Auto" IsVisible="{Binding #SeenCardsViewRoot.StackPacks}">
+                <Grid ColumnDefinitions="*,*,*,*,*,*,*" Margin="0 2">
+                  <v:CardStackView Grid.Column="0" DataContext="{Binding ColorStacks.WhiteCards}" />
+                  <v:CardStackView Grid.Column="1" DataContext="{Binding ColorStacks.BlueCards}" />
+                  <v:CardStackView Grid.Column="2" DataContext="{Binding ColorStacks.BlackCards}" />
+                  <v:CardStackView Grid.Column="3" DataContext="{Binding ColorStacks.RedCards}" />
+                  <v:CardStackView Grid.Column="4" DataContext="{Binding ColorStacks.GreenCards}" />
+                  <v:CardStackView Grid.Column="5" DataContext="{Binding ColorStacks.MulticolorCards}" />
+                  <v:CardStackView Grid.Column="6" DataContext="{Binding ColorStacks.ColorlessCards}" />
+                </Grid>
+              </ScrollViewer>
+            </StackPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <!-- Reversed order -->
+      <ItemsControl ItemsSource="{Binding Packs}">
+        <ItemsControl.IsVisible>
+          <MultiBinding Converter="{x:Static BoolConverters.And}">
+            <MultiBinding.Bindings>
+              <Binding Path="!#SeenCardsViewRoot.MergePacks"/>
+              <Binding Path="#SeenCardsViewRoot.ReversePacks"/>
+            </MultiBinding.Bindings>
+          </MultiBinding>
+        </ItemsControl.IsVisible>
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <ReversibleStackPanel Orientation="Vertical" ReverseOrder="True"/>
           </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>

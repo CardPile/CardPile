@@ -48,5 +48,5 @@ public partial class SeenCardsView : UserControl
 
     private bool mergePacks = false;
     private bool reversePacks = true;
-    private bool stackPacks = false;
+    private bool stackPacks = true;
 }
