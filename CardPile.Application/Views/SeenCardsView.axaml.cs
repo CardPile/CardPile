@@ -11,6 +11,12 @@ public partial class SeenCardsView : UserControl
         (o, v) => o.MergePacks = v
     );
 
+    public static readonly DirectProperty<SeenCardsView, bool> ReversePacksProperty = AvaloniaProperty.RegisterDirect<SeenCardsView, bool>(
+        nameof(ReversePacks),
+        o => o.ReversePacks,
+        (o, v) => o.ReversePacks = v
+    );
+    
     public static readonly DirectProperty<SeenCardsView, bool> StackPacksProperty = AvaloniaProperty.RegisterDirect<SeenCardsView, bool>(
         nameof(StackPacks),
         o => o.StackPacks,
@@ -28,12 +34,19 @@ public partial class SeenCardsView : UserControl
         set => SetAndRaise(MergePacksProperty, ref mergePacks, value);
     }
 
+    public bool ReversePacks
+    {
+        get => reversePacks;
+        set => SetAndRaise(ReversePacksProperty, ref reversePacks, value);
+    }    
+    
     public bool StackPacks
     {
         get => stackPacks;
         set => SetAndRaise(StackPacksProperty, ref stackPacks, value);
     }
 
-    private bool mergePacks = true;
+    private bool mergePacks = false;
+    private bool reversePacks = true;
     private bool stackPacks = false;
 }

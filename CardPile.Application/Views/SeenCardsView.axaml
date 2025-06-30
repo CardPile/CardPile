@@ -14,7 +14,8 @@
     <StackPanel Orientation="Vertical">
       <StackPanel Orientation="Horizontal">
         <CheckBox IsChecked="{Binding #SeenCardsViewRoot.MergePacks, Mode=TwoWay}" Margin="5 0">Merge packs</CheckBox>
-        <CheckBox IsChecked="{Binding #SeenCardsViewRoot.StackPacks, Mode=TwoWay}" Margin="5 0" IsVisible="{Binding !#SeenCardsViewRoot.MergePacks}">Stack packs</CheckBox>
+        <CheckBox IsChecked="{Binding #SeenCardsViewRoot.ReversePacks, Mode=TwoWay}" Margin="5 0" IsEnabled="{Binding !#SeenCardsViewRoot.MergePacks}">Reverse packs</CheckBox>
+        <CheckBox IsChecked="{Binding #SeenCardsViewRoot.StackPacks, Mode=TwoWay}" Margin="5 0" IsEnabled="{Binding !#SeenCardsViewRoot.MergePacks}">Stack packs</CheckBox>
       </StackPanel>
       <ScrollViewer HorizontalScrollBarVisibility="Auto" IsVisible="{Binding #SeenCardsViewRoot.MergePacks}">
         <Grid ColumnDefinitions="*,*,*,*,*,*,*">
@@ -30,7 +31,7 @@
       <ItemsControl ItemsSource="{Binding Packs}" IsVisible="{Binding !#SeenCardsViewRoot.MergePacks}">
         <ItemsControl.ItemsPanel>
           <ItemsPanelTemplate>
-            <StackPanel Orientation="Vertical" />
+            <ReversibleStackPanel Orientation="Vertical" ReverseOrder="{Binding #SeenCardsViewRoot.ReversePacks}" />
           </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
