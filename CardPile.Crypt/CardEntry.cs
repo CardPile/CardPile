@@ -92,7 +92,8 @@ public class CardEntry : IBone
             return null;
         }
 
-        var cardIds = Arena.GetCardIdsFromNameAndExpansion(cardName, set);
+        var sets = Scryfall.GetSetTree(set);
+        var cardIds = Arena.GetCardIdsFromNameAndExpansion(cardName, sets);
         if (cardIds.Count == 0)
         {
             logger.Error("Error parsing card entry in skeleton. Unknown card name {cardName}", cardName);

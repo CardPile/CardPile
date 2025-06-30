@@ -70,9 +70,9 @@ public class Arena
         return CardDictionary.TryGetValue(cardId, out var data) ? data.Colors : Color.None;
     }
 
-    public static List<int> GetCardIdsFromNameAndExpansion(string name, string expansion)
+    public static List<int> GetCardIdsFromNameAndExpansion(string name, List<string> expansions)
     {
-        return [.. CardDictionary.Where(kv => string.Equals(kv.Value.Name, name, StringComparison.OrdinalIgnoreCase) && string.Equals(kv.Value.Expansion, expansion, StringComparison.OrdinalIgnoreCase)).Select(kv => kv.Key)];
+        return [.. CardDictionary.Where(kv => string.Equals(kv.Value.Name, name, StringComparison.OrdinalIgnoreCase) && expansions.Contains(kv.Value.Expansion, StringComparer.OrdinalIgnoreCase)).Select(kv => kv.Key)];
     }
 
     private static string? GetArenaInstallDirectory()

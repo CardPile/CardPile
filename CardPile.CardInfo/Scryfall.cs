@@ -2,6 +2,7 @@
 using NLog;
 using SkiaSharp;
 using Svg.Skia;
+using Newtonsoft.Json.Linq;
 
 namespace CardPile.CardInfo;
 
@@ -13,6 +14,8 @@ public static class Scryfall
     public static readonly string RedManaUrl = "https://svgs.scryfall.io/card-symbols/R.svg";
     public static readonly string GreenManaUrl = "https://svgs.scryfall.io/card-symbols/G.svg";
     public static readonly string ColorlessManaUrl = "https://svgs.scryfall.io/card-symbols/C.svg";
+    
+    public static readonly string SetsUrl = "https://api.scryfall.com/sets";
     
     public static readonly Bitmap WhiteManaSymbol; 
     public static readonly Bitmap BlueManaSymbol; 
@@ -32,6 +35,8 @@ public static class Scryfall
         RedManaSymbol = LoadSvg("R", RedManaUrl).Result ?? throw new Exception("Could not load white red image");
         GreenManaSymbol = LoadSvg("G", GreenManaUrl).Result ?? throw new Exception("Could not load green mana image");
         ColorlessManaSymbol = LoadSvg("C", ColorlessManaUrl).Result ?? throw new Exception("Could not load colorless mana image");
+
+        _ = LoadSets();
     }
 
     public static void Init()
@@ -51,7 +56,7 @@ public static class Scryfall
         {
             var lastAccessTime = File.GetLastAccessTimeUtc(filePath);
             var lastAccessTimeSpan = DateTime.UtcNow.Subtract(lastAccessTime);
-            if (lastAccessTimeSpan.TotalDays >= CACHE_VALID_DAYS)
+            if (lastAccessTimeSpan.TotalDays >= CacheValidDays)
             {
                 try
                 {
@@ -59,7 +64,7 @@ public static class Scryfall
                 }
                 catch(Exception ex)
                 {
-                    logger.Error("Error removing image {cardImageFilePath}. Exception: {exception}", filePath, ex);
+                    Logger.Error("Error removing image {cardImageFilePath}. Exception: {exception}", filePath, ex);
                 }
             }
         }
@@ -80,7 +85,7 @@ public static class Scryfall
 
         if (!cached)
         {
-            SaveBitmap(cacheDirectory, cachePath, bitmap);
+            await SaveBitmap(cacheDirectory, cachePath, bitmap);
         }
 
         return bitmap;
@@ -105,7 +110,7 @@ public static class Scryfall
 
         if (!fullSizeCached)
         {
-            SaveBitmap(fullSizeCacheDirectory, fullSizeCachePath, new Bitmap(fullSizeStream));
+            await SaveBitmap(fullSizeCacheDirectory, fullSizeCachePath, new Bitmap(fullSizeStream));
             fullSizeStream.Position = 0;
         }
 
@@ -135,7 +140,7 @@ public static class Scryfall
             }
 
             using (var skEncodedBitmap = skBitmap.Encode(SKEncodedImageFormat.Jpeg, 100))
-            using (var skImageDataStream = skEncodedBitmap.AsStream())
+            await using (var skImageDataStream = skEncodedBitmap.AsStream())
             {
                 bitmap = new Bitmap(skImageDataStream);
             }
@@ -143,7 +148,7 @@ public static class Scryfall
             skBitmap.Dispose();
         }
 
-        SaveBitmap(cacheDirectory, cachePath, bitmap);
+        await SaveBitmap(cacheDirectory, cachePath, bitmap);
 
         return bitmap;
     }
@@ -213,7 +218,27 @@ public static class Scryfall
         return (cacheDirectory, cachePath);
     }
 
-    private static async void SaveBitmap(string directory, string path, Bitmap bitmap)
+    public static List<string> GetSetTree(string setCode)
+    {
+        List<string> result = [];
+        List<string> queue = [setCode];
+        while (queue.Count > 0)
+        {
+            var code = queue.Last();
+            queue.RemoveAt(queue.Count - 1);
+
+            result.Add(code);
+
+            var newCodes = Sets
+                .Where(s => string.Equals(s.Value.ParentSetCode, code, StringComparison.OrdinalIgnoreCase))
+                .Select(s => s.Value.Code);
+            queue.AddRange(newCodes);
+        }
+
+        return result;
+    }
+
+    private static async Task SaveBitmap(string directory, string path, Bitmap bitmap)
     {
         if (!Directory.Exists(directory))
         {
@@ -226,16 +251,132 @@ public static class Scryfall
 
     private static async Task<(Stream?, bool)> GetImageStream(string cachePath, string cacheIdentifier, string? url)
     {
-        Stream? stream = GetImageStreamFromCache(cachePath);
+        var stream = GetImageStreamFromCache(cachePath);
         if (stream != null)
         {
             return (stream, true);
         }
 
-        return (await GetImageStreamFromUrl(cacheIdentifier, url), false);
+        return (await GetStreamFromUrl(cacheIdentifier, url), false);
+    }
+    
+    private static Stream? GetImageStreamFromCache(string cachePath)
+    {
+        if (!File.Exists(cachePath))
+        {
+            return null;
+        }
+        return File.OpenRead(cachePath);
+    }
+    
+    private static async Task LoadSets()
+    {
+        Sets.Clear();
+        
+        var url = SetsUrl;
+        var moreData = true;
+        while (moreData)
+        {
+            await using var dataStream = await GetStreamFromUrl("sets data", url);
+            if (dataStream == null)
+            {
+                break;
+            }
+            
+            using var reader = new StreamReader(dataStream);
+            var jsonText = await reader.ReadToEndAsync();
+            dynamic setList = JObject.Parse(jsonText);
+            
+            var newSets = ParseSetList(setList, url);
+            if (newSets != null)
+            {
+                foreach (var newSet in newSets)
+                {
+                    Sets.Add(newSet.Code, newSet);
+                }
+            }
+            
+            if (!setList.ContainsKey("has_more"))
+            {
+                Logger.Warn("Error fetching set data from {url}: The 'has_more' property is missing.", url);
+                break;
+            }
+            
+            moreData = setList["has_more"];
+            if (!moreData)
+            {
+                break;
+            }
+            
+            if (!setList.ContainsKey("next_page"))
+            {
+                Logger.Warn("Error fetching set data from {url}: The 'has_more' value was truem but 'next_page' URL is missing.", url);
+                break;
+            }
+            
+            url = setList["next_page"];
+        }
     }
 
-    private static async Task<Stream?> GetImageStreamFromUrl(string cacheIdentifier, string? url)
+    private static List<SetInfo>? ParseSetList(dynamic setList, string url)
+    {
+        if (!setList.ContainsKey("object"))
+        {
+            Logger.Warn("Error fetching set data from {url}: The response does not contain 'object' property.", url);
+            return null;
+        }
+
+        if (setList["object"] != "list")
+        {
+            Logger.Warn("Error fetching set data from {url}: The 'object' property is not equal to 'list'.", url);
+            return null;
+        }
+
+        if (!setList.ContainsKey("data"))
+        {
+            Logger.Warn("Error fetching set data from {url}: The 'data' property is missing.", url);
+            return null;
+        }
+            
+        dynamic data =  setList["data"];
+        if (data is not JArray dataArray)
+        {
+            Logger.Warn("Error fetching set data from {url}: The 'data' property is not an array.", url);
+            return null;
+        }
+
+        List<SetInfo> result = [];
+        foreach (var entry in dataArray)
+        {
+            if (entry is not JObject entryObject)
+            {
+                Logger.Warn("Error fetching set data from {url}: The 'data' array entry is not an object.", url);
+                continue;
+            }
+
+            if (!entryObject.TryGetValue("code", out var codeValue))
+            {
+                Logger.Warn("Error fetching set data from {url}: The 'data' array entry object does not contain a 'code' property.", url);
+                continue;
+            }
+
+            var parentSetCode = string.Empty;
+            if (entryObject.TryGetValue("parent_set_code", out var parentSetCodeValue))
+            {
+                parentSetCode = parentSetCodeValue.ToString();
+            }
+            
+            result.Add(new SetInfo()
+            {
+                Code = codeValue.ToString(),
+                ParentSetCode = parentSetCode,
+            });
+        }
+
+        return result;
+    }
+    
+    private static async Task<Stream?> GetStreamFromUrl(string identifier, string? url)
     {
         if (url == null)
         {
@@ -246,30 +387,29 @@ public static class Scryfall
         if (!response.IsSuccessStatusCode)
         {
             var content = await response.Content.ReadAsStringAsync();
-            logger.Warn("Error fetching image for {cacheIdentifier} from {url}", cacheIdentifier, url);
-            logger.Warn("Status: {status} Response: {response}", response.StatusCode, content);
+            Logger.Warn("Error fetching {identifier} from {url}", identifier, url);
+            Logger.Warn("Status: {status} Response: {response}", response.StatusCode, content);
             return null;
         }
 
         var data = await response.Content.ReadAsByteArrayAsync();
         return new MemoryStream(data);
-    }
+    }    
 
-    private static Stream? GetImageStreamFromCache(string cachePath)
+    private struct SetInfo
     {
-        if (!File.Exists(cachePath))
-        {
-            return null;
-        }
-        return File.OpenRead(cachePath);
-    }
-
+        public string Code;
+        public string ParentSetCode;
+    };
+    
     private static readonly string AppProgramData = OperatingSystem.IsMacOS() ? "/Users/Shared" : Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
     private static readonly string CardPileProgramData = Path.Combine(AppProgramData, "CardPile");
-    private  static readonly string ScryfallImageCache = Path.Combine(CardPileProgramData, "ScryfallImageCache");
-    private const int CACHE_VALID_DAYS = 30;
+    private static readonly string ScryfallImageCache = Path.Combine(CardPileProgramData, "ScryfallImageCache");
+    private const int CacheValidDays = 30;
 
-    private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+    private static readonly Dictionary<string, SetInfo> Sets = [];
+    
     private static readonly HttpClient HttpClient = new();
 }
