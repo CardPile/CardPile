@@ -48,6 +48,8 @@ internal class CryptModel : ReactiveObject, ICryptService
                 card.Annotations.Add(new CardAnnotationModel(name, text));
             }
         }
+
+        // For each Synergy in Synergies...
     }
 
     public void ReloadSkeletons()

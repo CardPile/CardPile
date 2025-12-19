@@ -1,7 +1,6 @@
 ﻿using CardPile.CardData.Importance;
 using NLog;
 using Tomlet.Models;
-using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace CardPile.Crypt;
 
