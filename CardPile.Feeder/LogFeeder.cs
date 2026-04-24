@@ -49,6 +49,7 @@ internal class LogFeeder
             foreach (var line in chunks[currentChunkIndex])
             {
                 outputFile.WriteLine(line);
+                outputFile.Flush();
                 lastLine = line;
             }
             Console.WriteLine(lastLine);

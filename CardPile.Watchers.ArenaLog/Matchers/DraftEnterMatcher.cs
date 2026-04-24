@@ -5,9 +5,21 @@ namespace CardPile.Watchers.ArenaLog.Matchers;
 public class DraftEnterMatcher : ILogMatcher
 {
     public event EventHandler<DraftEnterEvent>? DraftEnterEvent;
+    
+    public event EventHandler<DraftChoiceEvent>? DraftChoiceEvent;
 
+    public DraftEnterMatcher()
+    {
+        choiceMatcher.DraftChoiceEvent += DraftChoiceHandler;
+    }
+    
     public bool Match(string line)
     {
+        if (choiceMatcher.Match(line))
+        {
+            return true;
+        }
+        
         if (!line.StartsWith(SCENE_CHANGE_NEEDLE))
         {
             return false;
@@ -41,6 +53,14 @@ public class DraftEnterMatcher : ILogMatcher
         return new();
     }
 
+    private void DraftChoiceHandler(object? sender, DraftChoiceEvent e)
+    {
+        DraftEnterEvent?.Invoke(this, new DraftEnterEvent());
+        DraftChoiceEvent?.Invoke(this, e);
+    }
+    
+    private DraftChoiceMatcher choiceMatcher = new DraftChoiceMatcher();
+    
     private static readonly string SCENE_CHANGE_NEEDLE = "[UnityCrossThreadLogger]Client.SceneChange";
     private static readonly string DESTINATION_SCENE_NAME_NEEDLE = "Draft";
 }

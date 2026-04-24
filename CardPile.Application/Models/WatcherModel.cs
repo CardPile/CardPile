@@ -21,7 +21,10 @@ internal class WatcherModel : ReactiveObject, IWatcherService
 
         dispatcher = new MatcherDispatcher();
         dispatcher.Connect(logWatcher);
-        dispatcher.AddMatcher<DraftEnterMatcher>().DraftEnterEvent += DraftEnterHandler;
+        
+        var enterMatcher = dispatcher.AddMatcher<DraftEnterMatcher>();
+        enterMatcher.DraftEnterEvent += DraftEnterHandler;
+        enterMatcher.DraftChoiceEvent += DraftChoiceHandler;
 
         logWatcherTimerHandle = null;
         memoryWatcherTimerHandle = null;
@@ -157,7 +160,10 @@ internal class WatcherModel : ReactiveObject, IWatcherService
         dispatcher.RemoveMatcher<DraftChoiceMatcher>();
         dispatcher.RemoveMatcher<DraftPickMatcher>();
         dispatcher.RemoveMatcher<DraftLeaveMatcher>();
-        dispatcher.AddMatcher<DraftEnterMatcher>().DraftEnterEvent += DraftEnterHandler;
+        
+        var enterMatcher = dispatcher.AddMatcher<DraftEnterMatcher>();
+        enterMatcher.DraftEnterEvent += DraftEnterHandler;
+        enterMatcher.DraftChoiceEvent += DraftChoiceHandler;
 
         OnRaiseDraftLeaveEvent(e);
     }
