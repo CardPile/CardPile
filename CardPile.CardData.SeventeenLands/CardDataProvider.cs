@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using NLog;
-using System.Collections.Generic;
 using System.Text;
 using System.Web;
 
@@ -21,7 +20,7 @@ public class SeventeenLandsThrottlingDelegatingHandler : DelegatingHandler
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        await Task.Delay(rng.Next(0, maxMillisecondsDelay));
+        await Task.Delay(rng.Next(0, maxMillisecondsDelay), cancellationToken);
 
         await semaphore.WaitAsync(cancellationToken);
         try
@@ -34,26 +33,24 @@ public class SeventeenLandsThrottlingDelegatingHandler : DelegatingHandler
         }
     }
 
-    private SemaphoreSlim semaphore;
-    private Random rng;
-    private int maxMillisecondsDelay;
+    private readonly SemaphoreSlim semaphore;
+    private readonly Random rng;
+    private readonly int maxMillisecondsDelay;
 }
 
-public class SeventeenLandsCardDataSourceProvider
+public static class SeventeenLandsCardDataSourceProvider
 {
-
-
     static SeventeenLandsCardDataSourceProvider()
     {
         const int MAX_PARALLELISM = 3;
         const int MAX_DELAY_MILLISECONDS = 2000;
-        httpClient = new(new SeventeenLandsThrottlingDelegatingHandler(MAX_PARALLELISM, MAX_DELAY_MILLISECONDS));
+        HttpClient = new(new SeventeenLandsThrottlingDelegatingHandler(MAX_PARALLELISM, MAX_DELAY_MILLISECONDS));
     }
 
-    internal const string ALL_USERS_USER_TYPE = "All users";
-    internal const string ALL_COLORS_COLOR_TYPE = "All colors";
-    internal const string ALL_COLORS_DECK_TYPE = "All colors";
-    internal const string ALL_RARITIES_RARITY_TYPE = "All rarities";
+    private const string ALL_USERS_USER_TYPE = "All users";
+    private const string ALL_COLORS_COLOR_TYPE = "All colors";
+    private const string ALL_COLORS_DECK_TYPE = "All colors";
+    private const string ALL_RARITIES_RARITY_TYPE = "All rarities";
 
     internal const string WU_COLORS_DECK_TYPE = "WU";
     internal const string WB_COLORS_DECK_TYPE = "WB";
@@ -102,17 +99,17 @@ public class SeventeenLandsCardDataSourceProvider
         return [];
     }
 
-    internal static List<RawCardData> LoadCardData(Stream steam)
+    private static List<RawCardData> LoadCardData(Stream steam)
     {
         var reader = new StreamReader(steam);
         var data = reader.ReadToEnd();
         return LoadCardData(data);
     }
 
-    internal static List<RawCardData> LoadCardData(string jsonText)
+    private static List<RawCardData> LoadCardData(string jsonText)
     {
         var result = JsonConvert.DeserializeObject<List<RawCardData>>(jsonText);
-        return result == null ? throw new ArgumentException("Invalid JSON", nameof(jsonText)) : result;
+        return result ?? throw new ArgumentException("Invalid JSON", nameof(jsonText));
     }
 
     internal static List<RawWinData> LoadWinData(string? set, string? eventType, DateTime startDate, DateTime endDate, bool combineSplashes)
@@ -140,14 +137,14 @@ public class SeventeenLandsCardDataSourceProvider
         return [];
     }
 
-    internal static List<RawWinData> LoadWinData(Stream steam)
+    private static List<RawWinData> LoadWinData(Stream steam)
     {
         var reader = new StreamReader(steam);
         var data = reader.ReadToEnd();
         return LoadWinData(data);
     }
 
-    internal static List<RawWinData> LoadWinData(string jsonText)
+    private static List<RawWinData> LoadWinData(string jsonText)
     {
         List<RawWinData>? result = null;
         try
@@ -156,10 +153,10 @@ public class SeventeenLandsCardDataSourceProvider
         }
         catch(Exception ex)
         {
-            logger.Error("Error deserializing win data. {ex}", ex);
+            Logger.Error("Error deserializing win data. {ex}", ex);
         }
 
-        return result == null ? throw new ArgumentException("Invalid JSON", nameof(jsonText)) : result;
+        return result ?? throw new ArgumentException("Invalid JSON", nameof(jsonText));
     }
 
     internal static void ClearOldData()
@@ -182,7 +179,7 @@ public class SeventeenLandsCardDataSourceProvider
                 }
                 catch (Exception ex)
                 {
-                    logger.Error("Error removing 17Lands card data {filePath}. Exception: {exception}", filePath, ex);
+                    Logger.Error("Error removing 17Lands card data {filePath}. Exception: {exception}", filePath, ex);
                 }
             }
         }
@@ -251,7 +248,7 @@ public class SeventeenLandsCardDataSourceProvider
         try
         {
             var webRequest = new HttpRequestMessage(HttpMethod.Get, FiltersUrl);
-            var response = httpClient.Send(webRequest);
+            var response = HttpClient.Send(webRequest);
             stream = response.Content.ReadAsStream();
         }
         catch (HttpRequestException)
@@ -266,30 +263,35 @@ public class SeventeenLandsCardDataSourceProvider
         var jsonText = reader.ReadToEnd();
         var filters = JsonConvert.DeserializeObject<SeventeenLandFilters>(jsonText);
 
-        SetList = filters!.Expansions;
-        EventTypeList = filters!.Formats;
+        if (filters == null)
+        {
+            throw new InvalidOperationException("Cannot deserialize 17Lands filters");
+        }
 
-        UserTypeList = filters!.Groups.Select(x => x == null ? ALL_USERS_USER_TYPE : System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(x)).ToList();
-        ColorList = filters!.Colors.Select(x => x ?? ALL_COLORS_COLOR_TYPE).ToList();
-        StartDates = filters!.StartDates;
+        SetList = filters.FilterExpansions;
+        EventTypeList = filters.FilterFormats;
+
+        UserTypeList = filters.FilterGroups.Select(x => x == null ? ALL_USERS_USER_TYPE : System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(x)).ToList();
+        ColorList = filters.FilterColors.Select(x => x ?? ALL_COLORS_COLOR_TYPE).ToList();
+        StartDates = filters.FilterStartDates;
     }
 
     private class SeventeenLandFilters
     {
         [JsonProperty("colors")]
-        internal List<string?> Colors = [];
+        internal List<string?> FilterColors = [];
 
         [JsonProperty("expansions")]
-        internal List<string> Expansions = [];
+        internal List<string> FilterExpansions = [];
 
         [JsonProperty("formats")]
-        internal List<string> Formats = [];
+        internal List<string> FilterFormats = [];
 
         [JsonProperty("groups")]
-        internal List<string?> Groups = [];
+        internal List<string?> FilterGroups = [];
 
         [JsonProperty("start_dates")]
-        internal Dictionary<string, DateTime> StartDates = [];
+        internal Dictionary<string, DateTime> FilterStartDates = [];
     };
 
     private static string BuildCardDataCacheFilename(string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
@@ -315,7 +317,7 @@ public class SeventeenLandsCardDataSourceProvider
             sb.AppendFormat("{0}_", deckType.ToLower());
         }
 
-        sb.AppendFormat("{0}_", startDate.ToString("yyyy-MM-dd"));
+        sb.AppendFormat("{0:yyyy-MM-dd}_", startDate);
         sb.Append(endDate.ToString("yyyy-MM-dd"));
         sb.Append(".json");
 
@@ -340,7 +342,7 @@ public class SeventeenLandsCardDataSourceProvider
             }
             catch(Exception ex)
             {
-                logger.Error("Error deleting {cacheFilePath}. Exception {exception}", cachePath, ex);
+                Logger.Error("Error deleting {cacheFilePath}. Exception {exception}", cachePath, ex);
             }
             return null;
         }
@@ -371,8 +373,8 @@ public class SeventeenLandsCardDataSourceProvider
             sb.AppendFormat("{0}_", eventType);
         }
 
-        sb.AppendFormat("{0}_", startDate.ToString("yyyy-MM-dd"));
-        sb.AppendFormat("{0}_", endDate.ToString("yyyy-MM-dd"));
+        sb.AppendFormat("{0:yyyy-MM-dd}_", startDate);
+        sb.AppendFormat("{0:yyyy-MM-dd}_", endDate);
         sb.Append(combineSplashes);
         sb.Append(".json");
 
@@ -391,7 +393,10 @@ public class SeventeenLandsCardDataSourceProvider
             using var fs = File.OpenWrite(Path.Combine(CacheDirectory, cacheFilename));
             stream.CopyTo(fs);
         }
-        catch { }
+        catch
+        {
+            // Ignored
+        }
     }
 
     private static async Task<Stream?> ReadCardDataFromWeb(CancellationToken cancelation, string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
@@ -429,7 +434,7 @@ public class SeventeenLandsCardDataSourceProvider
         try
         {
             var url = urlBuilder.ToString();
-            var data = await httpClient.GetByteArrayAsync(url, cancelation);
+            var data = await HttpClient.GetByteArrayAsync(url, cancelation);
             webStream = new MemoryStream(data);
         }
         catch (HttpRequestException)
@@ -464,7 +469,7 @@ public class SeventeenLandsCardDataSourceProvider
         try
         {
             var url = urlBuilder.ToString();
-            var data = await httpClient.GetByteArrayAsync(url, cancelation);
+            var data = await HttpClient.GetByteArrayAsync(url, cancelation);
             webStream = new MemoryStream(data);
         }
         catch (HttpRequestException)
@@ -473,15 +478,15 @@ public class SeventeenLandsCardDataSourceProvider
         return webStream;
     }
 
-    private static readonly HttpClient httpClient;
+    private static readonly HttpClient HttpClient;
 
-    private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     private const string FiltersUrl = "https://www.17lands.com/data/filters";
     private const string CardDataUrl = "https://www.17lands.com/card_ratings/data";
     private const string WinDataUrl = "https://www.17lands.com/color_ratings/data";
-    private readonly static string AppProgramData = OperatingSystem.IsMacOS() ? "/Users/Shared" : Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-    private readonly static string CardPileProgramData = Path.Combine(AppProgramData, "CardPile");
-    private readonly static string CacheDirectory = Path.Combine(CardPileProgramData, "17LandsCache");
+    private static readonly string AppProgramData = OperatingSystem.IsMacOS() ? "/Users/Shared" : Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+    private static readonly string CardPileProgramData = Path.Combine(AppProgramData, "CardPile");
+    private static readonly string CacheDirectory = Path.Combine(CardPileProgramData, "17LandsCache");
     private const int CacheValidHours = 24;
 }
