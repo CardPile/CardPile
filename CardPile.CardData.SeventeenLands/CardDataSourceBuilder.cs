@@ -14,6 +14,7 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
 
     static CardDataSourceBuilder()
     {
+        CardDEqProvider.ClearOldData();
         SeventeenLandsCardDataSourceProvider.ClearOldData();
         SeventeenLandsCardDataSourceProvider.LoadFilters();
     }

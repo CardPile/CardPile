@@ -61,6 +61,32 @@ public static class CardDEqProvider
         return result != null ? result.Cards : throw new ArgumentException("Invalid JSON", nameof(jsonText));
     }    
     
+    internal static void ClearOldData()
+    {
+        if (!Directory.Exists(CacheDirectory))
+        {
+            return;
+        }
+
+        var filePaths = Directory.GetFiles(CacheDirectory);
+        foreach (var filePath in filePaths)
+        {
+            var lastWriteTime = File.GetLastWriteTimeUtc(filePath);
+            var lastWriteTimeSpan = DateTime.UtcNow.Subtract(lastWriteTime);
+            if (lastWriteTimeSpan.TotalHours >= CacheValidHours)
+            {
+                try
+                {
+                    File.Delete(filePath);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Error removing card DEq data {filePath}. Exception: {exception}", filePath, ex);
+                }
+            }
+        }
+    }    
+    
     private static string BuildDeqDataCacheFilename(string set)
     {
         return $"DEq_{set}.json";
