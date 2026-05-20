@@ -1,8 +1,5 @@
 ﻿using CardPile.CardData.Parameters;
 using CardPile.CardData.Settings;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace CardPile.CardData.SeventeenLands;
 
@@ -130,8 +127,9 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
         var winData = new WinDataSource(await SeventeenLandsCardDataSourceProvider.LoadWinDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, startDateParameter.Value, endDateParameter.Value, true), (float)winRateParticipationCutoffSetting.Value);
 
         var winRateColors = OptionsToColors(winRateColorsSetting.Options);
-        var deqCalculator = GetDEqCalculator(cardDataSource);
 
+        var deqData = new RawDEqSource(await DEqProvider.LoadDEqDataAsync(cancelation, setParameter.Value));
+        
         return new CardDataSource(setParameter.Value,
                                   cardDataSource,
                                   wuCardDataSource,
@@ -156,7 +154,7 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
                                   brgCardDataSource,
                                   winRateColors,
                                   winData,
-                                  deqCalculator);
+                                  deqData);
     }
 
     private async Task SaveConfiguration()
@@ -243,20 +241,7 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
 
         return rankColors;
     }
-
-    private DEqCalculator GetDEqCalculator(RawCardDataSource cardDataSource)
-    {
-        return new DEqCalculator(cardDataSource,
-                                 OptionsToColors(deqColorsSetting.Options),
-                                 deqDampingSampleSetting.Value,
-                                 (double)deqAtaBetaSetting.Value,
-                                 (double)deqP1P1ValueSetting.Value,
-                                 (double)deqArchetypeDecaySetting.Value,
-                                 (double)deqLossFactorSetting.Value,
-                                 (double)deqSampleDecaySetting.Value,
-                                 deqFutureProjectionDaysSetting.Value);
-    }
-
+    
     private static List<ICardDataSourceSettingOption> ColorsCombinationNamesToOptions(List<string> colorCombinationNames)
     {
         return

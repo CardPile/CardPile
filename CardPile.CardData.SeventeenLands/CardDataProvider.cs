@@ -74,21 +74,16 @@ public static class SeventeenLandsCardDataSourceProvider
     internal const string URG_COLORS_DECK_TYPE = "URG";
     internal const string BRG_COLORS_DECK_TYPE = "BRG";
 
-    internal static List<RawCardData> LoadCardData(string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
-    {
-        return Task.Run(() => LoadCardDataAsync(CancellationToken.None, set, eventType, userType, deckType, startDate, endDate)).Result;
-    }
-
-    internal static async Task<List<RawCardData>> LoadCardDataAsync(CancellationToken cancelation, string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
+    internal static async Task<List<RawCardData>> LoadCardDataAsync(CancellationToken cancellation, string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
     {
         string cacheFilename = BuildCardDataCacheFilename(set, eventType, userType, deckType, startDate, endDate);
-        Stream? fileStream = await ReadFromCache(cacheFilename, cancelation);
+        Stream? fileStream = await ReadFromCache(cacheFilename, cancellation);
         if (fileStream != null)
         {
             return LoadCardData(fileStream);
         }
 
-        Stream? webStream = await ReadCardDataFromWeb(cancelation, set, eventType, userType, deckType, startDate, endDate);
+        Stream? webStream = await ReadCardDataFromWeb(cancellation, set, eventType, userType, deckType, startDate, endDate);
         if (webStream != null)
         {
             SaveToCache(webStream, cacheFilename);
@@ -117,16 +112,16 @@ public static class SeventeenLandsCardDataSourceProvider
         return Task.Run(() => LoadWinDataAsync(CancellationToken.None, set, eventType, startDate, endDate, combineSplashes)).Result;
     }
 
-    internal static async Task<List<RawWinData>> LoadWinDataAsync(CancellationToken cancelation, string? set, string? eventType, DateTime startDate, DateTime endDate, bool combineSplashes)
+    internal static async Task<List<RawWinData>> LoadWinDataAsync(CancellationToken cancellation, string? set, string? eventType, DateTime startDate, DateTime endDate, bool combineSplashes)
     {
         string cacheFilename = BuildWinDataCacheFilename(set, eventType, startDate, endDate, combineSplashes);
-        Stream? fileStream = await ReadFromCache(cacheFilename, cancelation);
+        Stream? fileStream = await ReadFromCache(cacheFilename, cancellation);
         if (fileStream != null)
         {
             return LoadWinData(fileStream);
         }
 
-        Stream? webStream = await ReadWinDataFromWeb(cancelation, set, eventType, startDate, endDate, combineSplashes);
+        Stream? webStream = await ReadWinDataFromWeb(cancellation, set, eventType, startDate, endDate, combineSplashes);
         if (webStream != null)
         {
             SaveToCache(webStream, cacheFilename);
@@ -299,32 +294,31 @@ public static class SeventeenLandsCardDataSourceProvider
         var sb = new StringBuilder("17Lands_");
         if (set != null)
         {
-            sb.AppendFormat("{0}_", set);
+            sb.Append($"{set}_");
         }
 
         if (eventType != null)
         {
-            sb.AppendFormat("{0}_", eventType);
+            sb.Append($"{eventType}_");
         }
 
         if (userType != null && userType != ALL_USERS_USER_TYPE)
         {
-            sb.AppendFormat("{0}_", userType.ToLower());
+            sb.Append($"{userType.ToLower()}_");
         }
 
         if (deckType != null && deckType != ALL_COLORS_DECK_TYPE)
         {
-            sb.AppendFormat("{0}_", deckType.ToLower());
+            sb.Append($"{deckType.ToLower()}_");
         }
 
-        sb.AppendFormat("{0:yyyy-MM-dd}_", startDate);
-        sb.Append(endDate.ToString("yyyy-MM-dd"));
+        sb.Append($"{startDate:yyyy-MM-dd}_{endDate:yyyy-MM-dd}");
         sb.Append(".json");
 
         return sb.ToString();
     }
 
-    private static async Task<Stream?> ReadFromCache(string cacheFilename, CancellationToken cancelation)
+    private static async Task<Stream?> ReadFromCache(string cacheFilename, CancellationToken cancellation)
     {
         string cachePath = Path.Combine(CacheDirectory, cacheFilename);
         if (!File.Exists(cachePath))
@@ -351,7 +345,7 @@ public static class SeventeenLandsCardDataSourceProvider
         try
         {
 
-            var data = await File.ReadAllBytesAsync(cachePath, cancelation);
+            var data = await File.ReadAllBytesAsync(cachePath, cancellation);
             fileStream = new MemoryStream(data);
         }
         catch (HttpRequestException)
@@ -399,7 +393,7 @@ public static class SeventeenLandsCardDataSourceProvider
         }
     }
 
-    private static async Task<Stream?> ReadCardDataFromWeb(CancellationToken cancelation, string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
+    private static async Task<Stream?> ReadCardDataFromWeb(CancellationToken cancellation, string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
     {
         var queryParameters = HttpUtility.ParseQueryString(string.Empty);
         if (set != null)
@@ -434,7 +428,7 @@ public static class SeventeenLandsCardDataSourceProvider
         try
         {
             var url = urlBuilder.ToString();
-            var data = await HttpClient.GetByteArrayAsync(url, cancelation);
+            var data = await HttpClient.GetByteArrayAsync(url, cancellation);
             webStream = new MemoryStream(data);
         }
         catch (HttpRequestException)
@@ -443,7 +437,7 @@ public static class SeventeenLandsCardDataSourceProvider
         return webStream;
     }
 
-    private static async Task<Stream?> ReadWinDataFromWeb(CancellationToken cancelation, string? set, string? eventType, DateTime startDate, DateTime endDate, bool combineSplashes)
+    private static async Task<Stream?> ReadWinDataFromWeb(CancellationToken cancellation, string? set, string? eventType, DateTime startDate, DateTime endDate, bool combineSplashes)
     {
         var queryParameters = HttpUtility.ParseQueryString(string.Empty);
         if (set != null)
@@ -469,7 +463,7 @@ public static class SeventeenLandsCardDataSourceProvider
         try
         {
             var url = urlBuilder.ToString();
-            var data = await HttpClient.GetByteArrayAsync(url, cancelation);
+            var data = await HttpClient.GetByteArrayAsync(url, cancellation);
             webStream = new MemoryStream(data);
         }
         catch (HttpRequestException)
