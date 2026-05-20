@@ -39,31 +39,14 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
         winRateParticipationCutoffSetting = new("Deck mategame participation cutoff (%)", Configuration.Instance.WinRateParticipationCutoff, 0.0m, 100.0m);
         rankColorsSetting = new("Rank color combinations", ColorsCombinationNamesToOptions(Configuration.Instance.RankColorsToShow));
         maxDisplayedRankSetting = new("Max rank to show", Configuration.Instance.MaxRankToShow, 0);
-
-        deqDampingSampleSetting = new("DEq dampling sample", Configuration.Instance.DEqDampingSample, 0);
-        deqAtaBetaSetting = new("DEq ATA Beta", Configuration.Instance.DEqAtaBeta, -1.0m, 1.0m, 0.05m);
-        deqP1P1ValueSetting = new("DEq P1P1 Value", Configuration.Instance.DEqP1P1Value, 0.0m, 1.0m, 0.05m);
-        deqArchetypeDecaySetting = new("DEq Archetype decay", Configuration.Instance.DEqArchetypeDecay, 0.0m, 1.0m, 0.05m);
-        deqLossFactorSetting = new("DEq Loss factor", Configuration.Instance.DEqLossFactor, 0.0m, 0.6m, 0.05m);
-        deqSampleDecaySetting = new("DEq Sample decay", Configuration.Instance.DEqSampleDecay, 0.0m, 1.0m, 0.05m);
-        deqFutureProjectionDaysSetting = new("DEq future projection days", Configuration.Instance.DEqFutureProjectionDays);
-        deqColorsSetting = new("DEq color combination", ColorsCombinationNamesToOptions(Configuration.Instance.DEqColors));
-
+        
         Settings =
         [
             currentSetStartDateOffsetInDaysSetting,
             winRateColorsSetting,
             winRateParticipationCutoffSetting,
             rankColorsSetting,
-            maxDisplayedRankSetting,
-            deqDampingSampleSetting,
-            deqAtaBetaSetting,
-            deqP1P1ValueSetting,
-            deqArchetypeDecaySetting,
-            deqLossFactorSetting,
-            deqSampleDecaySetting,
-            deqFutureProjectionDaysSetting,
-            deqColorsSetting,
+            maxDisplayedRankSetting
         ];
 
         Parameters =
@@ -128,7 +111,7 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
 
         var winRateColors = OptionsToColors(winRateColorsSetting.Options);
 
-        var deqData = new RawDEqSource(await DEqProvider.LoadDEqDataAsync(cancelation, setParameter.Value));
+        var deqSource = new RawCardDEqSource(await CardDEqProvider.LoadDEqDataAsync(cancelation, setParameter.Value));
         
         return new CardDataSource(setParameter.Value,
                                   cardDataSource,
@@ -154,7 +137,7 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
                                   brgCardDataSource,
                                   winRateColors,
                                   winData,
-                                  deqData);
+                                  deqSource);
     }
 
     private async Task SaveConfiguration()
@@ -182,25 +165,7 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
         Configuration.Instance.WinRateParticipationCutoff = winRateParticipationCutoffSetting.Value;
         Configuration.Instance.RankColorsToShow = rankColorsToShow;
         Configuration.Instance.MaxRankToShow = maxDisplayedRankSetting.Value;
-
-        List<string> deqColorsToShow = [];
-        foreach (var option in deqColorsSetting.Options)
-        {
-            if (option.Value)
-            {
-                deqColorsToShow.Add(option.Name);
-            }
-        }
-
-        Configuration.Instance.DEqDampingSample = deqDampingSampleSetting.Value;
-        Configuration.Instance.DEqAtaBeta = deqAtaBetaSetting.Value;
-        Configuration.Instance.DEqP1P1Value = deqP1P1ValueSetting.Value;
-        Configuration.Instance.DEqArchetypeDecay = deqArchetypeDecaySetting.Value;
-        Configuration.Instance.DEqLossFactor = deqLossFactorSetting.Value;
-        Configuration.Instance.DEqSampleDecay = deqSampleDecaySetting.Value;
-        Configuration.Instance.DEqFutureProjectionDays = deqFutureProjectionDaysSetting.Value;
-        Configuration.Instance.DEqColors = deqColorsToShow;
-
+        
         await Configuration.Instance.Save();
     }
 
@@ -291,13 +256,4 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
     private readonly SettingDecimal winRateParticipationCutoffSetting;
     private readonly SettingMultipleOptions rankColorsSetting;
     private readonly SettingNumber maxDisplayedRankSetting;
-
-    private readonly SettingNumber deqDampingSampleSetting;
-    private readonly SettingDecimal deqAtaBetaSetting;
-    private readonly SettingDecimal deqP1P1ValueSetting;
-    private readonly SettingDecimal deqArchetypeDecaySetting;
-    private readonly SettingDecimal deqLossFactorSetting;
-    private readonly SettingDecimal deqSampleDecaySetting;
-    private readonly SettingNumber deqFutureProjectionDaysSetting;
-    private readonly SettingMultipleOptions deqColorsSetting;
 }

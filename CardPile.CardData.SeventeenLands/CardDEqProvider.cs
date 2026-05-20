@@ -1,18 +1,11 @@
 using Newtonsoft.Json;
 using NLog;
-using System.Text;
-using System.Web;
 
 namespace CardPile.CardData.SeventeenLands;
 
-public class DEqProvider
+public static class CardDEqProvider
 {
-    static DEqProvider()
-    {
-        HttpClient = new HttpClient();
-    }
-    
-    internal static async Task<List<RawDEq>> LoadDEqDataAsync(CancellationToken cancellation, string? set)
+    internal static async Task<List<RawCardDEq>> LoadDEqDataAsync(CancellationToken cancellation, string? set)
     {
         if (set == null)
         {
@@ -37,7 +30,7 @@ public class DEqProvider
         return LoadDEqData(webStream);
     }    
     
-    private static List<RawDEq> LoadDEqData(Stream steam)
+    private static List<RawCardDEq> LoadDEqData(Stream steam)
     {
         var reader = new StreamReader(steam);
         var data = reader.ReadToEnd();
@@ -56,13 +49,13 @@ public class DEqProvider
         internal string EndDate = string.Empty;
         
         [JsonProperty("embargoed")]
-        internal bool Embargoed = false;
+        internal bool Embargoed;
         
         [JsonProperty("cards")]
-        internal List<RawDEq> Cards = [];
+        internal List<RawCardDEq> Cards = [];
     }
     
-    private static List<RawDEq> LoadDEqData(string jsonText)
+    private static List<RawCardDEq> LoadDEqData(string jsonText)
     {
         var result = JsonConvert.DeserializeObject<DEqData>(jsonText);
         return result != null ? result.Cards : throw new ArgumentException("Invalid JSON", nameof(jsonText));
@@ -142,9 +135,9 @@ public class DEqProvider
         { }
 
         return fileStream;
-    }    
-    
-    private static readonly HttpClient HttpClient;
+    }
+
+    private static readonly HttpClient HttpClient = new();
     
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     

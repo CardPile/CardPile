@@ -33,7 +33,7 @@ public class CardDataSource : ICardDataSource
                             RawCardDataSource brgCardData,
                             List<Color> winRateColors,
                             WinDataSource winData,
-                            RawDEqSource deq)
+                            RawCardDEqSource deqSrc)
     {
         Set = set;
 
@@ -60,8 +60,7 @@ public class CardDataSource : ICardDataSource
         archetypeCardData[Color.BRG] = brgCardData;
 
         archetypeWinData = winData;
-
-        deqData = deq;
+        deqSource = deqSrc;
 
         foreach (var archetypeEntry in archetypeCardData)
         {
@@ -197,7 +196,7 @@ public class CardDataSource : ICardDataSource
                 CardData.BRGWinRateImprovementMetricDesc.NewMetric(tripleGameWinRateImprovement[Color.BRG], ImportanceCalculators.AboveThreshold(CARD_WR_IMPROVEMENT_CRITICAL_THRESHOLD, CARD_WR_IMPROVEMENT_HIGH_THRESHOLD, CARD_WR_IMPROVEMENT_REGULAR_THRESHOLD), [])
             );
             
-            var deq = deqData.GetDEqCard(rawCardData.Name);
+            var cardDeq = deqSource.GetDEqCard(rawCardData.Name);
 
             return new CardData(rawCardData.Name,
                                 rawCardData.ArenaCardId,
@@ -225,8 +224,8 @@ public class CardDataSource : ICardDataSource
                                 CardData.NumberOfGamesNotSeenMetricDesc.NewMetric(rawCardData.NeverDrawnGameCount, rawCardData.NeverDrawnGameCountRanks),
                                 CardData.WinRateNotSeenMetricDesc.NewMetric(rawCardData.NeverDrawnWinRate, rawCardData.NeverDrawnWinRateRanks),
                                 CardData.WinRateImprovementWhenDrawnMetricDesc.NewMetric(rawCardData.DrawnImprovementWinRate, rawCardData.DrawnImprovementWinRateRanks),
-                                CardData.DEqMetricDesc.NewMetric(deq?.DEq, []),
-                                CardData.DEqGradeMetricDesc.NewMetric(deq?.DEqGrade)
+                                CardData.DEqMetricDesc.NewMetric(cardDeq?.DEq, []),
+                                CardData.DEqGradeMetricDesc.NewMetric(cardDeq?.DEqGrade)
                                 );
         }
 
@@ -317,6 +316,6 @@ public class CardDataSource : ICardDataSource
     private readonly Dictionary<Color, RawCardDataSource> archetypeCardData = [];
     private readonly Dictionary<Color, Normal> archetypeGihWrDistribution = [];
     private readonly WinDataSource archetypeWinData;
-    private readonly RawDEqSource deqData;
+    private readonly RawCardDEqSource deqSource;
 
 }
