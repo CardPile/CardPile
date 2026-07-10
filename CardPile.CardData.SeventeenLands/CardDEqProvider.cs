@@ -49,7 +49,7 @@ public static class CardDEqProvider
         internal string EndDate = string.Empty;
         
         [JsonProperty("embargoed")]
-        internal bool Embargoed;
+        internal bool Embargoed = false;
         
         [JsonProperty("cards")]
         internal List<RawCardDEq> Cards = [];

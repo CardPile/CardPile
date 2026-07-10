@@ -34,11 +34,11 @@ internal class CardDataSourceParameterOptionsModel : CardDataSourceParameterMode
 
     private void OnParameterPropertyChanging(object? sender, System.ComponentModel.PropertyChangingEventArgs e)
     {
-        this.RaisePropertyChanging(nameof(Value));
+        this.RaisePropertyChanging(e.PropertyName);
     }
 
     private void OnParameterPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        this.RaisePropertyChanged(nameof(Value));
+        this.RaisePropertyChanged(e.PropertyName);
     }
 }

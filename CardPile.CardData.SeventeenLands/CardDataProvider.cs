@@ -49,8 +49,16 @@ public static class SeventeenLandsCardDataSourceProvider
 
     private const string ALL_USERS_USER_TYPE = "All users";
     private const string ALL_COLORS_COLOR_TYPE = "All colors";
-    private const string ALL_COLORS_DECK_TYPE = "All colors";
+    private const string ALL_DECKS_DECK_TYPE = "All colors";
     private const string ALL_RARITIES_RARITY_TYPE = "All rarities";
+
+    internal const string ALL_TIME_TIME_PERIOD_TYPE = "All time";
+    internal const string ALL_EXCEPT_FIRST_WEEK_TIME_PERIOD_TYPE = "All except first week";
+    internal const string LATEST_EVENT_TIME_PERIOD_TYPE = "Latest event";
+    internal const string LAST_TWO_WEEKS_TIME_PERIOD_TYPE = "Last two weeks";
+    internal const string LAST_WEEK_TIME_PERIOD_TYPE = "Last week";
+    internal const string LAST_DAY_TIME_PERIOD_TYPE = "Last day";
+    internal const string FIRST_WEEK_TIME_PERIOD_TYPE = "First week";
 
     internal const string WU_COLORS_DECK_TYPE = "WU";
     internal const string WB_COLORS_DECK_TYPE = "WB";
@@ -74,16 +82,16 @@ public static class SeventeenLandsCardDataSourceProvider
     internal const string URG_COLORS_DECK_TYPE = "URG";
     internal const string BRG_COLORS_DECK_TYPE = "BRG";
 
-    internal static async Task<List<RawCardData>> LoadCardDataAsync(CancellationToken cancellation, string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
+    internal static async Task<List<RawCardData>> LoadCardDataAsync(CancellationToken cancellation, string? set, string? eventType, string? userType, string? deckType, string? timePeriod)
     {
-        string cacheFilename = BuildCardDataCacheFilename(set, eventType, userType, deckType, startDate, endDate);
+        string cacheFilename = BuildCardDataCacheFilename(set, eventType, userType, deckType, timePeriod);
         Stream? fileStream = await ReadFromCache(cacheFilename, cancellation);
         if (fileStream != null)
         {
             return LoadCardData(fileStream);
         }
 
-        Stream? webStream = await ReadCardDataFromWeb(cancellation, set, eventType, userType, deckType, startDate, endDate);
+        Stream? webStream = await ReadCardDataFromWeb(cancellation, set, eventType, userType, deckType, timePeriod);
         if (webStream != null)
         {
             SaveToCache(webStream, cacheFilename);
@@ -101,10 +109,19 @@ public static class SeventeenLandsCardDataSourceProvider
         return LoadCardData(data);
     }
 
+    private class RawCardDataEnvelope
+    {
+        [JsonProperty("copyright")]
+        internal string Copyright = string.Empty;
+
+        [JsonProperty("data")]
+        internal List<RawCardData> CardData = [];
+    }
+
     private static List<RawCardData> LoadCardData(string jsonText)
     {
-        var result = JsonConvert.DeserializeObject<List<RawCardData>>(jsonText);
-        return result ?? throw new ArgumentException("Invalid JSON", nameof(jsonText));
+        var result = JsonConvert.DeserializeObject<RawCardDataEnvelope>(jsonText);
+        return result == null ? throw new ArgumentException("Invalid JSON", nameof(jsonText)) : result.CardData;
     }
 
     internal static List<RawWinData> LoadWinData(string? set, string? eventType, DateTime startDate, DateTime endDate, bool combineSplashes)
@@ -180,42 +197,17 @@ public static class SeventeenLandsCardDataSourceProvider
         }
     }
 
-    internal static List<string> GetDeckTypeList()
+    internal static List<string> GetColorList()
     {
         return
         [
-            ALL_COLORS_DECK_TYPE,
             "W",
             "U",
             "B",
             "R",
             "G",
-            WU_COLORS_DECK_TYPE,
-            WB_COLORS_DECK_TYPE,
-            WR_COLORS_DECK_TYPE,
-            WG_COLORS_DECK_TYPE,
-            UB_COLORS_DECK_TYPE,
-            UR_COLORS_DECK_TYPE,
-            UG_COLORS_DECK_TYPE,
-            BR_COLORS_DECK_TYPE,
-            BG_COLORS_DECK_TYPE,
-            RG_COLORS_DECK_TYPE,
-            "WUB",
-            "WUR",
-            "WUG",
-            "WBR",
-            "WBG",
-            "WRG",
-            "UBR",
-            "UBG",
-            "URG",
-            "BRG",
-            "WUBR",
-            "WUBG",
-            "WURG",
-            "WBRG",
-            "UBRG",
-            "WUBRG",
+            "Multicolor",
+            "Colorless",
         ];
     }
 
@@ -231,11 +223,26 @@ public static class SeventeenLandsCardDataSourceProvider
         ];
     }
 
+    internal static List<string> GetTimePeriodList()
+    {
+        return
+        [
+            ALL_TIME_TIME_PERIOD_TYPE,
+            ALL_EXCEPT_FIRST_WEEK_TIME_PERIOD_TYPE,
+            LATEST_EVENT_TIME_PERIOD_TYPE,
+            LAST_TWO_WEEKS_TIME_PERIOD_TYPE,
+            LAST_WEEK_TIME_PERIOD_TYPE,
+            LAST_DAY_TIME_PERIOD_TYPE,
+            FIRST_WEEK_TIME_PERIOD_TYPE,
+        ];
+    }
+
     internal static List<string> SetList = [];
-    internal static List<string> EventTypeList = [];
+    internal static Dictionary<string, List<string>> FormatsByExpansion = [];
     internal static List<string> UserTypeList = [];
     internal static List<string> ColorList = [];
     internal static Dictionary<string, DateTime> StartDates = [];
+    internal static Dictionary<string, List<string>> TimePeriods = [];
 
     internal static void LoadFilters()
     {
@@ -263,12 +270,31 @@ public static class SeventeenLandsCardDataSourceProvider
             throw new InvalidOperationException("Cannot deserialize 17Lands filters");
         }
 
+        var allowedTimePeriods = GetTimePeriodList();
+        foreach (var (set, timePeriods) in filters.FilterTimePeriods)
+        {
+            if (allowedTimePeriods.Count != timePeriods.Count)
+            {
+                throw new InvalidOperationException($"Set {set} uses {timePeriods.Count} when {allowedTimePeriods.Count} are expected");
+            }
+
+            foreach (var timePeriod in timePeriods)
+            {
+                var humanizedTimePeriod = TimePeriodToHumanReadableTimePeriod(timePeriod);
+                if (!allowedTimePeriods.Contains(humanizedTimePeriod))
+                {
+                    throw new InvalidOperationException($"Set {set} contains unexpected time period {timePeriod}");
+                }
+            }
+        }
+
         SetList = filters.FilterExpansions;
-        EventTypeList = filters.FilterFormats;
+        FormatsByExpansion = filters.FilterFormatsByExpansion;
 
         UserTypeList = filters.FilterGroups.Select(x => x == null ? ALL_USERS_USER_TYPE : System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(x)).ToList();
         ColorList = filters.FilterColors.Select(x => x ?? ALL_COLORS_COLOR_TYPE).ToList();
         StartDates = filters.FilterStartDates;
+        TimePeriods = filters.FilterTimePeriods.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Select(TimePeriodToHumanReadableTimePeriod).ToList());
     }
 
     private class SeventeenLandFilters
@@ -279,40 +305,48 @@ public static class SeventeenLandsCardDataSourceProvider
         [JsonProperty("expansions")]
         internal List<string> FilterExpansions = [];
 
-        [JsonProperty("formats")]
-        internal List<string> FilterFormats = [];
+        [JsonProperty("formats_by_expansion")]
+        internal Dictionary<string, List<string>> FilterFormatsByExpansion = [];
 
         [JsonProperty("groups")]
         internal List<string?> FilterGroups = [];
 
         [JsonProperty("start_dates")]
         internal Dictionary<string, DateTime> FilterStartDates = [];
+
+        [JsonProperty("time_periods")]
+        internal Dictionary<string, List<string>> FilterTimePeriods = [];
+
     };
 
-    private static string BuildCardDataCacheFilename(string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
+    private static string BuildCardDataCacheFilename(string? set, string? eventType, string? userType, string? deckType, string? timePeriod)
     {
-        var sb = new StringBuilder("17Lands_");
+        var sb = new StringBuilder("17Lands");
         if (set != null)
         {
-            sb.Append($"{set}_");
+            sb.Append($"_{set}");
         }
 
         if (eventType != null)
         {
-            sb.Append($"{eventType}_");
+            sb.Append($"_{eventType}");
         }
 
         if (userType != null && userType != ALL_USERS_USER_TYPE)
         {
-            sb.Append($"{userType.ToLower()}_");
+            sb.Append($"_{userType.ToLower()}");
         }
 
-        if (deckType != null && deckType != ALL_COLORS_DECK_TYPE)
+        if (deckType != null && deckType != ALL_DECKS_DECK_TYPE)
         {
-            sb.Append($"{deckType.ToLower()}_");
+            sb.Append($"_{deckType.ToLower()}");
         }
 
-        sb.Append($"{startDate:yyyy-MM-dd}_{endDate:yyyy-MM-dd}");
+        if (timePeriod != null && timePeriod != ALL_TIME_TIME_PERIOD_TYPE)
+        {
+            sb.Append($"_{System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(timePeriod.ToLower()).Replace(" ", "")}");
+        }
+            
         sb.Append(".json");
 
         return sb.ToString();
@@ -393,7 +427,7 @@ public static class SeventeenLandsCardDataSourceProvider
         }
     }
 
-    private static async Task<Stream?> ReadCardDataFromWeb(CancellationToken cancellation, string? set, string? eventType, string? userType, string? deckType, DateTime startDate, DateTime endDate)
+    private static async Task<Stream?> ReadCardDataFromWeb(CancellationToken cancellation, string? set, string? eventType, string? userType, string? deckType, string? timePeriod)
     {
         var queryParameters = HttpUtility.ParseQueryString(string.Empty);
         if (set != null)
@@ -403,21 +437,24 @@ public static class SeventeenLandsCardDataSourceProvider
 
         if (eventType != null)
         {
-            queryParameters["format"] = eventType;
+            queryParameters["event_type"] = eventType;
         }
 
         if (userType != null && userType != ALL_USERS_USER_TYPE)
         {
+            // bottom/middle/top
             queryParameters["user_group"] = userType.ToLower();
         }
 
-        if (deckType != null && deckType != ALL_COLORS_DECK_TYPE)
+        if (deckType != null && deckType != ALL_DECKS_DECK_TYPE)
         {
             queryParameters["colors"] = deckType;
         }
 
-        queryParameters["start_date"] = startDate.ToString("yyyy-MM-dd");
-        queryParameters["end_date"] = endDate.ToString("yyyy-MM-dd");
+        if (timePeriod != null)
+        {
+            queryParameters["time_period"] = timePeriod.Replace(" ", "_").ToUpper();
+        }
 
         var urlBuilder = new UriBuilder(CardDataUrl)
         {
@@ -472,12 +509,18 @@ public static class SeventeenLandsCardDataSourceProvider
         return webStream;
     }
 
+    private static string TimePeriodToHumanReadableTimePeriod(string timePeriod)
+    {
+        var lowercaseTimePeriod = timePeriod.Replace("_", " ").ToLower();
+        return $"{char.ToUpper(lowercaseTimePeriod[0])}{lowercaseTimePeriod[1..]}";
+    }
+
     private static readonly HttpClient HttpClient;
 
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     private const string FiltersUrl = "https://www.17lands.com/data/filters";
-    private const string CardDataUrl = "https://www.17lands.com/card_ratings/data";
+    private const string CardDataUrl = "https://www.17lands.com/api/card_data";
     private const string WinDataUrl = "https://www.17lands.com/color_ratings/data";
     private static readonly string AppProgramData = OperatingSystem.IsMacOS() ? "/Users/Shared" : Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
     private static readonly string CardPileProgramData = Path.Combine(AppProgramData, "CardPile");

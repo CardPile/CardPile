@@ -9,9 +9,6 @@ internal class Configuration
     private Configuration()
     {}
 
-    [JsonProperty("current_set_start_date_offset_in_days")]
-    public int CurrentSetStartDateOffsetInDays { get; set; } = DefaultCurrentSetStartDateOffsetInDays;
-
     [JsonProperty("win_rate_colors_to_show")]
     public List<string> WinRateColorsToShow { get; set; } = [CardDataSourceBuilder.ONE_COLOR_RANK_COLOR_OPTION_NAME, CardDataSourceBuilder.TWO_COLOR_RANK_COLOR_OPTION_NAME, CardDataSourceBuilder.THREE_COLOR_RANK_COLOR_OPTION_NAME];
 
@@ -53,6 +50,4 @@ internal class Configuration
     private const decimal DefaultWinRateParticipationCutoff = 1.0M;
 
     private const int DefaultMaxRankToShow = 20;
-
-    private const int DefaultCurrentSetStartDateOffsetInDays = 14;
 }

@@ -2,19 +2,29 @@
 
 public class ParameterOptions : Parameter, ICardDataSourceParameterOptions
 {
-    public ParameterOptions(string name, List<string> options) : base(name, ParameterType.Options)
+    public ParameterOptions(string name, List<string> options, string? defaultValue = null) : base(name, ParameterType.Options)
     {
-        Options = options;
-        option = options.First();
+        if (defaultValue != null && !options.Contains(defaultValue))
+        {
+            throw new ArgumentException($"Invalid default option {defaultValue}", nameof(defaultValue));
+        }
+
+        possibleOptions = options;
+        selectedOption = defaultValue ?? options.First();
     }
 
-    public List<string> Options { get; init; }
+    public List<string> Options
+    {
+        get => possibleOptions;
+        set => RaiseAndSetIfChanged(ref possibleOptions, value);
+    }
 
     public string Value
     { 
-        get => option;
-        set => RaiseAndSetIfChanged(ref option, value);
+        get => selectedOption;
+        set => RaiseAndSetIfChanged(ref selectedOption, value);
     }
 
-    public string option;
+    private List<string> possibleOptions;
+    private string selectedOption;
 }
