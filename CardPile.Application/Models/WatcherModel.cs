@@ -142,7 +142,7 @@ internal class WatcherModel : ReactiveObject, IWatcherService
 
     private void DraftPickHandler(object? sender, DraftPickEvent e)
     {
-        logger.Info($"Draft {e.DraftId} - P{e.PackNumber}P{e.PickNumber}. Picked {e.CardPicked}.");
+        logger.Info($"Draft {e.DraftId} - P{e.PackNumber}P{e.PickNumber}. Picked {e.CardsPicked}.");
 
         OnRaiseDraftPickEvent(e);
     }

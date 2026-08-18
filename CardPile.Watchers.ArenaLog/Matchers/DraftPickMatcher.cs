@@ -10,9 +10,9 @@ public class DraftPickMatcher : ILogMatcher
     public bool Match(string line)
     {
         DraftPickEvent? eventData = null;
-        if (line.StartsWith(PREMIERE_DRAFT_PICK_PREFIX_NEEDLE) && line.Contains(PREMIERE_DRAFT_PICK_DRAFT_ID_NEEDLE))
+        if (line.StartsWith(PREMIERE_AND_PICK_TWO_DRAFT_PICK_PREFIX_NEEDLE) && line.Contains(PREMIERE_AND_PICK_TWO_DRAFT_PICK_DRAFT_ID_NEEDLE))
         {
-            eventData = ParsePremiereDraftEventInfo(line, PREMIERE_DRAFT_PICK_PREFIX_NEEDLE);
+            eventData = ParsePremiereAndPickTwoDraftEventInfo(line, PREMIERE_AND_PICK_TWO_DRAFT_PICK_PREFIX_NEEDLE);
         }
         else if (line.StartsWith(QUICK_DRAFT_PICK_PREFIX_NEEDLE))
         {
@@ -28,7 +28,7 @@ public class DraftPickMatcher : ILogMatcher
         return false;
     }
 
-    private static DraftPickEvent? ParsePremiereDraftEventInfo(string line, string needle)
+    private static DraftPickEvent? ParsePremiereAndPickTwoDraftEventInfo(string line, string needle)
     {
         dynamic? requestData = MatcherHelpers.ParseRequestUnchecked(line, needle);
 
@@ -42,12 +42,12 @@ public class DraftPickMatcher : ILogMatcher
             return null; 
         }
 
-        if(cardsPicked!.Count != 1)
+        if(cardsPicked!.Count <= 0)
         {
             return null;
         }
 
-        return new DraftPickEvent(new Guid(draftId), (int)packNumber, (int)pickNumber, (int)cardsPicked.First);
+        return new DraftPickEvent(new Guid(draftId), (int)packNumber, (int)pickNumber, cardsPicked.ToObject<List<int>>());
     }
 
     private static DraftPickEvent? ParseQuickDraftEventInfo(string line, string needle)
@@ -72,10 +72,10 @@ public class DraftPickMatcher : ILogMatcher
         // Generate a name-based guid using the event name since we don't have an actual guid here
         var draftId = GuidHelpers.CreateFromName(MatcherHelpers.CARD_PILE_DRAFT_NAMESPACE_GUID, eventName);
 
-        return new DraftPickEvent(draftId, (int)packNumber + 1, (int)pickNumber + 1, cardPicked);
+        return new DraftPickEvent(draftId, (int)packNumber + 1, (int)pickNumber + 1, new List<int>(cardPicked));
     }
 
-    private static readonly string PREMIERE_DRAFT_PICK_PREFIX_NEEDLE = "[UnityCrossThreadLogger]==> EventPlayerDraftMakePick";
-    private static readonly string PREMIERE_DRAFT_PICK_DRAFT_ID_NEEDLE = "DraftId";
+    private static readonly string PREMIERE_AND_PICK_TWO_DRAFT_PICK_PREFIX_NEEDLE = "[UnityCrossThreadLogger]==> EventPlayerDraftMakePick";
+    private static readonly string PREMIERE_AND_PICK_TWO_DRAFT_PICK_DRAFT_ID_NEEDLE = "DraftId";
     private static readonly string QUICK_DRAFT_PICK_PREFIX_NEEDLE = "[UnityCrossThreadLogger]==> BotDraft_DraftPick";
 }

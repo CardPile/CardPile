@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace CardPile.Draft
 {
@@ -33,7 +32,7 @@ namespace CardPile.Draft
                 {
                     CurrentPack.Clear();
                 }
-                AddPick(pickEvent.PackNumber, pickEvent.PickNumber, pickEvent.CardPicked);
+                AddPicks(pickEvent.PackNumber, pickEvent.PickNumber, pickEvent.CardsPicked);
             }
         }
 
@@ -67,7 +66,7 @@ namespace CardPile.Draft
         }
 
         [JsonIgnore]
-        public List<List<int>> Picks 
+        public List<List<List<int>>> Picks 
         {
             get
             {
@@ -121,13 +120,17 @@ namespace CardPile.Draft
             }
 
             var result = new List<int>();
-            for(int currentPackIndex = 0; currentPackIndex < packIndex; currentPackIndex++)
+            for(var currentPackIndex = 0; currentPackIndex < packIndex; currentPackIndex++)
             {
-                result.AddRange(picks[currentPackIndex]);
+                for (var currentPickIndex = 0; currentPickIndex < picks[currentPackIndex].Count; currentPickIndex++)
+                {
+                    result.AddRange(picks[currentPackIndex][currentPickIndex]);
+                }
+                    
             }
-            for(int currentPickIndex = 0; currentPickIndex <= pickIndex; currentPickIndex++)
+            for(var currentPickIndex = 0; currentPickIndex <= pickIndex; currentPickIndex++)
             {
-                result.Add(picks[packIndex][currentPickIndex]);
+                result.AddRange(picks[packIndex][currentPickIndex]);
             }
             return result;
         }
@@ -160,7 +163,10 @@ namespace CardPile.Draft
             }
 
             var result = new List<int>(packsSeen[packIndex][previousPickIndex]);
-            result.Remove(picks[packIndex][previousPickIndex]);
+            foreach (var card in picks[packIndex][previousPickIndex])
+            {
+                result.Remove(card);
+            }
             foreach(var card in packsSeen[packIndex][pickIndex])
             {
                 result.Remove(card);
@@ -168,12 +174,12 @@ namespace CardPile.Draft
             return result;
         }
 
-        public int? GetCurrentPackPreviousPick()
+        public List<int>? GetCurrentPackPreviousPick()
         {
-            return GetPreviousPick(lastPack, lastPick);
+            return GetPreviousPicks(lastPack, lastPick);
         }
 
-        public int? GetPreviousPick(int pack, int pick)
+        public List<int>? GetPreviousPicks(int pack, int pick)
         {
             if (CurrentPack.Count == 0)
             {
@@ -225,7 +231,10 @@ namespace CardPile.Draft
             }
 
             var result = new List<int>(packsSeen[packIndex][upcomingPickIndex]);
-            result.Remove(picks[packIndex][upcomingPickIndex]);
+            foreach (var card in picks[packIndex][upcomingPickIndex])
+            {
+                result.Remove(card);
+            }
             return result;
         }
 
@@ -256,7 +265,10 @@ namespace CardPile.Draft
                 
                 for (int i = 0; i < picks[packIndex].Count; i++)
                 {
-                    result.Remove(picks[packIndex][i]);
+                    foreach (var card in picks[packIndex][i])
+                    {
+                        result.Remove(card);
+                    }
                 }
             }
             return result;
@@ -289,10 +301,17 @@ namespace CardPile.Draft
 
                     if(packIndex < picks.Count)
                     {
-                        packSeen.Cards.Remove(picks[packIndex][i]);
+                        foreach (var card in picks[packIndex][i])
+                        {
+                            packSeen.Cards.Remove(card);
+                        }
+                        
                         if(i + PACK_LOOK_FORWARD < picks[packIndex].Count)
                         {
-                            packSeen.Cards.Remove(picks[packIndex][i + PACK_LOOK_FORWARD]);
+                            foreach (var card in picks[packIndex][i + PACK_LOOK_FORWARD])
+                            {
+                                packSeen.Cards.Remove(card);
+                            }
                         }
                     }
 
@@ -307,7 +326,10 @@ namespace CardPile.Draft
 
                 for (int i = 0; i < packLookBackCount; i++)
                 {
-                    currentPackResult[i].Cards.Remove(picks[packIndex][i]);
+                    foreach (var card in picks[packIndex][i])
+                    {
+                        currentPackResult[i].Cards.Remove(card);
+                    }
                 }
 
                 result.AddRange(currentPackResult);
@@ -315,7 +337,7 @@ namespace CardPile.Draft
             return result;
         }
 
-        private void AddPick(int packNumber, int pickNumber, int cardPicked)
+        private void AddPicks(int packNumber, int pickNumber, List<int> cardsPicked)
         {
             var packIndex = packNumber - 1;
             var pickIndex = pickNumber - 1;
@@ -326,10 +348,10 @@ namespace CardPile.Draft
             }
             while (picks[packIndex].Count <= pickIndex)
             {
-                picks[packIndex].Add(-1);
+                picks[packIndex].Add([]);
             }
 
-            picks[packIndex][pickIndex] = cardPicked;
+            picks[packIndex][pickIndex] = cardsPicked.ToList();
         }
 
         private void AddSeenPack(int packNumber, int pickNumber, List<int> pack)
@@ -364,7 +386,7 @@ namespace CardPile.Draft
         private List<int> currentPack = [];
 
         [JsonProperty]
-        private List<List<int>> picks = [];
+        private List<List<List<int>>> picks = [];
 
         [JsonProperty]
         private List<List<List<int>>> packsSeen = [];

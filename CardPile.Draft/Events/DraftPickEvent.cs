@@ -2,12 +2,12 @@
 
 public class DraftPickEvent : DraftEvent
 {
-    public DraftPickEvent(Guid draftId, int packNumber, int pickNumber, int cardPicked)
+    public DraftPickEvent(Guid draftId, int packNumber, int pickNumber, List<int> cardsPicked)
     {
         DraftId = draftId;
         PackNumber = packNumber;
         PickNumber = pickNumber;
-        CardPicked = cardPicked;
+        CardsPicked = cardsPicked;
     }
 
     public Guid DraftId { get; set; }
@@ -16,5 +16,5 @@ public class DraftPickEvent : DraftEvent
 
     public int PickNumber { get; set; }
 
-    public int CardPicked {  get; set; }    
+    public List<int> CardsPicked {  get; set; }    
 }

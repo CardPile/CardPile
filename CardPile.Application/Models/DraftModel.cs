@@ -248,10 +248,13 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
         var previouslyPickedCard = draftState.GetCurrentPackPreviousPick();
         if (previouslyPickedCard != null)
         {
-            var previouslyPickedCardData = newCardDataSource.GetDataForCard(previouslyPickedCard.Value, draftState);
-            if(previouslyPickedCardData != null)
+            foreach (var card in previouslyPickedCard)
             {
-                PreviousPick = AnnotateCard(new CardDataModel(previouslyPickedCardData));
+                var previouslyPickedCardData = newCardDataSource.GetDataForCard(card, draftState);
+                if (previouslyPickedCardData != null)
+                {
+                    PreviousPick = AnnotateCard(new CardDataModel(previouslyPickedCardData));
+                }
             }
         }
     }
