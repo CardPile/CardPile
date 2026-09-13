@@ -54,6 +54,7 @@ public static class SeventeenLandsCardDataSourceProvider
 
     internal const string ALL_TIME_TIME_PERIOD_TYPE = "All time";
     internal const string ALL_EXCEPT_FIRST_WEEK_TIME_PERIOD_TYPE = "All except first week";
+    internal const string LAST_TWO_EVENTS_PERIOD_TYPE = "Last two events";
     internal const string LATEST_EVENT_TIME_PERIOD_TYPE = "Latest event";
     internal const string LAST_TWO_WEEKS_TIME_PERIOD_TYPE = "Last two weeks";
     internal const string LAST_WEEK_TIME_PERIOD_TYPE = "Last week";
@@ -124,21 +125,21 @@ public static class SeventeenLandsCardDataSourceProvider
         return result == null ? throw new ArgumentException("Invalid JSON", nameof(jsonText)) : result.CardData;
     }
 
-    internal static List<RawWinData> LoadWinData(string? set, string? eventType, DateTime startDate, DateTime endDate, bool combineSplashes)
+    internal static List<RawWinData> LoadWinData(string? set, string? eventType, string? timePeriod, bool combineSplashes)
     {
-        return Task.Run(() => LoadWinDataAsync(CancellationToken.None, set, eventType, startDate, endDate, combineSplashes)).Result;
+        return Task.Run(() => LoadWinDataAsync(CancellationToken.None, set, eventType, timePeriod, combineSplashes)).Result;
     }
 
-    internal static async Task<List<RawWinData>> LoadWinDataAsync(CancellationToken cancellation, string? set, string? eventType, DateTime startDate, DateTime endDate, bool combineSplashes)
+    internal static async Task<List<RawWinData>> LoadWinDataAsync(CancellationToken cancellation, string? set, string? eventType, string? timePeriod, bool combineSplashes)
     {
-        string cacheFilename = BuildWinDataCacheFilename(set, eventType, startDate, endDate, combineSplashes);
+        string cacheFilename = BuildWinDataCacheFilename(set, eventType, timePeriod, combineSplashes);
         Stream? fileStream = await ReadFromCache(cacheFilename, cancellation);
         if (fileStream != null)
         {
             return LoadWinData(fileStream);
         }
 
-        Stream? webStream = await ReadWinDataFromWeb(cancellation, set, eventType, startDate, endDate, combineSplashes);
+        Stream? webStream = await ReadWinDataFromWeb(cancellation, set, eventType, timePeriod, combineSplashes);
         if (webStream != null)
         {
             SaveToCache(webStream, cacheFilename);
@@ -229,6 +230,7 @@ public static class SeventeenLandsCardDataSourceProvider
         [
             ALL_TIME_TIME_PERIOD_TYPE,
             ALL_EXCEPT_FIRST_WEEK_TIME_PERIOD_TYPE,
+            LAST_TWO_EVENTS_PERIOD_TYPE,
             LATEST_EVENT_TIME_PERIOD_TYPE,
             LAST_TWO_WEEKS_TIME_PERIOD_TYPE,
             LAST_WEEK_TIME_PERIOD_TYPE,
@@ -241,7 +243,6 @@ public static class SeventeenLandsCardDataSourceProvider
     internal static Dictionary<string, List<string>> FormatsByExpansion = [];
     internal static List<string> UserTypeList = [];
     internal static List<string> ColorList = [];
-    internal static Dictionary<string, DateTime> StartDates = [];
     internal static Dictionary<string, List<string>> TimePeriods = [];
 
     internal static void LoadFilters()
@@ -293,7 +294,6 @@ public static class SeventeenLandsCardDataSourceProvider
 
         UserTypeList = filters.FilterGroups.Select(x => x == null ? ALL_USERS_USER_TYPE : System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(x)).ToList();
         ColorList = filters.FilterColors.Select(x => x ?? ALL_COLORS_COLOR_TYPE).ToList();
-        StartDates = filters.FilterStartDates;
         TimePeriods = filters.FilterTimePeriods.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Select(TimePeriodToHumanReadableTimePeriod).ToList());
     }
 
@@ -310,9 +310,6 @@ public static class SeventeenLandsCardDataSourceProvider
 
         [JsonProperty("groups")]
         internal List<string?> FilterGroups = [];
-
-        [JsonProperty("start_dates")]
-        internal Dictionary<string, DateTime> FilterStartDates = [];
 
         [JsonProperty("time_periods")]
         internal Dictionary<string, List<string>> FilterTimePeriods = [];
@@ -388,7 +385,7 @@ public static class SeventeenLandsCardDataSourceProvider
         return fileStream;
     }
 
-    private static string BuildWinDataCacheFilename(string? set, string? eventType, DateTime startDate, DateTime endDate, bool combineSplashes)
+    private static string BuildWinDataCacheFilename(string? set, string? eventType, string? timePeriod, bool combineSplashes)
     {
         var sb = new StringBuilder("17Lands_winData_");
         if (set != null)
@@ -401,8 +398,11 @@ public static class SeventeenLandsCardDataSourceProvider
             sb.AppendFormat("{0}_", eventType);
         }
 
-        sb.AppendFormat("{0:yyyy-MM-dd}_", startDate);
-        sb.AppendFormat("{0:yyyy-MM-dd}_", endDate);
+        if (timePeriod != null && timePeriod != ALL_TIME_TIME_PERIOD_TYPE)
+        {
+            sb.Append($"_{System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(timePeriod.ToLower()).Replace(" ", "")}");
+        }
+
         sb.Append(combineSplashes);
         sb.Append(".json");
 
@@ -474,7 +474,7 @@ public static class SeventeenLandsCardDataSourceProvider
         return webStream;
     }
 
-    private static async Task<Stream?> ReadWinDataFromWeb(CancellationToken cancellation, string? set, string? eventType, DateTime startDate, DateTime endDate, bool combineSplashes)
+    private static async Task<Stream?> ReadWinDataFromWeb(CancellationToken cancellation, string? set, string? eventType, string? timePeriod, bool combineSplashes)
     {
         var queryParameters = HttpUtility.ParseQueryString(string.Empty);
         if (set != null)
@@ -487,8 +487,11 @@ public static class SeventeenLandsCardDataSourceProvider
             queryParameters["event_type"] = eventType;
         }
 
-        queryParameters["start_date"] = startDate.ToString("yyyy-MM-dd");
-        queryParameters["end_date"] = endDate.ToString("yyyy-MM-dd");
+        if (timePeriod != null)
+        {
+            queryParameters["time_period"] = timePeriod.Replace(" ", "_").ToUpper();
+        }
+
         queryParameters["combine_splash"] = combineSplashes.ToString().ToLowerInvariant();
 
         var urlBuilder = new UriBuilder(WinDataUrl)

@@ -107,8 +107,7 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
         var brgCardDataSource = new RawCardDataSource(await SeventeenLandsCardDataSourceProvider.LoadCardDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, userTypeParameter.Value, SeventeenLandsCardDataSourceProvider.BRG_COLORS_DECK_TYPE, timePeriodParameter.Value), timePeriodParameter.Value, rankColors, maxDisplayedRankSetting.Value);
 
 
-        var (startDate, endDate) = StartDateAndTimePeriodToEffectiveStartAndEndDate(SeventeenLandsCardDataSourceProvider.StartDates[setParameter.Value], timePeriodParameter.Value);
-        var winData = new WinDataSource(await SeventeenLandsCardDataSourceProvider.LoadWinDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, startDate, endDate, true), (float)winRateParticipationCutoffSetting.Value);
+        var winData = new WinDataSource(await SeventeenLandsCardDataSourceProvider.LoadWinDataAsync(cancelation, setParameter.Value, eventTypeParameter.Value, timePeriodParameter.Value, true), (float)winRateParticipationCutoffSetting.Value);
 
         var winRateColors = OptionsToColors(winRateColorsSetting.Options);
 
@@ -178,30 +177,6 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
         else
         {
             eventTypeParameter.Options = SeventeenLandsCardDataSourceProvider.FormatsByExpansion[string.Empty];
-        }
-    }
-
-    private (DateTime, DateTime) StartDateAndTimePeriodToEffectiveStartAndEndDate(DateTime startDate, string timePeriod)
-    {
-        switch (timePeriod)
-        {
-            case SeventeenLandsCardDataSourceProvider.ALL_TIME_TIME_PERIOD_TYPE:
-                return (startDate, DateTime.Now);
-            case SeventeenLandsCardDataSourceProvider.ALL_EXCEPT_FIRST_WEEK_TIME_PERIOD_TYPE:
-                return (startDate.AddDays(7), DateTime.Now);
-            case SeventeenLandsCardDataSourceProvider.LATEST_EVENT_TIME_PERIOD_TYPE:
-                // Hard to know when that started from what we have, so return whole period
-                return (startDate, DateTime.Now);
-            case SeventeenLandsCardDataSourceProvider.LAST_TWO_WEEKS_TIME_PERIOD_TYPE:
-                return (DateTime.Now.AddDays(-14), DateTime.Now);
-            case SeventeenLandsCardDataSourceProvider.LAST_WEEK_TIME_PERIOD_TYPE:
-                return (DateTime.Now.AddDays(-7), DateTime.Now);
-            case SeventeenLandsCardDataSourceProvider.LAST_DAY_TIME_PERIOD_TYPE:
-                return (DateTime.Now.AddDays(-1), DateTime.Now);
-            case SeventeenLandsCardDataSourceProvider.FIRST_WEEK_TIME_PERIOD_TYPE:
-                return (startDate, startDate.AddDays(7));
-            default:
-                return (startDate, DateTime.Now);
         }
     }
 
