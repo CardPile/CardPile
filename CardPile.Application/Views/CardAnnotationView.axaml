@@ -10,7 +10,7 @@
              x:DataType="vm:CardAnnotationViewModel"
              x:Name="CardAnnotationViewRoot">
   <UniformGrid Rows="1" Margin="5 0">
-    <TextBlock Inlines="{Binding Name, Converter={x:Static vm:CardAnnotationViewModel.AnnotationTextToInlinesConverter}}" Margin="5 2" />
-    <TextBlock Inlines="{Binding TextValue, Converter={x:Static vm:CardAnnotationViewModel.AnnotationTextToInlinesConverter}}" Margin="5 2" HorizontalAlignment="Right" />
+    <TextBlock Inlines="{Binding Name, Converter={x:Static vm:CardAnnotationViewModel.AnnotationTextToInlinesConverter}}" Margin="5 2" MaxWidth="150" TextWrapping="Wrap"/>
+    <TextBlock Inlines="{Binding TextValue, Converter={x:Static vm:CardAnnotationViewModel.AnnotationTextToInlinesConverter}}" Margin="5 2" HorizontalAlignment="Right" MaxWidth="150" TextWrapping="Wrap"/>
   </UniformGrid>
 </UserControl>

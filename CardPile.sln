@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.9.34728.123
+# Visual Studio Version 18
+VisualStudioVersion = 18.7.11911.148 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardPile.Application", "CardPile.Application\CardPile.Application.csproj", "{255DCB49-E3C5-4931-A69D-775BD8C62033}"
 EndProject
@@ -28,6 +28,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardPile.Deck", "CardPile.Deck\CardPile.Deck.csproj", "{6B8982C2-6650-4472-89D1-311C3970A8BA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardPile.Crypt", "CardPile.Crypt\CardPile.Crypt.csproj", "{279BA757-D47F-4C6C-8D48-9CA464DE5399}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardPile.Synergies", "CardPile.Synergies\CardPile.Synergies.csproj", "{78166617-3906-4E33-BD65-F9DABCEF4879}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +89,10 @@ Global
 		{279BA757-D47F-4C6C-8D48-9CA464DE5399}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{279BA757-D47F-4C6C-8D48-9CA464DE5399}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{279BA757-D47F-4C6C-8D48-9CA464DE5399}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78166617-3906-4E33-BD65-F9DABCEF4879}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78166617-3906-4E33-BD65-F9DABCEF4879}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78166617-3906-4E33-BD65-F9DABCEF4879}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78166617-3906-4E33-BD65-F9DABCEF4879}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

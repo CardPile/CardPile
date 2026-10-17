@@ -19,7 +19,7 @@ public class DeckModel : ReactiveObject, IDeckService
     public void UpdateDeck(List<ICardData> cards, Func<ICardDataService, ICardDataService> annotator)
     {
         deck.UpdateDeck(cards);
-
+        
         CardStacks.Clear();
         
         foreach (var stack in deck.CardStacks)

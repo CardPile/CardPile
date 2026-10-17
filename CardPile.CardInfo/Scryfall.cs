@@ -246,7 +246,7 @@ public static class Scryfall
         }
 
         await using var fs = File.OpenWrite(path);
-        bitmap.Save(fs);
+        bitmap.Save(fs, JpegBitmapEncoderOptions.Default);
     }
 
     private static async Task<(Stream?, bool)> GetImageStream(string cachePath, string cacheIdentifier, string? url)

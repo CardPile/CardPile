@@ -29,6 +29,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
 
         deck = new DeckModel();
         crypt = new CryptModel(cardDataSource);
+        synergies = new SynergiesModel(cardDataSource, draftState);
 
         PreviousPick = null;
 
@@ -124,6 +125,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
     {
         cardDataSource = newCardDataSource;
         crypt.SetCardDataSource(newCardDataSource);
+        synergies.SetCardDataSource(newCardDataSource);
         UpdateCardDataAfterChoice(cardDataSource);
         UpdateCardDataAfterPick(cardDataSource);
     }
@@ -369,6 +371,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
     private ICardDataService AnnotateCard(ICardDataService card)
     {
         crypt.AnnotateCard(card);
+        synergies.AnnotateCard(card);
         return card;
     }
 
@@ -384,6 +387,7 @@ internal class DraftModel : ReactiveObject, ICardsInPackService
     private ICardDataService? previousPick;
     private IDeckService deck;
     private ICryptService crypt;
+    private ISynergiesService synergies;
 
     private readonly WatcherModel watcherModel;
     private ICardDataSource cardDataSource;

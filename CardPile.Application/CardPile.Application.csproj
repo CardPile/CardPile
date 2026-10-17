@@ -2,7 +2,7 @@
   <PropertyGroup>
     <VersionPrefix>0.1.0</VersionPrefix>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -19,15 +19,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.3.0" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.3.0" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.0" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.0" />
+    <PackageReference Include="Avalonia" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.4" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.0" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.0" />
-    <PackageReference Include="LoadingIndicators.Avalonia" Version="11.0.11.1" />
-    <PackageReference Include="NLog.Extensions.Logging" Version="5.4.0" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.22" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.8" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="6.2.1" />
+    <PackageReference Include="Optris.LoadingIndicators.Avalonia" Version="12.0.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,6 +38,7 @@
     <ProjectReference Include="..\CardPile.Crypt\CardPile.Crypt.csproj" />
     <ProjectReference Include="..\CardPile.Deck\CardPile.Deck.csproj" />
     <ProjectReference Include="..\CardPile.Draft\CardPile.Draft.csproj" />
+    <ProjectReference Include="..\CardPile.Synergies\CardPile.Synergies.csproj" />
     <ProjectReference Include="..\CardPile.Watchers.ArenaLog\CardPile.Watchers.ArenaLog.csproj" />
     <ProjectReference Include="..\CardPile.Watchers.Unity\CardPile.Watchers.Unity.csproj" />
   </ItemGroup>

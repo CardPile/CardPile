@@ -26,7 +26,7 @@ internal class WatcherModel : ReactiveObject, IWatcherService
         enterMatcher.DraftEnterEvent += DraftEnterHandler;
         enterMatcher.DraftChoiceEvent += DraftChoiceHandler;
 
-        logWatcherTimerHandle = null;
+        logWatcherTimerHandle = null; 
         memoryWatcherTimerHandle = null;
 
         StartLogWatcherTimer();

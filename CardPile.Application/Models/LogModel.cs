@@ -4,7 +4,6 @@ using NLog.Layouts;
 using NLog.Targets;
 using ReactiveUI;
 using System;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace CardPile.Application.Models;
 
@@ -18,7 +17,7 @@ internal class LogModel : ReactiveObject, ILogService
         config.AddRule(LogLevel.Debug, LogLevel.Fatal, new FileTarget(){ FileName = "${basedir}/CardPile.log"});
         
         var target = new Target(this);
-        target.Layout = new SimpleLayout { Text = "${longdate} ${logger} [${uppercase:${level}}]: ${message} ${exception:format=tostring}" };
+        target.Layout = new SimpleLayout("${longdate} ${logger} [${uppercase:${level}}]: ${message} ${exception:format=tostring}");
         config.AddRule(LogLevel.Debug, LogLevel.Fatal, target);
         
         LogManager.Configuration = config;

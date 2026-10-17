@@ -1,14 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <UserSecretsId>3a8d5bb3-23bc-4e55-af89-ade2c6b3efa3</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="NGuid" Version="1.0.0" />
-    <PackageReference Include="NLog" Version="5.3.4" />
+    <PackageReference Include="NLog" Version="6.2.1" />
   </ItemGroup>
 
   <ItemGroup>

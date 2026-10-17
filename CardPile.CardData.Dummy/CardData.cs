@@ -3,7 +3,7 @@ namespace CardPile.CardData.Dummy;
 
 public class CardData : ICardData
 {
-    internal CardData(string name, int arenaCardId, Type type, int? manaValue, Color colors, string? url, ICardMetric? metricA, ICardMetric? metricB, ICardMetric? metricC, ICardMetric? metricD, ICardMetric? metricE)
+    internal CardData(string name, int arenaCardId, Type type, int? manaValue, Color colors, string? url, ICardMetric metricA, ICardMetric metricB, ICardMetric metricC, ICardMetric metricD, ICardMetric metricE)
     {
         Name = name;
         ArenaCardId = arenaCardId;

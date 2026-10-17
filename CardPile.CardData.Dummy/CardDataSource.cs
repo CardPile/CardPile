@@ -105,7 +105,25 @@ public class CardDataSource : ICardDataSource
                 var type = CardInfo.Arena.GetCardTypeFromId(cardNumber);
                 var manaValue = CardInfo.Arena.GetCardManaValueFromId(cardNumber);
                 var colors = CardInfo.Arena.GetCardColorsFromId(cardNumber);
-                return new CardData(cardNameFromArena, cardNumber, type, manaValue, colors, url, null, null, null, null, null);
+
+                var metricA = CardDataSourceBuilder.MetricADesc.NewMetric<float>(0.0f, []);
+                var metricB = CardDataSourceBuilder.MetricBDesc.NewMetric<int>(0, []);
+                var metricC = CardDataSourceBuilder.MetricCDesc.NewMetric<float>(0.0f, []);
+                var metricD = CardDataSourceBuilder.MetricDDesc.NewMetric(null);
+                var metricE = CardDataSourceBuilder.MetricEDesc.NewMetricWithSort(metricB, metricA, metricC, metricD);
+
+                return new CardData(
+                    cardNameFromArena, 
+                    cardNumber, 
+                    type, 
+                    manaValue, 
+                    colors, 
+                    url,
+                    metricA,
+                    metricB,
+                    metricC,
+                    metricD,
+                    metricE);
             }
 
             return null;

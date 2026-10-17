@@ -29,6 +29,13 @@ internal class Configuration : INotifyPropertyChanged
         set => this.RaiseAndSetIfChanged(ref showAllSkeletons, value);
     }
 
+    [JsonProperty("synergies_location")]
+    public string SynergiesLocation
+    {
+        get => synergiesLocation;
+        set => RaiseAndSetIfChanged(ref synergiesLocation, value);
+    }
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public async Task Save()
@@ -67,6 +74,8 @@ internal class Configuration : INotifyPropertyChanged
     private static Lazy<Configuration> instance = new Lazy<Configuration>(() => Load());
 
     private string cryptLocation = Path.Combine(Environment.ProcessPath != null ? Path.GetDirectoryName(Environment.ProcessPath) ?? "." : ".", "Skeletons");
+
+    private string synergiesLocation = Path.Combine(Environment.ProcessPath != null ? Path.GetDirectoryName(Environment.ProcessPath) ?? "." : ".", "Synergies");
 
     private bool showAllSkeletons = false;
 }
