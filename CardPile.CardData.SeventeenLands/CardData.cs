@@ -76,6 +76,7 @@ internal class CardData : ICardData
         NumberOfGamesNotSeenMetricDesc.NewMetric(),
         WinRateNotSeenMetricDesc.NewMetric(),
         WinRateImprovementWhenDrawnMetricDesc.NewMetric(),
+        LluRatingMetricDesc.NewMetric(),
         DEqMetricDesc.NewMetric(),
         DEqGradeMetricDesc.NewMetric()
         )
@@ -109,6 +110,7 @@ internal class CardData : ICardData
         ICardMetric numberOfGamesNotSeenMetric,
         ICardMetric winRateNotSeenMetric,
         ICardMetric winRateImprovementWhenDrawnMetric,
+        ICardMetric lluRatingMetric,
         ICardMetric deqMetric,
         ICardMetric deqGradeMetric
     )
@@ -141,6 +143,7 @@ internal class CardData : ICardData
             numberOfGamesNotSeenMetric,
             winRateNotSeenMetric,
             winRateImprovementWhenDrawnMetric,
+            lluRatingMetric,
             deqMetric,
             deqGradeMetric,
         ];
@@ -186,6 +189,7 @@ internal class CardData : ICardData
                 NumberOfGamesNotSeenMetricDesc,
                 WinRateNotSeenMetricDesc,
                 WinRateImprovementWhenDrawnMetricDesc,
+                LluRatingMetricDesc,
                 DEqMetricDesc,
                 DEqGradeMetricDesc,
             ];
@@ -296,6 +300,8 @@ internal class CardData : ICardData
                                                                                                                                   UBGWinRateImprovementMetricDesc,
                                                                                                                                   URGWinRateImprovementMetricDesc,
                                                                                                                                   BRGWinRateImprovementMetricDesc);
+
+    internal static readonly LetterGradeMetricDescription LluRatingMetricDesc = new LetterGradeMetricDescription("LLU Rating", true, false);
 
     internal static readonly MetricDescription<float> DEqMetricDesc = new MetricDescription<float>("DEq", true, false, new PercentFormatter(true));
     internal static readonly LetterGradeMetricDescription DEqGradeMetricDesc = new LetterGradeMetricDescription("DEq grade", true, false);

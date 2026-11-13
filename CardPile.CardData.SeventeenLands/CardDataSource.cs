@@ -33,7 +33,8 @@ public class CardDataSource : ICardDataSource
                             RawCardDataSource brgCardData,
                             List<Color> winRateColors,
                             WinDataSource winData,
-                            RawCardDEqSource deqSrc)
+                            RawCardDEqSource deqSrc,
+                            RawCardLluSource lluRatingsSrc)
     {
         Set = set;
 
@@ -61,6 +62,7 @@ public class CardDataSource : ICardDataSource
 
         archetypeWinData = winData;
         deqSource = deqSrc;
+        lluRatingsSource = lluRatingsSrc;
 
         foreach (var archetypeEntry in archetypeCardData)
         {
@@ -198,6 +200,8 @@ public class CardDataSource : ICardDataSource
             
             var cardDeq = deqSource.GetDEqCard(rawCardData.Name);
 
+            var cardLluRating = lluRatingsSource.GetLluCardRating(rawCardData.Name);
+
             return new CardData(rawCardData.Name,
                                 rawCardData.ArenaCardId,
                                 type,
@@ -224,6 +228,7 @@ public class CardDataSource : ICardDataSource
                                 CardData.NumberOfGamesNotSeenMetricDesc.NewMetric(rawCardData.NeverDrawnGameCount, rawCardData.NeverDrawnGameCountRanks),
                                 CardData.WinRateNotSeenMetricDesc.NewMetric(rawCardData.NeverDrawnWinRate, rawCardData.NeverDrawnWinRateRanks),
                                 CardData.WinRateImprovementWhenDrawnMetricDesc.NewMetric(rawCardData.DrawnImprovementWinRate, rawCardData.DrawnImprovementWinRateRanks),
+                                CardData.LluRatingMetricDesc.NewMetric(cardLluRating?.Tier),
                                 CardData.DEqMetricDesc.NewMetric(cardDeq?.DEq, []),
                                 CardData.DEqGradeMetricDesc.NewMetric(cardDeq?.DEqGrade)
                                 );
@@ -317,5 +322,6 @@ public class CardDataSource : ICardDataSource
     private readonly Dictionary<Color, Normal> archetypeGihWrDistribution = [];
     private readonly WinDataSource archetypeWinData;
     private readonly RawCardDEqSource deqSource;
+    private readonly RawCardLluSource lluRatingsSource;
 
 }

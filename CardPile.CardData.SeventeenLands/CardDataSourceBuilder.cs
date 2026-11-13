@@ -14,6 +14,7 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
 
     static CardDataSourceBuilder()
     {
+        CardLluProvider.ClearOldData();
         CardDEqProvider.ClearOldData();
         SeventeenLandsCardDataSourceProvider.ClearOldData();
         SeventeenLandsCardDataSourceProvider.LoadFilters();
@@ -112,7 +113,9 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
         var winRateColors = OptionsToColors(winRateColorsSetting.Options);
 
         var deqSource = new RawCardDEqSource(await CardDEqProvider.LoadDEqDataAsync(cancelation, setParameter.Value));
-        
+
+        var lluSource = new RawCardLluSource(await CardLluProvider.LoadLluDataAsync(cancelation, setParameter.Value));
+
         return new CardDataSource(setParameter.Value,
                                   cardDataSource,
                                   wuCardDataSource,
@@ -137,7 +140,8 @@ public class CardDataSourceBuilder : ICardDataSourceBuilder
                                   brgCardDataSource,
                                   winRateColors,
                                   winData,
-                                  deqSource);
+                                  deqSource,
+                                  lluSource);
     }
 
     private async Task SaveConfiguration()
