@@ -12,6 +12,7 @@ internal class LogModel : ReactiveObject, ILogService
     internal LogModel()
     {
         logContents = string.Empty;
+        isWarningOrErrorLogged = false;
 
         var config = new NLog.Config.LoggingConfiguration();
         config.AddRule(LogLevel.Debug, LogLevel.Fatal, new FileTarget(){ FileName = "${basedir}/CardPile.log"});
@@ -29,6 +30,12 @@ internal class LogModel : ReactiveObject, ILogService
         set => this.RaiseAndSetIfChanged(ref logContents, value);
     }
 
+    public bool IsWarningOrErrorLogged
+    {
+        get => isWarningOrErrorLogged;
+        set => this.RaiseAndSetIfChanged(ref isWarningOrErrorLogged, value);
+    }
+
     private class Target : TargetWithLayout
     {
         public Target(LogModel parent)
@@ -42,8 +49,17 @@ internal class LogModel : ReactiveObject, ILogService
         {
             string logMessage = RenderLogEvent(this.Layout, logEvent);
             Parent.LogContents = logMessage + Environment.NewLine + Parent.LogContents;
+
+            if (logMessage.Contains(WarningNeedle) || logMessage.Contains(ErrorNeedle))
+            {
+                Parent.IsWarningOrErrorLogged = true;
+            }
         }
     }
 
+    private const string WarningNeedle = "[WARN]";
+    private const string ErrorNeedle = "[ERROR]";
+
     private string logContents;
+    private bool isWarningOrErrorLogged;
 }

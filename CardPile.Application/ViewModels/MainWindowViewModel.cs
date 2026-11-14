@@ -78,6 +78,10 @@ public class MainWindowViewModel : ViewModelBase
         {
             DataContext = new LogWindowViewModel(model.LogService)
         };
+        
+        IsWarningOrErrorLogged = model.LogService.IsWarningOrErrorLogged;
+
+        model.LogService.ObservableForProperty(p => p.IsWarningOrErrorLogged).Subscribe(v => IsWarningOrErrorLogged = v.Value);
 
         ShowLogCommand = ReactiveCommand.Create(() =>
         {
@@ -172,6 +176,12 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     internal ICommand ShowLogCommand { get; init; }
+
+    internal bool IsWarningOrErrorLogged
+    {
+        get => isWarningOrErrorLogged;
+        private set => this.RaiseAndSetIfChanged(ref isWarningOrErrorLogged, value);
+    }
 
     internal Interaction<CardDataSourceSettingsDialogViewModel, bool> ShowCardDataSourceSettingsDialog { get; }
 
@@ -584,6 +594,7 @@ public class MainWindowViewModel : ViewModelBase
     private readonly ICryptService cryptService;
 
     private readonly LogWindow logWindow;
+    private bool isWarningOrErrorLogged = false;
 
     private ObservableCollection<CardDataMetricDescriptionViewModel> metricDescriptionViewModels;
     private CardDataMetricDescriptionViewModel? sortByMetricDescriptionViewModel;

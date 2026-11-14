@@ -76,8 +76,21 @@
           <!-- Log Button -->
           <StackPanel DockPanel.Dock="Right" Margin="5" Orientation="Horizontal">
             <Button Background="Transparent" Command="{Binding ShowLogCommand}" ToolTip.Tip="Show log window">
-              <PathIcon Height="20" Width="20" Foreground="Black" Data="{StaticResource log_icon}"/>
+              <Panel>
+                <PathIcon Height="20" Width="20" Foreground="Black" Data="{StaticResource log_icon}"/>
+                
+                <Border Background="{DynamicResource SystemRegionBrush}"
+                        CornerRadius="8"
+                        Padding="1"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Margin="0,0,-2,-2"
+                        IsVisible="{Binding IsWarningOrErrorLogged}">
+                    <PathIcon Data="{StaticResource error_circle_icon}" Width="12" Height="12" Foreground="Red" />
+                </Border>
+              </Panel>
             </Button>
+
             <Button Background="Transparent" Command="{Binding ShowSettingsCommand}" ToolTip.Tip="Settings">
               <PathIcon Height="20" Width="20" Foreground="Black" Data="{StaticResource settings_icon}"/>
             </Button>
