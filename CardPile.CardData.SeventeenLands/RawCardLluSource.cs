@@ -1,3 +1,5 @@
+using NLog;
+
 namespace CardPile.CardData.SeventeenLands;
 
 internal class RawCardLluSource
@@ -9,8 +11,17 @@ internal class RawCardLluSource
     
     public RawCardLluRating? GetLluCardRating(string name)
     {
-        return lluRatingSet.TryGetValue(name, out RawCardLluRating? lluRating) ? lluRating : null;
+        var result = lluRatingSet.TryGetValue(name, out RawCardLluRating? lluRating) ? lluRating : null;
+        
+        if (result == null)
+        {
+            logger.Warn("No LLU rating found for {name}", name);
+        }
+
+        return result;
     }
     
     private readonly Dictionary<string, RawCardLluRating> lluRatingSet;
+
+    private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 }
